@@ -1,0 +1,9 @@
+# Teraval AI Finance Assistant — minimal FastAPI + NVIDIA NIM (OpenAI-compatible).
+# Adapted from the provided Gen-AI Chatbot: we keep the OpenAI-client pattern and
+# the chat API shape, and strip the SQL/RAG/Qdrant/Redis/LangGraph stack.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+pydantic-settings>=2.6
+openai>=1.54
+python-dotenv>=1.0

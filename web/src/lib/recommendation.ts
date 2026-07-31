@@ -19,7 +19,7 @@ export interface Recommendation {
 }
 
 /** The driver with the largest one-way NPV span at the current assumptions. */
-function topDriver(a: Assumptions): string {
+export function topDriver(a: Assumptions): string {
   let bestLabel = '';
   let bestSpan = -1;
   for (const d of DRIVERS) {

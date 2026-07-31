@@ -21,6 +21,13 @@ Gen-AI Chatbot/**/*.zip
 # Python
 __pycache__/
 *.pyc
+# Python virtualenvs (e.g. assistant/.venv) — never commit
+.venv/
+venv/
+**/.venv/
+*.egg-info/
+# Assistant secrets (explicit; also covered by **/.env above)
+assistant/.env
 
 # OS / editor
 .DS_Store

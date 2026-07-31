@@ -9,6 +9,7 @@ import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
 import RateForecastPanel from './components/ai/RateForecastPanel';
 import ScenarioGenerator from './components/ai/ScenarioGenerator';
+import FinanceAssistant from './components/ai/FinanceAssistant';
 
 export default function App() {
   return (
@@ -50,10 +51,11 @@ export default function App() {
             <ScenarioGenerator />
           </div>
         </div>
+        <FinanceAssistant />
       </main>
       <footer className="mt-10 border-t border-glass-border pt-4 text-xs text-txt-faint">
         Teraval · Barq AI capital-budgeting appraisal · figures in AED millions, verified
-        against the reference model · dashboard Stage 5
+        against the reference model · dashboard Stage 6
       </footer>
     </div>
   );
