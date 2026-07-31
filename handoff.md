@@ -53,7 +53,7 @@ HARD RULES:
 - Before starting: `cd web && npm install && npm test` — confirm 13/13 pass. If they
   do not, fix that first (Phase 2 of the methodology) before new work.
 - After finishing your stage: run the tests and a type-check (`npx tsc -b`), then
-  UPDATE progress.md (Completed / In progress / exact NEXT TASK), commit, and push.
+  UPDATE progress.md (Completed / In progress / exact NEXT TASK), commit to main, and push.
 - Dashboard tech + look (from the plan): React + TypeScript + Vite; Three.js /
   react-three-fiber (3D GPU-rack scene); Framer Motion + GSAP; Recharts; Tailwind;
   Zustand. Theme: DARK, multi-accent (not mono-color), glassmorphism, hover/motion.

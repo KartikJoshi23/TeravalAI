@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-07-31 — master laptop (Kartik): pulled collaborator's Stages 2–6, installed, verified. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.
@@ -115,26 +115,41 @@ _Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/Kart
   - Note: MC narrative is rule-based for now; the LLM narrative (F4) arrives with the
     NIM assistant in Stage 6.
 
+- **Stage 6 — CODE COMPLETE (frontend + backend); plumbing VERIFIED on master.**
+  - Frontend (collaborator): `components/ai/FinanceAssistant.tsx` (streaming chat,
+    sample chips, "NIM connected / grounded offline" badge, graceful fallback),
+    `lib/assistantApi.ts` (SSE client), `lib/assistantContext.ts` (grounds every
+    answer in live engine state), `lib/assistantFallback.ts` (offline answerer).
+  - Backend (collaborator): `assistant/` FastAPI + NVIDIA NIM (OpenAI-compatible),
+    TechNova SQL/RAG/Qdrant/Redis stripped. `app/config.py`, `app/llm.py` (client →
+    NIM base_url), `app/prompts.py` (grounded "narrate, never invent" system prompt),
+    `app/main.py` (`/health` → nim_configured), `app/api/chat.py` (SSE token/final/error).
+  - Master-laptop verification: `.venv` created, `pip install -r requirements.txt` OK,
+    `from app.main import app` imports, `/health` → `{nim_configured:false}`, and
+    `POST /api/chat/message` streams a clean SSE `error` event without a key (→ frontend
+    falls back offline). **Live LLM path unverified — needs the NIM key.**
+  - `assistant/.env` created locally (git-ignored) ready for the key; `.env.example` present.
+
 ## 🔧 In progress
 
-- Nothing mid-flight in code. Stage 5 is complete and green; ready for Stage 6.
+- **Stage 6 live test — BLOCKED on the NIM key.** Everything else is built, installed,
+  and green (web: `npm test` 20/20, `tsc -b` clean, `npm run build` OK).
 
-## ▶️ NEXT TASK — Stage 6: AI Finance Assistant (NVIDIA NIM) integration
+## ▶️ NEXT TASK — add NIM key → live assistant test → then Stage 7 (report)
 
-Per plan §7 + §13 stage 6. Adapt the provided **Gen-AI Chatbot** into an `assistant/`
-FastAPI service that talks to **NVIDIA NIM** (OpenAI-compatible), and a chat UI:
-1. `assistant/` — keep the OpenAI-client pattern + chat API contract; **strip** the
-   TechNova SQL/RAG/Qdrant/Redis stack; repoint `base_url`/`api_key`/model to NIM.
-2. **NIM key lives only in `assistant/.env` (git-ignored) — supplied by Kartik; never
-   commit it.** Add `assistant/.env.example` with a `NVIDIA_NIM_API_KEY` placeholder.
-3. Chat UI in `web/`: every numeric answer **grounded in the live engine state**
-   (pass current metrics/assumptions as context); the LLM explains/narrates only.
-4. Wire the ≥5 sample Q&A (plan §7) and F3's LLM risk narrative.
-⚠️ Needs the NIM key to test end-to-end — coordinate with Kartik before/while building.
-Stop after Stage 6 for review. (Stage 7 = LaTeX report + figures + NotebookLM.)
+1. **Kartik:** paste the NIM key into `assistant/.env` (`NVIDIA_NIM_API_KEY=nvapi-…`),
+   then run the backend `cd assistant && ./.venv/Scripts/python -m uvicorn app.main:app --port 8000`
+   and the frontend `cd web && npm run dev`. Confirm the assistant badge flips to
+   **"NIM connected"** and replies stream while still matching the engine numbers.
+2. **Stage 7 (final):** LaTeX report (1,300–1,650 words, all 10 sections + 5 project
+   questions), capture dashboard screenshots into `docs/figures/` with filenames
+   matching `\includegraphics`, and provide the NotebookLM prompt.
+- Non-blocking polish: lazy-load the three.js `<Canvas>` (React.lazy) to cut the
+  ~495 kB gzip bundle warning.
+Stop after each for review.
 
 ## Notes / decisions
 
-- Repo root = this folder; GitHub repo to be named **`teraval`**. NIM API key goes
-  in `assistant/.env` (git-ignored); user supplies it — never commit it.
+- Repo root = this folder; GitHub repo is **`TeravalAI`** (https://github.com/KartikJoshi23/TeravalAI).
+  NIM API key goes in `assistant/.env` (git-ignored); Kartik supplies it — never commit it.
 - Finance engine and Python reference must stay in sync; tests enforce the numbers.
