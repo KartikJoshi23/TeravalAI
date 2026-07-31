@@ -1,0 +1,41 @@
+{
+  "id": "DEMO_LATENCY",
+  "query": "Which active customers in our top revenue tier are based in regulated Asian markets, and who are their account managers? Sort by ARR descending.",
+  "wall_clock_s": 52.29,
+  "stage_timing": [
+    {
+      "label": "session created",
+      "t_s": 0.02
+    },
+    {
+      "label": "first response stream complete",
+      "t_s": 6.52
+    },
+    {
+      "label": "clarification round 1 done",
+      "t_s": 12.76
+    },
+    {
+      "label": "readback approved",
+      "t_s": 52.29
+    },
+    {
+      "label": "FINAL received",
+      "t_s": 52.29
+    }
+  ],
+  "confidence": 0.93,
+  "trace": [
+    "router -> sql",
+    "intent -> clarity=0.62, 1 ambiguityy",
+    "clarify r1",
+    "intent -> clarity=0.98, 0 ambiguityies",
+    "readback -> approved",
+    "sql_agent -> 3 iter",
+    "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['regu...)",
+    "cross_validator -> pass (0.93)",
+    "completeness -> pass (0 missing)",
+    "finalise -> pass (0.93) via cross_validator"
+  ],
+  "answer": "Using TechNova’s strategy docs, “regulated APAC markets” explicitly includes **India, Japan, and South Korea** [TechNova_DRHP_Draft.pdf::sec2]. Separately, TechNova’s board/MD&A materials highlight **APAC localisation requirements** and the approved **Singapore data-centre expansion** to support them [TechNova_DRHP_Draft.pdf::sec3][TechNova_Board_Minutes_Q4.pdf::sec5]. Using your requested country set **(India, Japan, South Korea, Singapore)**, the active **Tier 1** customers and their account managers are:\n\n1. **Ember Retail** — Singapore — **₹1,743.02 L ARR** — **Aarti Iyer**\n2. **Beacon Logistics** — India — **₹1,720.14 L ARR** — **Divya Pillai**\n3. **Crescent Media** — Japan — **₹1,486.67 L ARR** — **Rohit Jain**\n4. **Atlas Telecom** — India — **₹1,325.29 L ARR** — **Kiran Malhotra**\n5. **Ascend Logistics** — Singapore — **₹1,186.54 L ARR** — **Rohit Jain**\n6. **Nova Systems** — Singapore — **₹1,029.43 L ARR** — **Divya Desai**\n7. **Ascend Motors** — India — **₹987.76 L ARR** — **Divya Pillai**\n8. **Zenith Capital** — Singapore — **₹893.94 L ARR** — **Divya Pillai**\n\n**Combined ARR: ₹10,372.80 L (≈ ₹103.73 Cr).**\n\nNote: there are **no matching active Tier 1 customers from South Korea** in the customer table for this filter set, even though Japan and South Korea are called out as APAC growth markets in the financial report [TechNova_Q4_Financial_Report.pdf::sec1]."
+}

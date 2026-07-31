@@ -1,0 +1,48 @@
+event: trace
+data: {"phase": "readback", "text": "clarify r1"}
+
+event: trace
+data: {"phase": "readback", "text": "intent -> clarity=0.93, 0 ambiguityies"}
+
+event: trace
+data: {"phase": "readback", "text": "readback -> approved"}
+
+event: trace
+data: {"phase": "sql_agent", "text": "intent -> clarity=0.93, 0 ambiguityies"}
+
+event: trace
+data: {"phase": "sql_agent", "text": "readback -> approved"}
+
+event: trace
+data: {"phase": "sql_agent", "text": "sql_agent -> 3 iter"}
+
+event: trace
+data: {"phase": "critic", "text": "readback -> approved"}
+
+event: trace
+data: {"phase": "critic", "text": "sql_agent -> 3 iter"}
+
+event: trace
+data: {"phase": "critic", "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['behi...)"}
+
+event: trace
+data: {"phase": "cross_validator", "text": "sql_agent -> 3 iter"}
+
+event: trace
+data: {"phase": "cross_validator", "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['behi...)"}
+
+event: trace
+data: {"phase": "cross_validator", "text": "cross_validator -> pass (0.92)"}
+
+event: trace
+data: {"phase": "finaliser", "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['behi...)"}
+
+event: trace
+data: {"phase": "finaliser", "text": "cross_validator -> pass (0.92)"}
+
+event: trace
+data: {"phase": "finaliser", "text": "finalise -> pass (0.92) via cross_validator"}
+
+event: final
+data: {"answer": "Using the SQL results, there are **22 Critical services** owned by **Engineering** whose owning team is behind on mandatory training and is associated with flagged vendors.\n\nPolicy grounding:\n- **Mandatory training** is explicitly annual and required for employees via the LMS; failure to complete it by deadline can lead to **system access restrictions** [TechNova_Training_Compliance.pdf::sec1].\n- A department is operationally **flagged/escalated for training compliance** when its completion rate falls **below 90%** in the monthly HR dashboard [TechNova_Training_Compliance.pdf::sec3]. Engineering\u2019s result here is **21 non-complete records out of 144 active-employee training records = 14.6% gap**, i.e. **85.4% completion**, which is below that 90% threshold.\n- For vendors, TechNova\u2019s vendor risk policy states that vendors may be **conditionally approved with remediation plans**, and specifically notes **VendorConnect Solutions** is **suspended** pending remediation and reassessment [TechNova_Vendor_Contracts.pdf::sec4].\n\nSo the grounded answer is:\n- **Owning team:** Engineering\n- **Training gap:** **21 of 144** active-employee training records are not completed (**14.6% gap**) [derived from SQL result; policy meaning of mandatory/behind grounded in TechNova_Training_Compliance.pdf::sec1 and ::sec3]\n- **Flagged vendors tied to that team:** **NVIDIA (DGX)** and **VendorConnect Solutions**; the policy-backed flagged statuses are the vendor-risk categories including **conditional approval** and **suspension**, with VendorConnect Solutions explicitly documented as **suspended** [TechNova_Vendor_Contracts.pdf::sec4]\n\nThe 22 affected Critical services returned by SQL are:\nNova Platform (Core), analytics-svc-01, analytics-svc-23, analytics-svc-26, analytics-svc-32, data-svc-01, data-svc-07, data-svc-12, data-svc-21, data-svc-26, integration-svc-07, integration-svc-08, integration-svc-16, integration-svc-24, integration-svc-27, integration-svc-28, integration-svc-30, integration-svc-31, integration-svc-35, integration-svc-36, integration-svc-39, and user-svc-01.", "confidence": 0.92, "evidence": {"sql": {"query": "WITH dept_training AS (\n  SELECT\n    e.department_id,\n    COUNT(*) AS total_training_records,\n    COUNT(*) FILTER (WHERE t.status <> 'Completed') AS behind_training_records,\n    ROUND(100.0 * COUNT(*) FILTER (WHERE t.status <> 'Completed') / NULLIF(COUNT(*), 0), 1) AS training_gap_pct\n  FROM employees e\n  JOIN training_compliance t\n    ON t.employee_id = e.employee_id\n  WHERE e.employment_status = 'Active'\n  GROUP BY e.department_id\n), flagged_vendors AS (\n  SELECT\n    owner_department_id AS department_id,\n    string_agg(vendor_name, ', ' ORDER BY vendor_name) AS vendor_names\n  FROM vendors\n  WHERE risk_status IN ('Conditional', 'Suspended')\n  GROUP BY owner_department_id\n)\nSELECT\n  ps.service_id,\n  ps.service_name,\n  d.department_name AS owning_team,\n  dt.behind_training_records AS training_gap_records,\n  dt.total_training_records,\n  dt.training_gap_pct,\n  fv.vendor_names\nFROM products_services ps\nJOIN departments d\n  ON d.department_id = ps.owner_department_id\nJOIN dept_training dt\n  ON dt.department_id = d.department_id\nJOIN flagged_vendors fv\n  ON fv.department_id = d.department_id\nWHERE ps.criticality_tier = 'Critical'\n  AND dt.behind_training_records > 0\nORDER BY dt.training_gap_pct DESC, ps.service_name;", "rows_markdown": "|   service_id | service_name         | owning_team   |   training_gap_records |   total_training_records |   training_gap_pct | vendor_names                          |\n|-------------:|:---------------------|:--------------|-----------------------:|-------------------------:|-------------------:|:--------------------------------------|\n|         9143 | Nova Platform (Core) | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9041 | analytics-svc-01     | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9063 | analytics-svc-23     | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9066 | analytics-svc-26     | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9072 | analytics-svc-32     | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9013 | data-svc-01          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9019 | data-svc-07          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9024 | data-svc-12          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9033 | data-svc-21          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9038 | data-svc-26          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9081 | integration-svc-07   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9082 | integration-svc-08   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9090 | integration-svc-16   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9098 | integration-svc-24   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9101 | integration-svc-27   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9102 | integration-svc-28   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9104 | integration-svc-30   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9105 | integration-svc-31   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9109 | integration-svc-35   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9110 | integration-svc-36   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9113 | integration-svc-39   | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |\n|         9001 | user-svc-01          | Engineering   |                     21 |                      144 |               14.6 | NVIDIA (DGX), VendorConnect Solutions |", "error": null}, "citations": [{"chunk_id": "TechNova_Training_Compliance.pdf::sec1"}, {"chunk_id": "TechNova_Training_Compliance.pdf::sec3"}, {"chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"}], "chunks_seen": null, "hybrid_sub_results": null}, "trace": ["router -> sql", "intent -> clarity=0.42, 4 ambiguityies", "clarify r1", "intent -> clarity=0.93, 0 ambiguityies", "readback -> approved", "sql_agent -> 3 iter", "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['behi...)", "cross_validator -> pass (0.92)", "finalise -> pass (0.92) via cross_validator"]}
+

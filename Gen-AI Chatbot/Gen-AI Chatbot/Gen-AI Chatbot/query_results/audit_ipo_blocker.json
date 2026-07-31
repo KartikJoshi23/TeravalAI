@@ -1,0 +1,349 @@
+{
+  "id": "AUDIT_IPO_BLOCKER",
+  "thread_id": "22491740-fb21-435d-83a9-e05d0a014794",
+  "final": {
+    "answer": "There are **4 audit findings currently flagged as IPO blockers** (`ipo_blocker_flag='Yes'` and active status `In Progress`).\n\n| Finding ID | Finding summary | Severity | Audit engagement it came from | Owning department | Assigned owner | ISMS policy on the related control type |\n|---|---|---|---|---|---|---|\n| 80008 | Data Handling identified in Engineering (High severity) | High | SOC 2 Type II | Engineering | Vikram Das | This most directly relates to **data classification and handling controls**. The ISMS policy says customer data is generally **Class 4 - Restricted**, requiring strict need-to-know access, logging, and CISO approval for non-routine access [TechNova_ISMS_Policy.pdf::sec2]. It also ties into the broader ISMS certification framework supporting SOC 2 Type II and ISO 27001, both required for IPO readiness by Dec 2026 [TechNova_ISMS_Policy.pdf::sec1] [F-AUTO-E8610E973D]. |\n| 80026 | Vulnerability identified in Human Resources (Critical severity) | Critical | Internal Audit FY2025-26 Q3 | Human Resources | Mohit Bhalla | This relates most plausibly to **security control coverage / risk treatment controls** within the ISMS scope. The policy explicitly includes **corporate IT systems supporting ... HR** in scope [TechNova_ISMS_Policy.pdf::sec1]. For unresolved vulnerabilities, the ISMS risk methodology requires risks to be assessed and then treated via **mitigate, accept, transfer, or avoid**, with mitigation being the relevant control response for active critical issues [TechNova_ISMS_Policy.pdf::sec4]. |\n| 80047 | Vulnerability identified in IT Operations (Critical severity) | Critical | DPDP Compliance Audit | IT Operations | Kiran Chopra | This most directly maps to **access control / operational security controls**. The ISMS policy requires **least privilege, separation of duties, and zero standing access for production systems**, with just-in-time access, manager approval, and full logging [TechNova_ISMS_Policy.pdf::sec3]. Since IT Operations is part of the in-scope operating environment, such vulnerability findings sit inside the formal ISMS control framework [TechNova_ISMS_Policy.pdf::sec1]. |\n| 80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical | Statutory Audit FY2025-26 | Data & AI Research | Vikram Reddy | This also maps most strongly to **access control / production security controls** plus broader **ISMS risk treatment**. The policy covers production AWS/GCP infrastructure and the **AI/ML EKS cluster** within ISMS scope [TechNova_ISMS_Policy.pdf::sec1]. Relevant control language includes **least privilege**, **zero standing access**, and controlled production access workflows [TechNova_ISMS_Policy.pdf::sec3]; unresolved vulnerabilities are handled through the ISO 27005-aligned risk treatment process [TechNova_ISMS_Policy.pdf::sec4]. |\n\n**Combined current IPO blockers: 4 findings**\n\nNotes:\n- I verified these from `audit_findings` directly because there is **no separate `audit_engagements` table** in the schema; the engagement name is stored in the `audit_engagement` column on each finding.\n- The ISMS-policy column above is a **semantic mapping** from each finding’s category/theme to the relevant policy control area, because the retrieved evidence does not expose a direct lookup from `control_id` (`P6.1`, `CC7.2`, `A4.4`, `P8.1`) to a formal policy taxonomy.\n- IPO relevance is consistent with the policy’s statement that SOC 2 Type II and ISO 27001 are required IPO-readiness milestones [TechNova_ISMS_Policy.pdf::sec1] [F-AUTO-E8610E973D].",
+    "confidence": 0.9,
+    "evidence": {
+      "sql": null,
+      "citations": [
+        {
+          "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+        },
+        {
+          "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+        },
+        {
+          "chunk_id": "TechNova_ISMS_Policy.pdf::sec2"
+        },
+        {
+          "chunk_id": "TechNova_ISMS_Policy.pdf::sec4"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "sql",
+          "question": "Find all audit findings that are currently flagged as IPO blockers, and for each return the finding summary, severity, audit engagement name/identifier, owning department, assigned owner employee, and any field(s) that indicate the finding's control domain/type so it can be mapped to policy guidance.",
+          "answer": "I found 4 audit findings in `audit_findings` that are **currently** IPO blockers, using `ipo_blocker_flag = 'Yes'` and restricting to active statuses `Open`/`In Progress`; joined to `departments` for the owning department and `employees` for the assigned owner. Control-domain/type fields available for policy mapping are `finding_category` and `control_id`. **Total current IPO blockers: 4.**\n\n| finding_id | finding_summary | severity | audit_engagement | owning_department | assigned_owner_employee | finding_category | control_id | status |\n|---:|---|---|---|---|---|---|---|---|\n| 80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical | Statutory Audit FY2025-26 | Data & AI Research | Vikram Reddy | Vulnerability | P8.1 | In Progress |\n| 80047 | Vulnerability identified in IT Operations (Critical severity) | Critical | DPDP Compliance Audit | IT Operations | Kiran Chopra | Vulnerability | A4.4 | In Progress |\n| 80026 | Vulnerability identified in Human Resources (Critical severity) | Critical | Internal Audit FY2025-26 Q3 | Human Resources | Mohit Bhalla | Vulnerability | CC7.2 | In Progress |\n| 80008 | Data Handling identified in Engineering (High severity) | High | SOC 2 Type II | Engineering | Vikram Das | Data Handling | P6.1 | In Progress |\n\n```sql\nSELECT\n  af.finding_id,\n  af.finding_summary,\n  af.severity,\n  af.audit_engagement,\n  af.audit_type,\n  af.audit_year,\n  af.audit_quarter,\n  d.department_name AS owning_department,\n  e.employee_id AS owner_employee_id,\n  e.first_name || ' ' || e.last_name AS assigned_owner_employee,\n  e.job_title AS owner_job_title,\n  af.finding_category,\n  af.control_id,\n  af.status,\n  af.customer_visibility,\n  af.report_date,\n  af.due_date\nFROM audit_findings af\nJOIN departments d\n  ON af.department_id = d.department_id\nJOIN employees e\n  ON af.assigned_owner_employee_id = e.employee_id\nWHERE af.ipo_blocker_flag = 'Yes'\n  AND af.status IN ('Open', 'In Progress')\nORDER BY\n  CASE af.severity\n    WHEN 'Critical' THEN 1\n    WHEN 'High' THEN 2\n    WHEN 'Medium' THEN 3\n    WHEN 'Low' THEN 4\n    ELSE 5\n  END,\n  af.report_date DESC,\n  af.finding_id;\n```",
+          "sql_result": {
+            "sql": "SELECT\n  af.finding_id,\n  af.finding_summary,\n  af.severity,\n  af.audit_engagement,\n  af.audit_type,\n  af.audit_year,\n  af.audit_quarter,\n  d.department_name AS owning_department,\n  e.employee_id AS owner_employee_id,\n  e.first_name || ' ' || e.last_name AS assigned_owner_employee,\n  e.job_title AS owner_job_title,\n  af.finding_category,\n  af.control_id,\n  af.status,\n  af.customer_visibility,\n  af.report_date,\n  af.due_date\nFROM audit_findings af\nJOIN departments d\n  ON af.department_id = d.department_id\nJOIN employees e\n  ON af.assigned_owner_employee_id = e.employee_id\nWHERE af.ipo_blocker_flag = 'Yes'\n  AND af.status IN ('Open', 'In Progress')\nORDER BY\n  CASE af.severity\n    WHEN 'Critical' THEN 1\n    WHEN 'High' THEN 2\n    WHEN 'Medium' THEN 3\n    WHEN 'Low' THEN 4\n    ELSE 5\n  END,\n  af.report_date DESC,\n  af.finding_id;",
+            "rows_markdown": "|   finding_id | finding_summary                                                    | severity   | audit_engagement            | audit_type   |   audit_year | audit_quarter   | owning_department   |   owner_employee_id | assigned_owner_employee   | owner_job_title     | finding_category   | control_id   | status      | customer_visibility   | report_date   | due_date   |\n|-------------:|:-------------------------------------------------------------------|:-----------|:----------------------------|:-------------|-------------:|:----------------|:--------------------|--------------------:|:--------------------------|:--------------------|:-------------------|:-------------|:------------|:----------------------|:--------------|:-----------|\n|        80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical   | Statutory Audit FY2025-26   | Statutory    |         2026 | 2026-Q1         | Data & AI Research  |                1004 | Vikram Reddy              | CTO                 | Vulnerability      | P8.1         | In Progress | Internal              | 2026-04-15    | 2026-08-10 |\n|        80047 | Vulnerability identified in IT Operations (Critical severity)      | Critical   | DPDP Compliance Audit       | DPDP         |         2026 | 2026-Q1         | IT Operations       |                1100 | Kiran Chopra              | Staff Engineer      | Vulnerability      | A4.4         | In Progress | Internal              | 2026-04-10    | 2026-06-20 |\n|        80026 | Vulnerability identified in Human Resources (Critical severity)    | Critical   | Internal Audit FY2025-26 Q3 | Internal     |         2025 | 2025-Q3         | Human Resources     |                1089 | Mohit Bhalla              | Lead Engineer       | Vulnerability      | CC7.2        | In Progress | Internal              | 2026-02-01    | 2026-07-14 |\n|        80008 | Data Handling identified in Engineering (High severity)            | High       | SOC 2 Type II               | SOC 2        |         2025 | 2025-Q3         | Engineering         |                1034 | Vikram Das                | Engineering Manager | Data Handling      | P6.1         | In Progress | Investor-Visible      | 2025-12-15    | 2026-04-21 |",
+            "row_count": 5,
+            "error": null,
+            "iterations": 3
+          }
+        },
+        {
+          "type": "rag",
+          "question": "Using the already extracted IPO-readiness fact IDs [F-AUTO-E8610E973D, F-IPO-08, F-AUTO-607B839509], extract what the ISMS policy says about the relevant control types implicated by IPO-blocking audit findings, especially controls tied to SOC 2 Type II and ISO 27001 certification coverage for all product modules, and provide policy language that can be matched to finding control domains/types from the SQL results.",
+          "answer": "Using the cited IPO-readiness facts together with the ISMS policy text, the relevant policy position is:\n\n1. **SOC 2 Type II / ISO 27001 coverage is an explicit IPO-readiness control objective across all product modules.**  \n   The DRHP states the milestone is “**SOC 2 Type II and ISO 27001 covering ALL product modules by December 2026**,” with current coverage below target, and says “**the remediation plan is detailed in the ISMS policy**.” [TechNova_DRHP_Draft.pdf::sec2026]  \n   The ISMS policy mirrors this by stating the ISMS is “**the formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification, both required as IPO-readiness milestones**.” [TechNova_ISMS_Policy.pdf::sec1]\n\n2. **The ISMS scope is broad enough to map findings from multiple departments/control areas to certification coverage.**  \n   The policy says the ISMS covers “**all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**,” including production cloud infrastructure, application services, databases, AI/ML cluster, and “**corporate IT systems supporting Engineering, SRE, Customer Success, Finance, HR, and Legal**,” plus third-party processors. [TechNova_ISMS_Policy.pdf::sec1]  \n   This means SQL finding domains like **Vulnerability** and **Data Handling** are not isolated technical issues; they fall within the in-scope control environment for certification coverage if they affect product modules, production systems, customer data, or supporting corporate systems. [TechNova_ISMS_Policy.pdf::sec1]\n\n3. **For matching SQL finding control domains/types, the strongest policy-aligned control types are:**\n   - **Access Control / Identity Management** for findings tied to unauthorized access, privileged access, MFA, JIT access, break-glass access, vendor access, or customer-data access. The policy language includes:\n     - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n     - “**mandatory hardware second factor**” for engineering staff [TechNova_ISMS_Policy.pdf::sec3]\n     - “**just-in-time access** ... **requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n     - customer data access restricted to need-based support access and revoked after ticket closure [TechNova_ISMS_Policy.pdf::sec3]\n     - vendor access reviewed quarterly and disabled when vendor risk status is suspended [TechNova_ISMS_Policy.pdf::sec3]\n     \n     These are the best policy phrases to map to SQL results where `finding_category` is something like **Vulnerability** or **Data Handling** and the underlying issue concerns authentication, privilege, production access, customer-data access, or vendor access.\n\n   - **Audit / Corrective Action / Continual Improvement controls** for findings that are IPO blockers because they remain open or insufficiently remediated. The policy says:\n     - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n     - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n     - Management Review includes “**results of internal audits, results of external audits (SOC 2, ISO 27001, statutory), results of risk assessment, status of preventive and corrective actions**” [TechNova_ISMS_Policy.pdf::sec6]\n     \n     These phrases are the clearest policy hooks for matching IPO-blocking findings to governance/control types around remediation, audit follow-up, and corrective action tracking.\n\n   - **ISMS Scope / Statement of Applicability / Certification-readiness controls** for findings that indicate a module or function is not yet covered by the certification control baseline. The policy says:\n     - the SoA documents “**which of the 93 Annex A controls ... are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n     - as of March 2026, only “**70% of applicable controls are at a ‘fully implemented’ maturity level; 25% are at ‘partially implemented’; 5% are ... ‘planned’**” [TechNova_ISMS_Policy.pdf::sec1]\n     \n     This is useful where SQL control IDs/domains indicate a gap in implemented controls rather than a single operational incident.\n\n4. **How this applies to IPO-blocking findings from the SQL output.**  \n   Based on the prior SQL answer, current IPO blockers include findings categorized as **Vulnerability** and **Data Handling**. The ISMS policy does not appear to define those exact SQL labels as formal policy taxonomies, but it does provide policy language that can be semantically matched:\n   - **Vulnerability** findings → likely map to certification/control coverage gaps in the ISMS scope and to operational security controls such as access control, privileged access, MFA, logging, and corrective-action remediation. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n   - **Data Handling** findings → likely map to customer-data access restrictions, least-privilege handling of production/customer data, vendor access governance, and broader in-scope certification controls over systems and personnel handling information. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3]\n\n5. **Most directly matchable policy language for control-domain/type joins from SQL results**\n   If you need short policy snippets to align against `finding_category` / `control_id` outputs, these are the best candidates:\n   - “**formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**covers all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**Statement of Applicability ... documents which ... controls are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**mandatory hardware second factor**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**just-in-time access ... requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n   - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n\nBottom line: the ISMS policy frames IPO-blocking audit findings primarily as failures or gaps in the **certification control framework**, especially around **scope coverage across all product modules**, **access/identity controls**, and **audit remediation / corrective action governance** required for SOC 2 Type II and ISO 27001 readiness. [TechNova_DRHP_Draft.pdf::sec2026] [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n\n- TechNova_DRHP_Draft.pdf::sec2026\n- TechNova_ISMS_Policy.pdf::sec1\n- TechNova_ISMS_Policy.pdf::sec3\n- TechNova_ISMS_Policy.pdf::sec6",
+          "rag_result": {
+            "answer": "Using the cited IPO-readiness facts together with the ISMS policy text, the relevant policy position is:\n\n1. **SOC 2 Type II / ISO 27001 coverage is an explicit IPO-readiness control objective across all product modules.**  \n   The DRHP states the milestone is “**SOC 2 Type II and ISO 27001 covering ALL product modules by December 2026**,” with current coverage below target, and says “**the remediation plan is detailed in the ISMS policy**.” [TechNova_DRHP_Draft.pdf::sec2026]  \n   The ISMS policy mirrors this by stating the ISMS is “**the formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification, both required as IPO-readiness milestones**.” [TechNova_ISMS_Policy.pdf::sec1]\n\n2. **The ISMS scope is broad enough to map findings from multiple departments/control areas to certification coverage.**  \n   The policy says the ISMS covers “**all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**,” including production cloud infrastructure, application services, databases, AI/ML cluster, and “**corporate IT systems supporting Engineering, SRE, Customer Success, Finance, HR, and Legal**,” plus third-party processors. [TechNova_ISMS_Policy.pdf::sec1]  \n   This means SQL finding domains like **Vulnerability** and **Data Handling** are not isolated technical issues; they fall within the in-scope control environment for certification coverage if they affect product modules, production systems, customer data, or supporting corporate systems. [TechNova_ISMS_Policy.pdf::sec1]\n\n3. **For matching SQL finding control domains/types, the strongest policy-aligned control types are:**\n   - **Access Control / Identity Management** for findings tied to unauthorized access, privileged access, MFA, JIT access, break-glass access, vendor access, or customer-data access. The policy language includes:\n     - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n     - “**mandatory hardware second factor**” for engineering staff [TechNova_ISMS_Policy.pdf::sec3]\n     - “**just-in-time access** ... **requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n     - customer data access restricted to need-based support access and revoked after ticket closure [TechNova_ISMS_Policy.pdf::sec3]\n     - vendor access reviewed quarterly and disabled when vendor risk status is suspended [TechNova_ISMS_Policy.pdf::sec3]\n     \n     These are the best policy phrases to map to SQL results where `finding_category` is something like **Vulnerability** or **Data Handling** and the underlying issue concerns authentication, privilege, production access, customer-data access, or vendor access.\n\n   - **Audit / Corrective Action / Continual Improvement controls** for findings that are IPO blockers because they remain open or insufficiently remediated. The policy says:\n     - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n     - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n     - Management Review includes “**results of internal audits, results of external audits (SOC 2, ISO 27001, statutory), results of risk assessment, status of preventive and corrective actions**” [TechNova_ISMS_Policy.pdf::sec6]\n     \n     These phrases are the clearest policy hooks for matching IPO-blocking findings to governance/control types around remediation, audit follow-up, and corrective action tracking.\n\n   - **ISMS Scope / Statement of Applicability / Certification-readiness controls** for findings that indicate a module or function is not yet covered by the certification control baseline. The policy says:\n     - the SoA documents “**which of the 93 Annex A controls ... are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n     - as of March 2026, only “**70% of applicable controls are at a ‘fully implemented’ maturity level; 25% are at ‘partially implemented’; 5% are ... ‘planned’**” [TechNova_ISMS_Policy.pdf::sec1]\n     \n     This is useful where SQL control IDs/domains indicate a gap in implemented controls rather than a single operational incident.\n\n4. **How this applies to IPO-blocking findings from the SQL output.**  \n   Based on the prior SQL answer, current IPO blockers include findings categorized as **Vulnerability** and **Data Handling**. The ISMS policy does not appear to define those exact SQL labels as formal policy taxonomies, but it does provide policy language that can be semantically matched:\n   - **Vulnerability** findings → likely map to certification/control coverage gaps in the ISMS scope and to operational security controls such as access control, privileged access, MFA, logging, and corrective-action remediation. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n   - **Data Handling** findings → likely map to customer-data access restrictions, least-privilege handling of production/customer data, vendor access governance, and broader in-scope certification controls over systems and personnel handling information. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3]\n\n5. **Most directly matchable policy language for control-domain/type joins from SQL results**\n   If you need short policy snippets to align against `finding_category` / `control_id` outputs, these are the best candidates:\n   - “**formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**covers all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**Statement of Applicability ... documents which ... controls are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**mandatory hardware second factor**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**just-in-time access ... requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n   - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n\nBottom line: the ISMS policy frames IPO-blocking audit findings primarily as failures or gaps in the **certification control framework**, especially around **scope coverage across all product modules**, **access/identity controls**, and **audit remediation / corrective action governance** required for SOC 2 Type II and ISO 27001 readiness. [TechNova_DRHP_Draft.pdf::sec2026] [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n\n- TechNova_DRHP_Draft.pdf::sec2026\n- TechNova_ISMS_Policy.pdf::sec1\n- TechNova_ISMS_Policy.pdf::sec3\n- TechNova_ISMS_Policy.pdf::sec6",
+            "citations": [
+              {
+                "chunk_id": "TechNova_DRHP_Draft.pdf::sec2026"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec6"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_DRHP_Draft.pdf::sec2026"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec6"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.74, 3 ambiguityies",
+      "planner -> 2 sub-qs",
+      "hybrid_exec -> 2 sub-answer(s)",
+      "synthesiser -> 3198 chars",
+      "critic -> uncertain (0.72)",
+      "cross_validator -> pass (0.90)",
+      "completeness -> pass (0 missing)",
+      "finalise -> pass (0.90) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.74, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.74, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "intent -> clarity=0.74, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 3198 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 3198 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> uncertain (0.72)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "synthesiser -> 3198 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> uncertain (0.72)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.90)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "critic -> uncertain (0.72)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "cross_validator -> pass (0.90)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "completeness -> pass (0 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.90)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "completeness -> pass (0 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.90) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "There are **4 audit findings currently flagged as IPO blockers** (`ipo_blocker_flag='Yes'` and active status `In Progress`).\n\n| Finding ID | Finding summary | Severity | Audit engagement it came from | Owning department | Assigned owner | ISMS policy on the related control type |\n|---|---|---|---|---|---|---|\n| 80008 | Data Handling identified in Engineering (High severity) | High | SOC 2 Type II | Engineering | Vikram Das | This most directly relates to **data classification and handling controls**. The ISMS policy says customer data is generally **Class 4 - Restricted**, requiring strict need-to-know access, logging, and CISO approval for non-routine access [TechNova_ISMS_Policy.pdf::sec2]. It also ties into the broader ISMS certification framework supporting SOC 2 Type II and ISO 27001, both required for IPO readiness by Dec 2026 [TechNova_ISMS_Policy.pdf::sec1] [F-AUTO-E8610E973D]. |\n| 80026 | Vulnerability identified in Human Resources (Critical severity) | Critical | Internal Audit FY2025-26 Q3 | Human Resources | Mohit Bhalla | This relates most plausibly to **security control coverage / risk treatment controls** within the ISMS scope. The policy explicitly includes **corporate IT systems supporting ... HR** in scope [TechNova_ISMS_Policy.pdf::sec1]. For unresolved vulnerabilities, the ISMS risk methodology requires risks to be assessed and then treated via **mitigate, accept, transfer, or avoid**, with mitigation being the relevant control response for active critical issues [TechNova_ISMS_Policy.pdf::sec4]. |\n| 80047 | Vulnerability identified in IT Operations (Critical severity) | Critical | DPDP Compliance Audit | IT Operations | Kiran Chopra | This most directly maps to **access control / operational security controls**. The ISMS policy requires **least privilege, separation of duties, and zero standing access for production systems**, with just-in-time access, manager approval, and full logging [TechNova_ISMS_Policy.pdf::sec3]. Since IT Operations is part of the in-scope operating environment, such vulnerability findings sit inside the formal ISMS control framework [TechNova_ISMS_Policy.pdf::sec1]. |\n| 80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical | Statutory Audit FY2025-26 | Data & AI Research | Vikram Reddy | This also maps most strongly to **access control / production security controls** plus broader **ISMS risk treatment**. The policy covers production AWS/GCP infrastructure and the **AI/ML EKS cluster** within ISMS scope [TechNova_ISMS_Policy.pdf::sec1]. Relevant control language includes **least privilege**, **zero standing access**, and controlled production access workflows [TechNova_ISMS_Policy.pdf::sec3]; unresolved vulnerabilities are handled through the ISO 27005-aligned risk treatment process [TechNova_ISMS_Policy.pdf::sec4]. |\n\n**Combined current IPO blockers: 4 findings**\n\nNotes:\n- I verified these from `audit_findings` directly because there is **no separate `audit_engagements` table** in the schema; the engagement name is stored in the `audit_engagement` column on each finding.\n- The ISMS-policy column above is a **semantic mapping** from each finding’s category/theme to the relevant policy control area, because the retrieved evidence does not expose a direct lookup from `control_id` (`P6.1`, `CC7.2`, `A4.4`, `P8.1`) to a formal policy taxonomy.\n- IPO relevance is consistent with the policy’s statement that SOC 2 Type II and ISO 27001 are required IPO-readiness milestones [TechNova_ISMS_Policy.pdf::sec1] [F-AUTO-E8610E973D].",
+        "confidence": 0.9,
+        "evidence": {
+          "sql": null,
+          "citations": [
+            {
+              "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+            },
+            {
+              "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+            },
+            {
+              "chunk_id": "TechNova_ISMS_Policy.pdf::sec2"
+            },
+            {
+              "chunk_id": "TechNova_ISMS_Policy.pdf::sec4"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "sql",
+              "question": "Find all audit findings that are currently flagged as IPO blockers, and for each return the finding summary, severity, audit engagement name/identifier, owning department, assigned owner employee, and any field(s) that indicate the finding's control domain/type so it can be mapped to policy guidance.",
+              "answer": "I found 4 audit findings in `audit_findings` that are **currently** IPO blockers, using `ipo_blocker_flag = 'Yes'` and restricting to active statuses `Open`/`In Progress`; joined to `departments` for the owning department and `employees` for the assigned owner. Control-domain/type fields available for policy mapping are `finding_category` and `control_id`. **Total current IPO blockers: 4.**\n\n| finding_id | finding_summary | severity | audit_engagement | owning_department | assigned_owner_employee | finding_category | control_id | status |\n|---:|---|---|---|---|---|---|---|---|\n| 80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical | Statutory Audit FY2025-26 | Data & AI Research | Vikram Reddy | Vulnerability | P8.1 | In Progress |\n| 80047 | Vulnerability identified in IT Operations (Critical severity) | Critical | DPDP Compliance Audit | IT Operations | Kiran Chopra | Vulnerability | A4.4 | In Progress |\n| 80026 | Vulnerability identified in Human Resources (Critical severity) | Critical | Internal Audit FY2025-26 Q3 | Human Resources | Mohit Bhalla | Vulnerability | CC7.2 | In Progress |\n| 80008 | Data Handling identified in Engineering (High severity) | High | SOC 2 Type II | Engineering | Vikram Das | Data Handling | P6.1 | In Progress |\n\n```sql\nSELECT\n  af.finding_id,\n  af.finding_summary,\n  af.severity,\n  af.audit_engagement,\n  af.audit_type,\n  af.audit_year,\n  af.audit_quarter,\n  d.department_name AS owning_department,\n  e.employee_id AS owner_employee_id,\n  e.first_name || ' ' || e.last_name AS assigned_owner_employee,\n  e.job_title AS owner_job_title,\n  af.finding_category,\n  af.control_id,\n  af.status,\n  af.customer_visibility,\n  af.report_date,\n  af.due_date\nFROM audit_findings af\nJOIN departments d\n  ON af.department_id = d.department_id\nJOIN employees e\n  ON af.assigned_owner_employee_id = e.employee_id\nWHERE af.ipo_blocker_flag = 'Yes'\n  AND af.status IN ('Open', 'In Progress')\nORDER BY\n  CASE af.severity\n    WHEN 'Critical' THEN 1\n    WHEN 'High' THEN 2\n    WHEN 'Medium' THEN 3\n    WHEN 'Low' THEN 4\n    ELSE 5\n  END,\n  af.report_date DESC,\n  af.finding_id;\n```",
+              "sql_result": {
+                "sql": "SELECT\n  af.finding_id,\n  af.finding_summary,\n  af.severity,\n  af.audit_engagement,\n  af.audit_type,\n  af.audit_year,\n  af.audit_quarter,\n  d.department_name AS owning_department,\n  e.employee_id AS owner_employee_id,\n  e.first_name || ' ' || e.last_name AS assigned_owner_employee,\n  e.job_title AS owner_job_title,\n  af.finding_category,\n  af.control_id,\n  af.status,\n  af.customer_visibility,\n  af.report_date,\n  af.due_date\nFROM audit_findings af\nJOIN departments d\n  ON af.department_id = d.department_id\nJOIN employees e\n  ON af.assigned_owner_employee_id = e.employee_id\nWHERE af.ipo_blocker_flag = 'Yes'\n  AND af.status IN ('Open', 'In Progress')\nORDER BY\n  CASE af.severity\n    WHEN 'Critical' THEN 1\n    WHEN 'High' THEN 2\n    WHEN 'Medium' THEN 3\n    WHEN 'Low' THEN 4\n    ELSE 5\n  END,\n  af.report_date DESC,\n  af.finding_id;",
+                "rows_markdown": "|   finding_id | finding_summary                                                    | severity   | audit_engagement            | audit_type   |   audit_year | audit_quarter   | owning_department   |   owner_employee_id | assigned_owner_employee   | owner_job_title     | finding_category   | control_id   | status      | customer_visibility   | report_date   | due_date   |\n|-------------:|:-------------------------------------------------------------------|:-----------|:----------------------------|:-------------|-------------:|:----------------|:--------------------|--------------------:|:--------------------------|:--------------------|:-------------------|:-------------|:------------|:----------------------|:--------------|:-----------|\n|        80057 | Vulnerability identified in Data & AI Research (Critical severity) | Critical   | Statutory Audit FY2025-26   | Statutory    |         2026 | 2026-Q1         | Data & AI Research  |                1004 | Vikram Reddy              | CTO                 | Vulnerability      | P8.1         | In Progress | Internal              | 2026-04-15    | 2026-08-10 |\n|        80047 | Vulnerability identified in IT Operations (Critical severity)      | Critical   | DPDP Compliance Audit       | DPDP         |         2026 | 2026-Q1         | IT Operations       |                1100 | Kiran Chopra              | Staff Engineer      | Vulnerability      | A4.4         | In Progress | Internal              | 2026-04-10    | 2026-06-20 |\n|        80026 | Vulnerability identified in Human Resources (Critical severity)    | Critical   | Internal Audit FY2025-26 Q3 | Internal     |         2025 | 2025-Q3         | Human Resources     |                1089 | Mohit Bhalla              | Lead Engineer       | Vulnerability      | CC7.2        | In Progress | Internal              | 2026-02-01    | 2026-07-14 |\n|        80008 | Data Handling identified in Engineering (High severity)            | High       | SOC 2 Type II               | SOC 2        |         2025 | 2025-Q3         | Engineering         |                1034 | Vikram Das                | Engineering Manager | Data Handling      | P6.1         | In Progress | Investor-Visible      | 2025-12-15    | 2026-04-21 |",
+                "row_count": 5,
+                "error": null,
+                "iterations": 3
+              }
+            },
+            {
+              "type": "rag",
+              "question": "Using the already extracted IPO-readiness fact IDs [F-AUTO-E8610E973D, F-IPO-08, F-AUTO-607B839509], extract what the ISMS policy says about the relevant control types implicated by IPO-blocking audit findings, especially controls tied to SOC 2 Type II and ISO 27001 certification coverage for all product modules, and provide policy language that can be matched to finding control domains/types from the SQL results.",
+              "answer": "Using the cited IPO-readiness facts together with the ISMS policy text, the relevant policy position is:\n\n1. **SOC 2 Type II / ISO 27001 coverage is an explicit IPO-readiness control objective across all product modules.**  \n   The DRHP states the milestone is “**SOC 2 Type II and ISO 27001 covering ALL product modules by December 2026**,” with current coverage below target, and says “**the remediation plan is detailed in the ISMS policy**.” [TechNova_DRHP_Draft.pdf::sec2026]  \n   The ISMS policy mirrors this by stating the ISMS is “**the formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification, both required as IPO-readiness milestones**.” [TechNova_ISMS_Policy.pdf::sec1]\n\n2. **The ISMS scope is broad enough to map findings from multiple departments/control areas to certification coverage.**  \n   The policy says the ISMS covers “**all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**,” including production cloud infrastructure, application services, databases, AI/ML cluster, and “**corporate IT systems supporting Engineering, SRE, Customer Success, Finance, HR, and Legal**,” plus third-party processors. [TechNova_ISMS_Policy.pdf::sec1]  \n   This means SQL finding domains like **Vulnerability** and **Data Handling** are not isolated technical issues; they fall within the in-scope control environment for certification coverage if they affect product modules, production systems, customer data, or supporting corporate systems. [TechNova_ISMS_Policy.pdf::sec1]\n\n3. **For matching SQL finding control domains/types, the strongest policy-aligned control types are:**\n   - **Access Control / Identity Management** for findings tied to unauthorized access, privileged access, MFA, JIT access, break-glass access, vendor access, or customer-data access. The policy language includes:\n     - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n     - “**mandatory hardware second factor**” for engineering staff [TechNova_ISMS_Policy.pdf::sec3]\n     - “**just-in-time access** ... **requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n     - customer data access restricted to need-based support access and revoked after ticket closure [TechNova_ISMS_Policy.pdf::sec3]\n     - vendor access reviewed quarterly and disabled when vendor risk status is suspended [TechNova_ISMS_Policy.pdf::sec3]\n     \n     These are the best policy phrases to map to SQL results where `finding_category` is something like **Vulnerability** or **Data Handling** and the underlying issue concerns authentication, privilege, production access, customer-data access, or vendor access.\n\n   - **Audit / Corrective Action / Continual Improvement controls** for findings that are IPO blockers because they remain open or insufficiently remediated. The policy says:\n     - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n     - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n     - Management Review includes “**results of internal audits, results of external audits (SOC 2, ISO 27001, statutory), results of risk assessment, status of preventive and corrective actions**” [TechNova_ISMS_Policy.pdf::sec6]\n     \n     These phrases are the clearest policy hooks for matching IPO-blocking findings to governance/control types around remediation, audit follow-up, and corrective action tracking.\n\n   - **ISMS Scope / Statement of Applicability / Certification-readiness controls** for findings that indicate a module or function is not yet covered by the certification control baseline. The policy says:\n     - the SoA documents “**which of the 93 Annex A controls ... are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n     - as of March 2026, only “**70% of applicable controls are at a ‘fully implemented’ maturity level; 25% are at ‘partially implemented’; 5% are ... ‘planned’**” [TechNova_ISMS_Policy.pdf::sec1]\n     \n     This is useful where SQL control IDs/domains indicate a gap in implemented controls rather than a single operational incident.\n\n4. **How this applies to IPO-blocking findings from the SQL output.**  \n   Based on the prior SQL answer, current IPO blockers include findings categorized as **Vulnerability** and **Data Handling**. The ISMS policy does not appear to define those exact SQL labels as formal policy taxonomies, but it does provide policy language that can be semantically matched:\n   - **Vulnerability** findings → likely map to certification/control coverage gaps in the ISMS scope and to operational security controls such as access control, privileged access, MFA, logging, and corrective-action remediation. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n   - **Data Handling** findings → likely map to customer-data access restrictions, least-privilege handling of production/customer data, vendor access governance, and broader in-scope certification controls over systems and personnel handling information. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3]\n\n5. **Most directly matchable policy language for control-domain/type joins from SQL results**\n   If you need short policy snippets to align against `finding_category` / `control_id` outputs, these are the best candidates:\n   - “**formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**covers all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**Statement of Applicability ... documents which ... controls are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**mandatory hardware second factor**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**just-in-time access ... requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n   - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n\nBottom line: the ISMS policy frames IPO-blocking audit findings primarily as failures or gaps in the **certification control framework**, especially around **scope coverage across all product modules**, **access/identity controls**, and **audit remediation / corrective action governance** required for SOC 2 Type II and ISO 27001 readiness. [TechNova_DRHP_Draft.pdf::sec2026] [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n\n- TechNova_DRHP_Draft.pdf::sec2026\n- TechNova_ISMS_Policy.pdf::sec1\n- TechNova_ISMS_Policy.pdf::sec3\n- TechNova_ISMS_Policy.pdf::sec6",
+              "rag_result": {
+                "answer": "Using the cited IPO-readiness facts together with the ISMS policy text, the relevant policy position is:\n\n1. **SOC 2 Type II / ISO 27001 coverage is an explicit IPO-readiness control objective across all product modules.**  \n   The DRHP states the milestone is “**SOC 2 Type II and ISO 27001 covering ALL product modules by December 2026**,” with current coverage below target, and says “**the remediation plan is detailed in the ISMS policy**.” [TechNova_DRHP_Draft.pdf::sec2026]  \n   The ISMS policy mirrors this by stating the ISMS is “**the formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification, both required as IPO-readiness milestones**.” [TechNova_ISMS_Policy.pdf::sec1]\n\n2. **The ISMS scope is broad enough to map findings from multiple departments/control areas to certification coverage.**  \n   The policy says the ISMS covers “**all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**,” including production cloud infrastructure, application services, databases, AI/ML cluster, and “**corporate IT systems supporting Engineering, SRE, Customer Success, Finance, HR, and Legal**,” plus third-party processors. [TechNova_ISMS_Policy.pdf::sec1]  \n   This means SQL finding domains like **Vulnerability** and **Data Handling** are not isolated technical issues; they fall within the in-scope control environment for certification coverage if they affect product modules, production systems, customer data, or supporting corporate systems. [TechNova_ISMS_Policy.pdf::sec1]\n\n3. **For matching SQL finding control domains/types, the strongest policy-aligned control types are:**\n   - **Access Control / Identity Management** for findings tied to unauthorized access, privileged access, MFA, JIT access, break-glass access, vendor access, or customer-data access. The policy language includes:\n     - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n     - “**mandatory hardware second factor**” for engineering staff [TechNova_ISMS_Policy.pdf::sec3]\n     - “**just-in-time access** ... **requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n     - customer data access restricted to need-based support access and revoked after ticket closure [TechNova_ISMS_Policy.pdf::sec3]\n     - vendor access reviewed quarterly and disabled when vendor risk status is suspended [TechNova_ISMS_Policy.pdf::sec3]\n     \n     These are the best policy phrases to map to SQL results where `finding_category` is something like **Vulnerability** or **Data Handling** and the underlying issue concerns authentication, privilege, production access, customer-data access, or vendor access.\n\n   - **Audit / Corrective Action / Continual Improvement controls** for findings that are IPO blockers because they remain open or insufficiently remediated. The policy says:\n     - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n     - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n     - Management Review includes “**results of internal audits, results of external audits (SOC 2, ISO 27001, statutory), results of risk assessment, status of preventive and corrective actions**” [TechNova_ISMS_Policy.pdf::sec6]\n     \n     These phrases are the clearest policy hooks for matching IPO-blocking findings to governance/control types around remediation, audit follow-up, and corrective action tracking.\n\n   - **ISMS Scope / Statement of Applicability / Certification-readiness controls** for findings that indicate a module or function is not yet covered by the certification control baseline. The policy says:\n     - the SoA documents “**which of the 93 Annex A controls ... are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n     - as of March 2026, only “**70% of applicable controls are at a ‘fully implemented’ maturity level; 25% are at ‘partially implemented’; 5% are ... ‘planned’**” [TechNova_ISMS_Policy.pdf::sec1]\n     \n     This is useful where SQL control IDs/domains indicate a gap in implemented controls rather than a single operational incident.\n\n4. **How this applies to IPO-blocking findings from the SQL output.**  \n   Based on the prior SQL answer, current IPO blockers include findings categorized as **Vulnerability** and **Data Handling**. The ISMS policy does not appear to define those exact SQL labels as formal policy taxonomies, but it does provide policy language that can be semantically matched:\n   - **Vulnerability** findings → likely map to certification/control coverage gaps in the ISMS scope and to operational security controls such as access control, privileged access, MFA, logging, and corrective-action remediation. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n   - **Data Handling** findings → likely map to customer-data access restrictions, least-privilege handling of production/customer data, vendor access governance, and broader in-scope certification controls over systems and personnel handling information. [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3]\n\n5. **Most directly matchable policy language for control-domain/type joins from SQL results**\n   If you need short policy snippets to align against `finding_category` / `control_id` outputs, these are the best candidates:\n   - “**formal control framework supporting the company's pursuit of SOC 2 Type II and ISO 27001 certification**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**covers all information processing systems, personnel, and physical sites involved in the operation of the Nova Platform**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**Statement of Applicability ... documents which ... controls are applicable ... and the implementation status of each**” [TechNova_ISMS_Policy.pdf::sec1]\n   - “**least privilege, separation of duties, and zero standing access for production systems**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**mandatory hardware second factor**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**just-in-time access ... requires manager approval and is fully logged**” [TechNova_ISMS_Policy.pdf::sec3]\n   - “**Critical or High findings from internal audit must be remediated within the timelines specified in the Audit Findings register**” [TechNova_ISMS_Policy.pdf::sec6]\n   - “**the IPO Committee tracks any finding flagged as ipo_blocker**” [TechNova_ISMS_Policy.pdf::sec6]\n\nBottom line: the ISMS policy frames IPO-blocking audit findings primarily as failures or gaps in the **certification control framework**, especially around **scope coverage across all product modules**, **access/identity controls**, and **audit remediation / corrective action governance** required for SOC 2 Type II and ISO 27001 readiness. [TechNova_DRHP_Draft.pdf::sec2026] [TechNova_ISMS_Policy.pdf::sec1] [TechNova_ISMS_Policy.pdf::sec3] [TechNova_ISMS_Policy.pdf::sec6]\n\n- TechNova_DRHP_Draft.pdf::sec2026\n- TechNova_ISMS_Policy.pdf::sec1\n- TechNova_ISMS_Policy.pdf::sec3\n- TechNova_ISMS_Policy.pdf::sec6",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_DRHP_Draft.pdf::sec2026"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec6"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_DRHP_Draft.pdf::sec2026"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec6"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.74, 3 ambiguityies",
+          "planner -> 2 sub-qs",
+          "hybrid_exec -> 2 sub-answer(s)",
+          "synthesiser -> 3198 chars",
+          "critic -> uncertain (0.72)",
+          "cross_validator -> pass (0.90)",
+          "completeness -> pass (0 missing)",
+          "finalise -> pass (0.90) via cross_validator"
+        ]
+      }
+    }
+  ]
+}

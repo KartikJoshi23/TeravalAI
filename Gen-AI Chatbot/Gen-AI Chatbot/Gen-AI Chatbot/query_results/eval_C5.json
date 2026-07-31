@@ -1,0 +1,178 @@
+{
+  "id": "C5",
+  "thread_id": "d8ec4c01-a1e0-41ba-bc37-41c3878d7140",
+  "final": {
+    "answer": "Arun Patel (the CFO in `employees`) has 9 direct reports: Vikram Reddy (L7), Divya Menon (L7), Karthik Iyer (L7), Ananya Gupta (L7), Meera Krishnan (L6), Priya Patel (L3), Gaurav Kulkarni (L2), Manish Joshi (L2), and Preeti Pillai (L5). Across the 8 direct reports with a FY2025-26 salary snapshot in `salary_records`, their combined CTC is **398.07 lakhs**; Preeti Pillai has no matching salary record in that table.\n\n```sql\nWITH cfo AS (\n  SELECT employee_id, first_name, last_name, job_title\n  FROM employees\n  WHERE job_title = 'CFO'\n), direct_reports AS (\n  SELECT\n    e.employee_id,\n    e.first_name || ' ' || e.last_name AS employee_name,\n    e.level,\n    sr.total_ctc_inr_lakhs\n  FROM employees e\n  JOIN cfo c\n    ON e.manager_employee_id = c.employee_id\n  LEFT JOIN salary_records sr\n    ON sr.employee_id = e.employee_id\n   AND sr.review_cycle = 'FY2025-26'\n)\nSELECT\n  employee_name,\n  level,\n  total_ctc_inr_lakhs,\n  SUM(total_ctc_inr_lakhs) OVER () AS combined_ctc_inr_lakhs\nFROM direct_reports\nORDER BY total_ctc_inr_lakhs DESC NULLS LAST, employee_name;\n```",
+    "confidence": 0.95,
+    "evidence": {
+      "sql": {
+        "query": "WITH cfo AS (\n  SELECT employee_id, first_name, last_name, job_title\n  FROM employees\n  WHERE job_title = 'CFO'\n), direct_reports AS (\n  SELECT\n    e.employee_id,\n    e.first_name || ' ' || e.last_name AS employee_name,\n    e.level,\n    sr.total_ctc_inr_lakhs\n  FROM employees e\n  JOIN cfo c\n    ON e.manager_employee_id = c.employee_id\n  LEFT JOIN salary_records sr\n    ON sr.employee_id = e.employee_id\n   AND sr.review_cycle = 'FY2025-26'\n)\nSELECT\n  employee_name,\n  level,\n  total_ctc_inr_lakhs,\n  SUM(total_ctc_inr_lakhs) OVER () AS combined_ctc_inr_lakhs\nFROM direct_reports\nORDER BY total_ctc_inr_lakhs DESC NULLS LAST, employee_name;",
+        "rows_markdown": "| employee_name   | level   |   total_ctc_inr_lakhs |   combined_ctc_inr_lakhs |\n|:----------------|:--------|----------------------:|-------------------------:|\n| Vikram Reddy    | L7      |                 93.79 |                   398.07 |\n| Divya Menon     | L7      |                 79.63 |                   398.07 |\n| Karthik Iyer    | L7      |                 74.83 |                   398.07 |\n| Ananya Gupta    | L7      |                 58.51 |                   398.07 |\n| Meera Krishnan  | L6      |                 58.36 |                   398.07 |\n| Priya Patel     | L3      |                 13.79 |                   398.07 |\n| Gaurav Kulkarni | L2      |                 10.6  |                   398.07 |\n| Manish Joshi    | L2      |                  8.56 |                   398.07 |\n| Preeti Pillai   | L5      |                nan    |                   398.07 |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.81, 2 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 3 iter",
+      "critic -> pass (0.95)",
+      "finalise -> pass (0.95) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.81, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want all employees who report directly to the employee with `job_title='CFO'`, returning each direct report and their `level`, joined to `salary_records` to compute `SUM(total_ctc_inr_lakhs)` across those direct reports using the current/active salary snapshot, with no explicit sort, limit, or time range specified; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.81, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.81, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.95) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Arun Patel (the CFO in `employees`) has 9 direct reports: Vikram Reddy (L7), Divya Menon (L7), Karthik Iyer (L7), Ananya Gupta (L7), Meera Krishnan (L6), Priya Patel (L3), Gaurav Kulkarni (L2), Manish Joshi (L2), and Preeti Pillai (L5). Across the 8 direct reports with a FY2025-26 salary snapshot in `salary_records`, their combined CTC is **398.07 lakhs**; Preeti Pillai has no matching salary record in that table.\n\n```sql\nWITH cfo AS (\n  SELECT employee_id, first_name, last_name, job_title\n  FROM employees\n  WHERE job_title = 'CFO'\n), direct_reports AS (\n  SELECT\n    e.employee_id,\n    e.first_name || ' ' || e.last_name AS employee_name,\n    e.level,\n    sr.total_ctc_inr_lakhs\n  FROM employees e\n  JOIN cfo c\n    ON e.manager_employee_id = c.employee_id\n  LEFT JOIN salary_records sr\n    ON sr.employee_id = e.employee_id\n   AND sr.review_cycle = 'FY2025-26'\n)\nSELECT\n  employee_name,\n  level,\n  total_ctc_inr_lakhs,\n  SUM(total_ctc_inr_lakhs) OVER () AS combined_ctc_inr_lakhs\nFROM direct_reports\nORDER BY total_ctc_inr_lakhs DESC NULLS LAST, employee_name;\n```",
+        "confidence": 0.95,
+        "evidence": {
+          "sql": {
+            "query": "WITH cfo AS (\n  SELECT employee_id, first_name, last_name, job_title\n  FROM employees\n  WHERE job_title = 'CFO'\n), direct_reports AS (\n  SELECT\n    e.employee_id,\n    e.first_name || ' ' || e.last_name AS employee_name,\n    e.level,\n    sr.total_ctc_inr_lakhs\n  FROM employees e\n  JOIN cfo c\n    ON e.manager_employee_id = c.employee_id\n  LEFT JOIN salary_records sr\n    ON sr.employee_id = e.employee_id\n   AND sr.review_cycle = 'FY2025-26'\n)\nSELECT\n  employee_name,\n  level,\n  total_ctc_inr_lakhs,\n  SUM(total_ctc_inr_lakhs) OVER () AS combined_ctc_inr_lakhs\nFROM direct_reports\nORDER BY total_ctc_inr_lakhs DESC NULLS LAST, employee_name;",
+            "rows_markdown": "| employee_name   | level   |   total_ctc_inr_lakhs |   combined_ctc_inr_lakhs |\n|:----------------|:--------|----------------------:|-------------------------:|\n| Vikram Reddy    | L7      |                 93.79 |                   398.07 |\n| Divya Menon     | L7      |                 79.63 |                   398.07 |\n| Karthik Iyer    | L7      |                 74.83 |                   398.07 |\n| Ananya Gupta    | L7      |                 58.51 |                   398.07 |\n| Meera Krishnan  | L6      |                 58.36 |                   398.07 |\n| Priya Patel     | L3      |                 13.79 |                   398.07 |\n| Gaurav Kulkarni | L2      |                 10.6  |                   398.07 |\n| Manish Joshi    | L2      |                  8.56 |                   398.07 |\n| Preeti Pillai   | L5      |                nan    |                   398.07 |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.81, 2 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 3 iter",
+          "critic -> pass (0.95)",
+          "finalise -> pass (0.95) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 28.9,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.95,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "CFO",
+    "direct"
+  ]
+}

@@ -1,0 +1,12 @@
+event: trace
+data: {"phase": "router", "text": "router -> sql"}
+
+event: trace
+data: {"phase": "intent_classifier", "text": "router -> sql"}
+
+event: trace
+data: {"phase": "intent_classifier", "text": "intent -> clarity=0.42, 4 ambiguityies"}
+
+event: clarification
+data: {"question": "What should count as a 'flagged' vendor here?", "options": [{"label": "Vendors flagged for security risk", "value": "security_risk"}, {"label": "Vendors flagged for compliance issues", "value": "compliance_issue"}, {"label": "Vendors with any active flag of any type", "value": "any_active_flag"}], "round": 1}
+

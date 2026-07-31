@@ -1,0 +1,201 @@
+{
+  "id": "C2",
+  "thread_id": "3290ba5a-e63f-4cbc-b105-f8751b74207b",
+  "final": {
+    "answer": "Top customer by ARR in each region:\n\n- APAC — Ember Retail, ₹1743.02L — Account Manager: Aarti Iyer (L6)\n- Europe — Apex Analytics, ₹494.13L — Account Manager: Rohit Jain (L4)\n- MEA — Sterling Logistics, ₹326.13L — Account Manager: Rohit Jain (L4)\n- North America — Beacon Motors, ₹1538.42L — Account Manager: Divya Pillai (L5)\n\nCombined ARR: ₹4101.70L",
+    "confidence": 0.95,
+    "evidence": {
+      "sql": {
+        "query": "WITH ranked_customers AS (\n  SELECT\n    c.region,\n    c.customer_name,\n    c.arr_inr_lakhs,\n    e.first_name || ' ' || e.last_name AS account_manager,\n    e.level AS account_manager_level,\n    ROW_NUMBER() OVER (\n      PARTITION BY c.region\n      ORDER BY c.arr_inr_lakhs DESC, c.customer_name\n    ) AS rn\n  FROM customers c\n  JOIN employees e\n    ON c.account_manager_employee_id = e.employee_id\n)\nSELECT\n  region,\n  customer_name,\n  arr_inr_lakhs,\n  account_manager,\n  account_manager_level\nFROM ranked_customers\nWHERE rn = 1\nORDER BY region;",
+        "rows_markdown": "| region        | customer_name      |   arr_inr_lakhs | account_manager   | account_manager_level   |\n|:--------------|:-------------------|----------------:|:------------------|:------------------------|\n| APAC          | Ember Retail       |         1743.02 | Aarti Iyer        | L6                      |\n| Europe        | Apex Analytics     |          494.13 | Rohit Jain        | L4                      |\n| MEA           | Sterling Logistics |          326.13 | Rohit Jain        | L4                      |\n| North America | Beacon Motors      |         1538.42 | Divya Pillai      | L5                      |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 3 iter",
+      "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['4101.70'...)",
+      "cross_validator -> pass (0.95)",
+      "finalise -> pass (0.95) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want, for each `region`, the top `customer` ranked by `arr DESC` using `row_number() over (partition by region order by arr desc)`, joined from `customers` to `employees` to return the customer's `arr` and their `account_manager` `level`, with `rank = 1` in each region; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['4101.70'...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['4101.70'...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['4101.70'...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.95) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Top customer by ARR in each region:\n\n- APAC — Ember Retail, ₹1743.02L — Account Manager: Aarti Iyer (L6)\n- Europe — Apex Analytics, ₹494.13L — Account Manager: Rohit Jain (L4)\n- MEA — Sterling Logistics, ₹326.13L — Account Manager: Rohit Jain (L4)\n- North America — Beacon Motors, ₹1538.42L — Account Manager: Divya Pillai (L5)\n\nCombined ARR: ₹4101.70L",
+        "confidence": 0.95,
+        "evidence": {
+          "sql": {
+            "query": "WITH ranked_customers AS (\n  SELECT\n    c.region,\n    c.customer_name,\n    c.arr_inr_lakhs,\n    e.first_name || ' ' || e.last_name AS account_manager,\n    e.level AS account_manager_level,\n    ROW_NUMBER() OVER (\n      PARTITION BY c.region\n      ORDER BY c.arr_inr_lakhs DESC, c.customer_name\n    ) AS rn\n  FROM customers c\n  JOIN employees e\n    ON c.account_manager_employee_id = e.employee_id\n)\nSELECT\n  region,\n  customer_name,\n  arr_inr_lakhs,\n  account_manager,\n  account_manager_level\nFROM ranked_customers\nWHERE rn = 1\nORDER BY region;",
+            "rows_markdown": "| region        | customer_name      |   arr_inr_lakhs | account_manager   | account_manager_level   |\n|:--------------|:-------------------|----------------:|:------------------|:------------------------|\n| APAC          | Ember Retail       |         1743.02 | Aarti Iyer        | L6                      |\n| Europe        | Apex Analytics     |          494.13 | Rohit Jain        | L4                      |\n| MEA           | Sterling Logistics |          326.13 | Rohit Jain        | L4                      |\n| North America | Beacon Motors      |         1538.42 | Divya Pillai      | L5                      |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 3 iter",
+          "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['4101.70'...)",
+          "cross_validator -> pass (0.95)",
+          "finalise -> pass (0.95) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 32.7,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.95,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "APAC",
+    "North America"
+  ]
+}

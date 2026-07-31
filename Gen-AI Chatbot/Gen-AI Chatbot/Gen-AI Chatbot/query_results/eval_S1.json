@@ -1,0 +1,178 @@
+{
+  "id": "S1",
+  "thread_id": "889c3eea-4051-4e9c-85aa-b860f389b431",
+  "final": {
+    "answer": "TechNova currently has **120 active employees** in the `employees` table.\n\n```sql\nSELECT COUNT(*) AS active_employee_count\nFROM employees\nWHERE employment_status = 'Active'\n```",
+    "confidence": 0.99,
+    "evidence": {
+      "sql": {
+        "query": "SELECT COUNT(*) AS active_employee_count\nFROM employees\nWHERE employment_status = 'Active'",
+        "rows_markdown": "|   active_employee_count |\n|------------------------:|\n|                     120 |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.95, 1 ambiguityy",
+      "readback -> approved",
+      "sql_agent -> 2 iter",
+      "critic -> pass (0.99)",
+      "finalise -> pass (0.99) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.95, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want the `count(*)` of `employee` records filtered to `employment_status='Active'`, using the current state to interpret `currently`; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.95, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.95, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.99)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.99)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.99) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "TechNova currently has **120 active employees** in the `employees` table.\n\n```sql\nSELECT COUNT(*) AS active_employee_count\nFROM employees\nWHERE employment_status = 'Active'\n```",
+        "confidence": 0.99,
+        "evidence": {
+          "sql": {
+            "query": "SELECT COUNT(*) AS active_employee_count\nFROM employees\nWHERE employment_status = 'Active'",
+            "rows_markdown": "|   active_employee_count |\n|------------------------:|\n|                     120 |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.95, 1 ambiguityy",
+          "readback -> approved",
+          "sql_agent -> 2 iter",
+          "critic -> pass (0.99)",
+          "finalise -> pass (0.99) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 59.5,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.99,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "simple",
+  "expected_substrings": [
+    "active",
+    "employee"
+  ]
+}

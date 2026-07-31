@@ -1,0 +1,222 @@
+# TechNova — curated policy & strategic-context fact catalog.
+#
+# Each fact is atomic, has a deterministic source citation, and carries category
+# tags used for fast deterministic lookup. FactLoader matches the user's
+# question/intent to categories and returns every relevant fact BEFORE semantic
+# RAG runs — this gives the Planner and downstream agents a recall floor.
+#
+# Rule for adding a fact: one idea per fact, exact source (chunk_id or table),
+# at least two overlapping category tags.
+
+facts:
+  # ---------------------- IPO readiness ------------------------
+  - id: F-IPO-01
+    text: "DRHP filing target September 2026; proposed BSE/NSE listing Q3 FY2027-28."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec3"
+    categories: [ipo_readiness, ipo_timeline]
+  - id: F-IPO-02
+    text: "IPO issue size target INR 2,000-2,500 Cr (mix of fresh issue and OFS)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec3"
+    categories: [ipo_readiness, ipo_timeline]
+  - id: F-IPO-03
+    text: "Pre-IPO valuation estimate INR 8,500-10,000 Cr (≈10-12x trailing ARR)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec3"
+    categories: [ipo_readiness, valuation]
+  - id: F-IPO-04
+    text: "BRLMs appointed: Kotak Mahindra Capital and Goldman Sachs. Legal counsel: AZB & Partners (domestic), Davis Polk (international)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec3"
+    categories: [ipo_readiness, legal]
+  - id: F-IPO-05
+    text: "Additional 2% ESOP pool approved for pre-IPO senior talent (on top of existing 8.2%)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec4"
+    categories: [ipo_readiness, talent, esop]
+  - id: F-IPO-06
+    text: "Customer-count IPO target: 3,500 paying enterprise customers by Q2 FY2027. Current count: 2,847. Gap: 653 net new logos still required."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec5"
+    categories: [ipo_readiness, ipo_milestone, customer_growth]
+  - id: F-IPO-07
+    text: "NRR IPO milestone: Net Revenue Retention ≥ 120% for 4 consecutive quarters. Current NRR: 118.3% (below threshold, clock not yet started)."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec5"
+    categories: [ipo_readiness, ipo_milestone, nrr, customer_retention]
+  - id: F-IPO-08
+    text: "Security-certification IPO milestone: SOC 2 Type II AND ISO 27001 for ALL product modules by December 2026."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec5"
+    categories: [ipo_readiness, ipo_milestone, security, certification]
+
+  # ---------------------- Financial baseline ------------------------
+  - id: F-FIN-01
+    text: "Q4 FY2025-26 revenue INR 847.3 Cr (4.2% above budget of INR 813 Cr)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec2"
+    categories: [financial_baseline, revenue]
+  - id: F-FIN-02
+    text: "EBITDA margin Q4 FY2025-26: 23.0% (target 21.5%)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec2"
+    categories: [financial_baseline, profitability]
+  - id: F-FIN-03
+    text: "Free cash flow INR 156.8 Cr in Q4 FY2025-26."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec2"
+    categories: [financial_baseline, liquidity, breach_absorption]
+  - id: F-FIN-04
+    text: "Cash on balance sheet INR 892.4 Cr, zero long-term debt."
+    source: "TechNova_Q4_Financial_Report.pdf::sec2"
+    categories: [financial_baseline, liquidity, breach_absorption, ipo_readiness]
+  - id: F-FIN-05
+    text: "NRR (Net Revenue Retention) currently 118.3%."
+    source: "TechNova_Q4_Financial_Report.pdf::sec2"
+    categories: [financial_baseline, nrr, customer_retention, ipo_readiness]
+  - id: F-FIN-06
+    text: "Engineering Q4 budget utilisation: 94.7% of INR 210 Cr (= INR 198.87 Cr actual). Unspent Q4 headroom: INR 11.13 Cr."
+    source: "TechNova_Q4_Financial_Report.pdf::sec4"
+    categories: [financial_baseline, budget, engineering, breach_absorption]
+  - id: F-FIN-07
+    text: "Primary Q4 Engineering overspend was cloud infrastructure (+INR 12.3 Cr over budget), offset by underspend in contractor hiring."
+    source: "TechNova_Q4_Financial_Report.pdf::sec4"
+    categories: [financial_baseline, budget, engineering]
+  - id: F-FIN-08
+    text: "Singapore data-centre expansion CapEx approved: INR 120 Cr (allocated from FCF)."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec2"
+    categories: [financial_baseline, capex, infrastructure, geo_expansion]
+  - id: F-FIN-09
+    text: "financial_transactions.category actual values are 'Revenue', 'Operating Expense', 'Capital Expenditure' (NOT 'Expense' / 'CapEx')."
+    source: "schema"
+    categories: [data_model, finance_query]
+
+  # ---------------------- Security / breach ------------------------
+  - id: F-SEC-01
+    text: "INC-2025-0847 — SEV-2 security breach reported Nov 2025. 847 customer accounts affected (23 Tier-1 + 312 Tier-2 + 512 Tier-3). Incidents table records remediation_cost_inr_lakhs = 0, but CERT-In filing was made and external counsel Khaitan & Co. was engaged."
+    source: "TechNova_Security_Incident_Report.pdf::sec2"
+    categories: [breach, breach_absorption, incident_baseline]
+  - id: F-SEC-02
+    text: "Board-approved additional cybersecurity spend: INR 8.5 Cr after INC-2025-0847. Zero Trust rollout accelerated from March 2026 to February 2026."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec5"
+    categories: [breach, breach_absorption, cybersecurity_budget]
+  - id: F-SEC-03
+    text: "Cyber insurance: ICICI Lombard policy with INR 50 Cr coverage, INR 28 L per year premium."
+    source: "TechNova_Vendor_Contracts.pdf::sec4"
+    categories: [breach, breach_absorption, insurance, liquidity]
+  - id: F-SEC-04
+    text: "CERT-In filing deadline after a material incident: within 6 hours."
+    source: "TechNova_Security_Incident_Report.pdf::sec3"
+    categories: [breach, regulatory, cert_in]
+  - id: F-SEC-05
+    text: "DPDP Act exemption applies when data is anonymised before processing."
+    source: "TechNova_Security_Incident_Report.pdf::sec4"
+    categories: [regulatory, dpdp, data_privacy]
+  - id: F-SEC-06
+    text: "Geopolitical risk flagged: data-localisation mandates in Vietnam and Indonesia. Legal tasked with compliance roadmap."
+    source: "TechNova_Board_Minutes_Q4.pdf::sec5"
+    categories: [regulatory, geopolitical, data_localization, apac]
+
+  # ---------------------- Training / compliance ------------------------
+  - id: F-TRN-01
+    text: "Department training-flag threshold: any department with <90% completion on any mandatory module is flagged in the monthly HR dashboard."
+    source: "TechNova_Training_Compliance.pdf::sec3"
+    categories: [compliance, training, threshold]
+  - id: F-TRN-02
+    text: "Four mandatory annual training modules: InfoSec Awareness, POSH Training, ABAC Training, DPDP Act 2023."
+    source: "TechNova_Training_Compliance.pdf::sec1"
+    categories: [compliance, training]
+  - id: F-TRN-03
+    text: "Mandatory module deadlines: InfoSec 31 Mar, POSH 30 Jun, ABAC 30 Sep, DPDP Act 31 Dec (for applicable employees)."
+    source: "TechNova_Training_Compliance.pdf::sec1"
+    categories: [compliance, training]
+  - id: F-TRN-04
+    text: "Recognised external certifications: AWS Solutions Architect (Professional), CKA, Google Professional ML Engineer, CIPP/A. One-time bonus INR 25,000 per cert."
+    source: "TechNova_Training_Compliance.pdf::sec2"
+    categories: [compliance, certification, talent]
+
+  # ---------------------- Salary / HR ------------------------
+  - id: F-SAL-01
+    text: "ESOP eligibility: granted only to employees at L5 and above. FMV INR 842/share (December 2025 409A valuation)."
+    source: "TechNova_Salary_Structure.pdf::sec3"
+    categories: [talent, esop, compensation]
+  - id: F-SAL-02
+    text: "ESOP vesting schedule: 4 years with 1-year cliff (25% vests at Y1, then monthly for 36 months)."
+    source: "TechNova_Salary_Structure.pdf::sec3"
+    categories: [talent, esop]
+  - id: F-SAL-03
+    text: "Retention-bonus cap: up to 30% of annual CTC (standard, HR-authorised for critical talent without additional approvals). Counter-offer cap: up to 40% above current CTC."
+    source: "TechNova_Salary_Structure.pdf::sec5"
+    categories: [talent, retention, compensation]
+  - id: F-SAL-04
+    text: "Counter-offer approvals: up to 25% require VP approval, >25% require C-suite."
+    source: "TechNova_Salary_Structure.pdf::sec5"
+    categories: [talent, retention, compensation]
+  - id: F-SAL-05
+    text: "CEO-to-median-employee pay ratio 18.4:1 (industry average 24:1)."
+    source: "TechNova_Salary_Structure.pdf::sec4"
+    categories: [talent, compensation, governance]
+  - id: F-SAL-06
+    text: "Salary bands L1-L8 at 65th percentile of Indian IT industry (Aon Hewitt + Mercer March 2025 benchmark)."
+    source: "TechNova_Salary_Structure.pdf::sec1"
+    categories: [talent, compensation]
+
+  # ---------------------- On-call ------------------------
+  - id: F-OC-01
+    text: "On-call stipend: INR 5,000/week primary, INR 2,500/week secondary."
+    source: "TechNova_OnCall_Runbook.pdf::sec1"
+    categories: [on_call, compensation, incident_response]
+  - id: F-OC-02
+    text: "Response-time SLAs: SEV-1 = 5-min response, SEV-2 = 15-min response."
+    source: "TechNova_OnCall_Runbook.pdf::sec1"
+    categories: [on_call, incident_response, sla]
+
+  # ---------------------- Vendor risk ------------------------
+  - id: F-VEN-01
+    text: "Vendor risk statuses: Passed (clean), Conditional (remediation plan required), Suspended (restricted pending re-assessment)."
+    source: "TechNova_Vendor_Contracts.pdf::sec4"
+    categories: [vendor_risk, compliance]
+  - id: F-VEN-02
+    text: "VendorConnect Solutions explicitly noted as Suspended pending remediation after INC-2025-0847."
+    source: "TechNova_Vendor_Contracts.pdf::sec4"
+    categories: [vendor_risk, breach]
+  - id: F-VEN-03
+    text: "Top cloud vendors by spend: AWS, Google Cloud, Snowflake (combined multi-million-USD annual commit)."
+    source: "TechNova_Vendor_Contracts.pdf::sec1"
+    categories: [vendor_risk, cloud_infrastructure]
+
+  # ---------------------- AI / architecture ------------------------
+  - id: F-ARCH-01
+    text: "AI/ML infrastructure: 16 NVIDIA A100 GPU nodes × 8 GPUs/node = 128 A100 80GB GPUs total, single EKS cluster — NO regional redundancy for AI workloads."
+    source: "TechNova_Platform_Architecture.pdf::sec4"
+    categories: [ai_investment, ai_concentration, infrastructure]
+  - id: F-ARCH-02
+    text: "Platform deployment: AWS primary + GCP disaster recovery. DB read-replicas in US-East, EU-West, AP-South."
+    source: "TechNova_Platform_Architecture.pdf::sec1"
+    categories: [infrastructure, data_localization]
+  - id: F-ARCH-03
+    text: "Nova Platform: 2,847 enterprise customers across 43 countries, 142 microservices in Kubernetes, 4.2M API requests/hour, 99.97% uptime SLA."
+    source: "TechNova_Platform_Architecture.pdf::sec1"
+    categories: [infrastructure, customer_base]
+  - id: F-ARCH-04
+    text: "Services organised into 5 domains: User Management (12), Data Processing (28), Analytics Engine (34), Integration Hub (41), AI Services (27)."
+    source: "TechNova_Platform_Architecture.pdf::sec2"
+    categories: [infrastructure, service_taxonomy]
+  - id: F-ARCH-05
+    text: "Criticality tier definition: 'Critical' denotes services where complete outage is an immediate SEV-1 event."
+    source: "TechNova_Platform_Architecture.pdf::sec1"
+    categories: [infrastructure, criticality, sla]
+
+  # ---------------------- Product Roadmap / strategy ------------------------
+  - id: F-ROAD-01
+    text: "FY2026-27 product investment budget INR 485 Cr. Allocation: AI/ML 38% (INR 184.3 Cr), Infrastructure/DevEx 15% (INR 72.75 Cr), remaining 47% across product/platform other."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec1"
+    categories: [strategy, ai_investment, budget, ipo_readiness]
+  - id: F-ROAD-02
+    text: "FY26-27 plan includes self-hosted RAG stack on 4× A100 nodes with customer-specific vector indices in Qdrant."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec2"
+    categories: [strategy, ai_investment, infrastructure]
+  - id: F-ROAD-03
+    text: "Hybrid deployment model planned (customer-selectable region); not yet confirmed as satisfying VN/ID data-localisation mandates."
+    source: "TechNova_Product_Roadmap_2026.pdf::sec4"
+    categories: [strategy, data_localization, geopolitical]
+
+  # ---------------------- Data model / counts ------------------------
+  - id: F-DATA-01
+    text: "Row counts: departments 12, employees 142, salary_records 131, customers 90, products_services 147, incidents 61, vendors 30, financial_transactions 165, training_compliance 572, assets_licenses 435."
+    source: "schema"
+    categories: [data_model]
+  - id: F-DATA-02
+    text: "CapEx rows booked against Engineering: Singapore Data Center INR 120 Cr, GPU Hardware Purchase INR 43 Cr. CapEx under Information Security: Zero Trust Infrastructure INR 8.5 Cr."
+    source: "financial_transactions"
+    categories: [data_model, capex, engineering, ai_investment, cybersecurity_budget]

@@ -1,0 +1,314 @@
+{
+  "id": "C6",
+  "thread_id": "20463d4f-ec2e-4e74-b10e-ae7c757fab57",
+  "final": {
+    "answer": "There are **2 vendors** with contracts ending in the next 12 months and a **Conditional** or **Suspended** risk status: **VendorConnect Solutions** (contract identifier **V-011**, ends **2026-04-30**, **Suspended**) and **FinSoul Network (Bahrain)** (contract identifier **V-029**, ends **2026-12-31**, **Conditional**).  \nFor policy action, the document says **Conditional** vendors are approved only **with remediation plans**, and **Suspended** vendors remain suspended until they complete **security remediation** and pass a **satisfactory re-assessment**; vendors with access to customer data or production systems also require an **annual SIG Lite security assessment** [TechNova_Vendor_Contracts.pdf::sec4].  \nI did **not** find a policy rule in the available documents that specifies what to do solely because a contract is expiring within the next 12 months [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2].\n\n- **VendorConnect Solutions** — V-011 — 2026-04-30 — Suspended  \n- **FinSoul Network (Bahrain)** — V-029 — 2026-12-31 — Conditional  \n\n**Sources:** tables used: `vendors` (filter: `risk_status IN ('Conditional','Suspended') AND contract_end_date >= CURRENT_DATE AND contract_end_date < CURRENT_DATE + INTERVAL '12 months'`); chunks cited: `TechNova_Vendor_Contracts.pdf::sec4`, `TechNova_Vendor_Contracts.pdf::sec1`, `TechNova_Vendor_Contracts.pdf::sec2`",
+    "confidence": 0.95,
+    "evidence": {
+      "sql": null,
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "sql",
+          "question": "Find vendors whose contract_end_date falls within the next 12 months from today and whose risk_status is either 'Conditional' or 'Suspended'. Return vendor name, contract identifier, contract_end_date, and risk_status.",
+          "answer": "Using the `vendors` table, I found 2 vendors meeting the criteria as of today (`CURRENT_DATE`): VendorConnect Solutions (V-011, ends 2026-04-30, Suspended) and FinSoul Network (Bahrain) (V-029, ends 2026-12-31, Conditional). Combined count: 2 vendors.\n\n```sql\nSELECT\n  vendor_name,\n  vendor_code AS contract_identifier,\n  CAST(contract_end_date AS DATE) AS contract_end_date,\n  risk_status\nFROM vendors\nWHERE risk_status IN ('Conditional', 'Suspended')\n  AND CAST(contract_end_date AS DATE) >= CURRENT_DATE\n  AND CAST(contract_end_date AS DATE) < CURRENT_DATE + INTERVAL '12 months'\nORDER BY contract_end_date, vendor_name;\n```",
+          "sql_result": {
+            "sql": "SELECT\n  vendor_name,\n  vendor_code AS contract_identifier,\n  CAST(contract_end_date AS DATE) AS contract_end_date,\n  risk_status\nFROM vendors\nWHERE risk_status IN ('Conditional', 'Suspended')\n  AND CAST(contract_end_date AS DATE) >= CURRENT_DATE\n  AND CAST(contract_end_date AS DATE) < CURRENT_DATE + INTERVAL '12 months'\nORDER BY contract_end_date, vendor_name;",
+            "rows_markdown": "| vendor_name               | contract_identifier   | contract_end_date   | risk_status   |\n|:--------------------------|:----------------------|:--------------------|:--------------|\n| VendorConnect Solutions   | V-011                 | 2026-04-30 00:00:00 | Suspended     |\n| FinSoul Network (Bahrain) | V-029                 | 2026-12-31 00:00:00 | Conditional   |",
+            "row_count": 3,
+            "error": null,
+            "iterations": 3
+          }
+        },
+        {
+          "type": "rag",
+          "question": "From the vendor policy or vendor contract management policy documents, extract what actions are required when a vendor has a 'Conditional' or 'Suspended' risk status and/or is approaching contract expiry within the next 12 months.",
+          "answer": "From the available vendor-related document, I find guidance on **Conditional** and **Suspended** vendor risk statuses, but I do **not** find a policy statement specifying required actions for vendors whose **contracts are approaching expiry within the next 12 months**. The retrieved material appears to be a vendor contracts summary rather than a formal policy with expiry workflow rules.\n\nWhat the document says:\n\n- Vendors with access to customer data or production systems must undergo an **annual security assessment** using the **SIG Lite questionnaire**. This is the baseline control for vendor risk review. [TechNova_Vendor_Contracts.pdf::sec4]\n- Vendors that are **conditionally approved** are described as being approved **with remediation plans**. So the required action for a **Conditional** status is that the vendor must operate under a **remediation plan**. [TechNova_Vendor_Contracts.pdf::sec4]\n- A vendor that is **suspended** is described as **suspended pending completion of security remediation and a satisfactory re-assessment**. So the required actions for a **Suspended** status are:\n  1. complete the required **security remediation**, and\n  2. undergo and pass a **satisfactory re-assessment** before the suspension can be lifted. [TechNova_Vendor_Contracts.pdf::sec4]\n\nOn the **contract expiry within the next 12 months** part:\n- I do not find this in the available documents. The vendor contracts summary lists some renewal dates and contract terms for specific vendors, but it does **not** state a policy action such as renewal review, termination planning, re-bid, or escalation for contracts expiring within 12 months. [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2]\n\nUsed chunks:\n- TechNova_Vendor_Contracts.pdf::sec4\n- TechNova_Vendor_Contracts.pdf::sec1\n- TechNova_Vendor_Contracts.pdf::sec2",
+          "rag_result": {
+            "answer": "From the available vendor-related document, I find guidance on **Conditional** and **Suspended** vendor risk statuses, but I do **not** find a policy statement specifying required actions for vendors whose **contracts are approaching expiry within the next 12 months**. The retrieved material appears to be a vendor contracts summary rather than a formal policy with expiry workflow rules.\n\nWhat the document says:\n\n- Vendors with access to customer data or production systems must undergo an **annual security assessment** using the **SIG Lite questionnaire**. This is the baseline control for vendor risk review. [TechNova_Vendor_Contracts.pdf::sec4]\n- Vendors that are **conditionally approved** are described as being approved **with remediation plans**. So the required action for a **Conditional** status is that the vendor must operate under a **remediation plan**. [TechNova_Vendor_Contracts.pdf::sec4]\n- A vendor that is **suspended** is described as **suspended pending completion of security remediation and a satisfactory re-assessment**. So the required actions for a **Suspended** status are:\n  1. complete the required **security remediation**, and\n  2. undergo and pass a **satisfactory re-assessment** before the suspension can be lifted. [TechNova_Vendor_Contracts.pdf::sec4]\n\nOn the **contract expiry within the next 12 months** part:\n- I do not find this in the available documents. The vendor contracts summary lists some renewal dates and contract terms for specific vendors, but it does **not** state a policy action such as renewal review, termination planning, re-bid, or escalation for contracts expiring within 12 months. [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2]\n\nUsed chunks:\n- TechNova_Vendor_Contracts.pdf::sec4\n- TechNova_Vendor_Contracts.pdf::sec1\n- TechNova_Vendor_Contracts.pdf::sec2",
+            "citations": [
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec2"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.79, 2 ambiguityies",
+      "readback -> approved",
+      "planner -> 2 sub-qs",
+      "hybrid_exec -> 2 sub-answer(s)",
+      "synthesiser -> 1399 chars",
+      "critic -> pass (0.95)",
+      "finalise -> pass (0.95) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.79, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want all `vendor` records with `contract_end_date` in the next 12 months from today and `risk_status IN ('Conditional','Suspended')`, plus the guidance from the `vendor_contracts` policy source on what action to take for those vendors; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.79, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.79, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 1399 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 1399 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "synthesiser -> 1399 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.95) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "There are **2 vendors** with contracts ending in the next 12 months and a **Conditional** or **Suspended** risk status: **VendorConnect Solutions** (contract identifier **V-011**, ends **2026-04-30**, **Suspended**) and **FinSoul Network (Bahrain)** (contract identifier **V-029**, ends **2026-12-31**, **Conditional**).  \nFor policy action, the document says **Conditional** vendors are approved only **with remediation plans**, and **Suspended** vendors remain suspended until they complete **security remediation** and pass a **satisfactory re-assessment**; vendors with access to customer data or production systems also require an **annual SIG Lite security assessment** [TechNova_Vendor_Contracts.pdf::sec4].  \nI did **not** find a policy rule in the available documents that specifies what to do solely because a contract is expiring within the next 12 months [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2].\n\n- **VendorConnect Solutions** — V-011 — 2026-04-30 — Suspended  \n- **FinSoul Network (Bahrain)** — V-029 — 2026-12-31 — Conditional  \n\n**Sources:** tables used: `vendors` (filter: `risk_status IN ('Conditional','Suspended') AND contract_end_date >= CURRENT_DATE AND contract_end_date < CURRENT_DATE + INTERVAL '12 months'`); chunks cited: `TechNova_Vendor_Contracts.pdf::sec4`, `TechNova_Vendor_Contracts.pdf::sec1`, `TechNova_Vendor_Contracts.pdf::sec2`",
+        "confidence": 0.95,
+        "evidence": {
+          "sql": null,
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "sql",
+              "question": "Find vendors whose contract_end_date falls within the next 12 months from today and whose risk_status is either 'Conditional' or 'Suspended'. Return vendor name, contract identifier, contract_end_date, and risk_status.",
+              "answer": "Using the `vendors` table, I found 2 vendors meeting the criteria as of today (`CURRENT_DATE`): VendorConnect Solutions (V-011, ends 2026-04-30, Suspended) and FinSoul Network (Bahrain) (V-029, ends 2026-12-31, Conditional). Combined count: 2 vendors.\n\n```sql\nSELECT\n  vendor_name,\n  vendor_code AS contract_identifier,\n  CAST(contract_end_date AS DATE) AS contract_end_date,\n  risk_status\nFROM vendors\nWHERE risk_status IN ('Conditional', 'Suspended')\n  AND CAST(contract_end_date AS DATE) >= CURRENT_DATE\n  AND CAST(contract_end_date AS DATE) < CURRENT_DATE + INTERVAL '12 months'\nORDER BY contract_end_date, vendor_name;\n```",
+              "sql_result": {
+                "sql": "SELECT\n  vendor_name,\n  vendor_code AS contract_identifier,\n  CAST(contract_end_date AS DATE) AS contract_end_date,\n  risk_status\nFROM vendors\nWHERE risk_status IN ('Conditional', 'Suspended')\n  AND CAST(contract_end_date AS DATE) >= CURRENT_DATE\n  AND CAST(contract_end_date AS DATE) < CURRENT_DATE + INTERVAL '12 months'\nORDER BY contract_end_date, vendor_name;",
+                "rows_markdown": "| vendor_name               | contract_identifier   | contract_end_date   | risk_status   |\n|:--------------------------|:----------------------|:--------------------|:--------------|\n| VendorConnect Solutions   | V-011                 | 2026-04-30 00:00:00 | Suspended     |\n| FinSoul Network (Bahrain) | V-029                 | 2026-12-31 00:00:00 | Conditional   |",
+                "row_count": 3,
+                "error": null,
+                "iterations": 3
+              }
+            },
+            {
+              "type": "rag",
+              "question": "From the vendor policy or vendor contract management policy documents, extract what actions are required when a vendor has a 'Conditional' or 'Suspended' risk status and/or is approaching contract expiry within the next 12 months.",
+              "answer": "From the available vendor-related document, I find guidance on **Conditional** and **Suspended** vendor risk statuses, but I do **not** find a policy statement specifying required actions for vendors whose **contracts are approaching expiry within the next 12 months**. The retrieved material appears to be a vendor contracts summary rather than a formal policy with expiry workflow rules.\n\nWhat the document says:\n\n- Vendors with access to customer data or production systems must undergo an **annual security assessment** using the **SIG Lite questionnaire**. This is the baseline control for vendor risk review. [TechNova_Vendor_Contracts.pdf::sec4]\n- Vendors that are **conditionally approved** are described as being approved **with remediation plans**. So the required action for a **Conditional** status is that the vendor must operate under a **remediation plan**. [TechNova_Vendor_Contracts.pdf::sec4]\n- A vendor that is **suspended** is described as **suspended pending completion of security remediation and a satisfactory re-assessment**. So the required actions for a **Suspended** status are:\n  1. complete the required **security remediation**, and\n  2. undergo and pass a **satisfactory re-assessment** before the suspension can be lifted. [TechNova_Vendor_Contracts.pdf::sec4]\n\nOn the **contract expiry within the next 12 months** part:\n- I do not find this in the available documents. The vendor contracts summary lists some renewal dates and contract terms for specific vendors, but it does **not** state a policy action such as renewal review, termination planning, re-bid, or escalation for contracts expiring within 12 months. [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2]\n\nUsed chunks:\n- TechNova_Vendor_Contracts.pdf::sec4\n- TechNova_Vendor_Contracts.pdf::sec1\n- TechNova_Vendor_Contracts.pdf::sec2",
+              "rag_result": {
+                "answer": "From the available vendor-related document, I find guidance on **Conditional** and **Suspended** vendor risk statuses, but I do **not** find a policy statement specifying required actions for vendors whose **contracts are approaching expiry within the next 12 months**. The retrieved material appears to be a vendor contracts summary rather than a formal policy with expiry workflow rules.\n\nWhat the document says:\n\n- Vendors with access to customer data or production systems must undergo an **annual security assessment** using the **SIG Lite questionnaire**. This is the baseline control for vendor risk review. [TechNova_Vendor_Contracts.pdf::sec4]\n- Vendors that are **conditionally approved** are described as being approved **with remediation plans**. So the required action for a **Conditional** status is that the vendor must operate under a **remediation plan**. [TechNova_Vendor_Contracts.pdf::sec4]\n- A vendor that is **suspended** is described as **suspended pending completion of security remediation and a satisfactory re-assessment**. So the required actions for a **Suspended** status are:\n  1. complete the required **security remediation**, and\n  2. undergo and pass a **satisfactory re-assessment** before the suspension can be lifted. [TechNova_Vendor_Contracts.pdf::sec4]\n\nOn the **contract expiry within the next 12 months** part:\n- I do not find this in the available documents. The vendor contracts summary lists some renewal dates and contract terms for specific vendors, but it does **not** state a policy action such as renewal review, termination planning, re-bid, or escalation for contracts expiring within 12 months. [TechNova_Vendor_Contracts.pdf::sec1] [TechNova_Vendor_Contracts.pdf::sec2]\n\nUsed chunks:\n- TechNova_Vendor_Contracts.pdf::sec4\n- TechNova_Vendor_Contracts.pdf::sec1\n- TechNova_Vendor_Contracts.pdf::sec2",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec2"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.79, 2 ambiguityies",
+          "readback -> approved",
+          "planner -> 2 sub-qs",
+          "hybrid_exec -> 2 sub-answer(s)",
+          "synthesiser -> 1399 chars",
+          "critic -> pass (0.95)",
+          "finalise -> pass (0.95) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 48.8,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.95,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": true
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "Conditional",
+    "Vendor_Contracts"
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "id": "S2",
+  "thread_id": "ca313753-2b5e-4953-8465-3c37dd431847",
+  "final": {
+    "answer": "The current ESOP fair-market value is **INR 842 per share**, based on the **latest 409A valuation dated December 2025**. [TechNova_Salary_Structure.pdf::sec3]\n\n- TechNova_Salary_Structure.pdf::sec3",
+    "confidence": 0.98,
+    "evidence": {
+      "sql": null,
+      "citations": [
+        {
+          "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+        }
+      ],
+      "chunks_seen": [
+        {
+          "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+        },
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+        },
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+        },
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+        },
+        {
+          "chunk_id": "TechNova_Salary_Structure.pdf::sec4"
+        }
+      ],
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> rag",
+      "intent -> clarity=0.78, 1 ambiguityy",
+      "rag_agent -> 2 iter, 1 cites",
+      "critic -> pass (0.98)",
+      "finalise -> pass (0.98) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> rag"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> rag"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.78, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "rag_agent",
+        "text": "router -> rag"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "rag_agent",
+        "text": "intent -> clarity=0.78, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "rag_agent",
+        "text": "rag_agent -> 2 iter, 1 cites"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "intent -> clarity=0.78, 1 ambiguityy"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "rag_agent -> 2 iter, 1 cites"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "rag_agent -> 2 iter, 1 cites"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.98) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "The current ESOP fair-market value is **INR 842 per share**, based on the **latest 409A valuation dated December 2025**. [TechNova_Salary_Structure.pdf::sec3]\n\n- TechNova_Salary_Structure.pdf::sec3",
+        "confidence": 0.98,
+        "evidence": {
+          "sql": null,
+          "citations": [
+            {
+              "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+            }
+          ],
+          "chunks_seen": [
+            {
+              "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+            },
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+            },
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+            },
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+            },
+            {
+              "chunk_id": "TechNova_Salary_Structure.pdf::sec4"
+            }
+          ],
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> rag",
+          "intent -> clarity=0.78, 1 ambiguityy",
+          "rag_agent -> 2 iter, 1 cites",
+          "critic -> pass (0.98)",
+          "finalise -> pass (0.98) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 41.6,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.98,
+    "matches": 1,
+    "matches_total": 1,
+    "cited_pdf": true
+  },
+  "level": "simple",
+  "expected_substrings": [
+    "842"
+  ]
+}

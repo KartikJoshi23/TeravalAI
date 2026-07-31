@@ -1,0 +1,215 @@
+{
+  "id": "C9",
+  "thread_id": "55059128-d698-4948-a143-c8eea43ab145",
+  "final": {
+    "answer": "Using the incident-management policy’s SEV-1 definition — “complete platform outage or data loss affecting all customers” [TechNova_OnCall_Runbook.pdf::sec2] — and the post-incident process that applies to all SEV-1 incidents [TechNova_OnCall_Runbook.pdf::sec4], the SEV-1 incidents **reported in calendar year 2025** (interpreted from the `incidents.reported_date` field) are:\n\n| Incident Ref | Affected Service | Reporter | Remediation Cost (₹ lakhs) |\n|---|---|---|---:|\n| INC-2025-0055 | data-svc-24 | Vikram Das | 60 |\n| INC-2025-0008 | TechNova-Extract | Meera Das | 13 |\n| INC-2025-0027 | data-svc-26 | Pooja Gupta | 85 |\n\n**Combined remediation cost: ₹158 lakhs.**\n\nCross-check: 3 SEV-1 incidents matched the 2025 `reported_date` filter, and their remediation costs sum to ₹158 lakhs. [TechNova_OnCall_Runbook.pdf::sec2][TechNova_OnCall_Runbook.pdf::sec4]",
+    "confidence": 0.91,
+    "evidence": {
+      "sql": {
+        "query": "SELECT i.incident_ref, s.service_name AS affected_service, e.first_name || ' ' || e.last_name AS reporter_name, i.remediation_cost_inr_lakhs\nFROM incidents i\nJOIN products_services s ON i.affected_service_id = s.service_id\nJOIN employees e ON i.reporter_employee_id = e.employee_id\nWHERE i.severity = 'SEV-1'\n  AND CAST(i.reported_date AS DATE) >= DATE '2025-01-01'\n  AND CAST(i.reported_date AS DATE) < DATE '2026-01-01'\nORDER BY CAST(i.reported_date AS DATE), i.incident_ref;",
+        "rows_markdown": "| incident_ref   | affected_service   | reporter_name   |   remediation_cost_inr_lakhs |\n|:---------------|:-------------------|:----------------|-----------------------------:|\n| INC-2025-0055  | data-svc-24        | Vikram Das      |                           60 |\n| INC-2025-0008  | TechNova-Extract   | Meera Das       |                           13 |\n| INC-2025-0027  | data-svc-26        | Pooja Gupta     |                           85 |",
+        "error": null
+      },
+      "citations": [
+        {
+          "chunk_id": "TechNova_OnCall_Runbook.pdf::sec4"
+        },
+        {
+          "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 4 iter",
+      "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['repo...)",
+      "cross_validator -> pass (0.91)",
+      "finalise -> pass (0.91) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want all `incident` records filtered to `severity='SEV-1'` and `reported_date` in calendar year `2025-01-01` to `2025-12-31`, returning `incident_ref`, `affected_service`, `reporter_name`, and `remediation_cost_inr_lakhs`; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 4 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 4 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['repo...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "sql_agent -> 4 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['repo...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.91)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['repo...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.91)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.91) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Using the incident-management policy’s SEV-1 definition — “complete platform outage or data loss affecting all customers” [TechNova_OnCall_Runbook.pdf::sec2] — and the post-incident process that applies to all SEV-1 incidents [TechNova_OnCall_Runbook.pdf::sec4], the SEV-1 incidents **reported in calendar year 2025** (interpreted from the `incidents.reported_date` field) are:\n\n| Incident Ref | Affected Service | Reporter | Remediation Cost (₹ lakhs) |\n|---|---|---|---:|\n| INC-2025-0055 | data-svc-24 | Vikram Das | 60 |\n| INC-2025-0008 | TechNova-Extract | Meera Das | 13 |\n| INC-2025-0027 | data-svc-26 | Pooja Gupta | 85 |\n\n**Combined remediation cost: ₹158 lakhs.**\n\nCross-check: 3 SEV-1 incidents matched the 2025 `reported_date` filter, and their remediation costs sum to ₹158 lakhs. [TechNova_OnCall_Runbook.pdf::sec2][TechNova_OnCall_Runbook.pdf::sec4]",
+        "confidence": 0.91,
+        "evidence": {
+          "sql": {
+            "query": "SELECT i.incident_ref, s.service_name AS affected_service, e.first_name || ' ' || e.last_name AS reporter_name, i.remediation_cost_inr_lakhs\nFROM incidents i\nJOIN products_services s ON i.affected_service_id = s.service_id\nJOIN employees e ON i.reporter_employee_id = e.employee_id\nWHERE i.severity = 'SEV-1'\n  AND CAST(i.reported_date AS DATE) >= DATE '2025-01-01'\n  AND CAST(i.reported_date AS DATE) < DATE '2026-01-01'\nORDER BY CAST(i.reported_date AS DATE), i.incident_ref;",
+            "rows_markdown": "| incident_ref   | affected_service   | reporter_name   |   remediation_cost_inr_lakhs |\n|:---------------|:-------------------|:----------------|-----------------------------:|\n| INC-2025-0055  | data-svc-24        | Vikram Das      |                           60 |\n| INC-2025-0008  | TechNova-Extract   | Meera Das       |                           13 |\n| INC-2025-0027  | data-svc-26        | Pooja Gupta     |                           85 |",
+            "error": null
+          },
+          "citations": [
+            {
+              "chunk_id": "TechNova_OnCall_Runbook.pdf::sec4"
+            },
+            {
+              "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 4 iter",
+          "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['repo...)",
+          "cross_validator -> pass (0.91)",
+          "finalise -> pass (0.91) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 64.4,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.91,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": true
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "SEV-1",
+    "INC-"
+  ]
+}

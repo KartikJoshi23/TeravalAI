@@ -1,0 +1,29 @@
+# Env
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Data
+data/db/
+backend/app/**/*.duckdb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store

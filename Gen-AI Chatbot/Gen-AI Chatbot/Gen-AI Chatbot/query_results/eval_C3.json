@@ -1,0 +1,178 @@
+{
+  "id": "C3",
+  "thread_id": "25409d7d-7154-4a62-80d8-de5f8e7d3a96",
+  "final": {
+    "answer": "Using `financial_transactions`, APAC revenue in FY2025-26 rose from ₹290.88 Cr in Q1 to ₹342.31 Cr in Q4; QoQ growth was 6.25% in Q2, 4.34% in Q3, and 6.15% in Q4. Combined FY2025-26 APAC revenue across these four quarters is ₹1,264.72 Cr.\n\n```sql\nWITH q AS (\n  SELECT\n    period_quarter,\n    SUM(amount) AS revenue_cr\n  FROM financial_transactions\n  WHERE region = 'APAC'\n    AND category = 'Revenue'\n    AND period_quarter LIKE '%FY2025-26%'\n  GROUP BY period_quarter\n), ranked AS (\n  SELECT\n    period_quarter,\n    revenue_cr,\n    LAG(revenue_cr) OVER (ORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER)) AS prev_revenue_cr\n  FROM q\n)\nSELECT\n  period_quarter,\n  revenue_cr,\n  prev_revenue_cr,\n  ROUND((revenue_cr - prev_revenue_cr) * 100.0 / prev_revenue_cr, 2) AS qoq_growth_pct\nFROM ranked\nORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER);\n```",
+    "confidence": 0.98,
+    "evidence": {
+      "sql": {
+        "query": "WITH q AS (\n  SELECT\n    period_quarter,\n    SUM(amount) AS revenue_cr\n  FROM financial_transactions\n  WHERE region = 'APAC'\n    AND category = 'Revenue'\n    AND period_quarter LIKE '%FY2025-26%'\n  GROUP BY period_quarter\n), ranked AS (\n  SELECT\n    period_quarter,\n    revenue_cr,\n    LAG(revenue_cr) OVER (ORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER)) AS prev_revenue_cr\n  FROM q\n)\nSELECT\n  period_quarter,\n  revenue_cr,\n  prev_revenue_cr,\n  ROUND((revenue_cr - prev_revenue_cr) * 100.0 / prev_revenue_cr, 2) AS qoq_growth_pct\nFROM ranked\nORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER);",
+        "rows_markdown": "| period_quarter   |   revenue_cr |   prev_revenue_cr |   qoq_growth_pct |\n|:-----------------|-------------:|------------------:|-----------------:|\n| Q1 FY2025-26     |       290.88 |            nan    |           nan    |\n| Q2 FY2025-26     |       309.06 |            290.88 |             6.25 |\n| Q3 FY2025-26     |       322.47 |            309.06 |             4.34 |\n| Q4 FY2025-26     |       342.31 |            322.47 |             6.15 |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 2 iter",
+      "critic -> pass (0.98)",
+      "finalise -> pass (0.98) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want quarter-over-quarter revenue growth computed from `amount` using `lag(amount)`, filtered to `region='APAC'` AND `category='Revenue'` AND `period_quarter LIKE 'FY2025-26'`, grouped by `period_quarter`, for FY2025-26; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.98) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Using `financial_transactions`, APAC revenue in FY2025-26 rose from ₹290.88 Cr in Q1 to ₹342.31 Cr in Q4; QoQ growth was 6.25% in Q2, 4.34% in Q3, and 6.15% in Q4. Combined FY2025-26 APAC revenue across these four quarters is ₹1,264.72 Cr.\n\n```sql\nWITH q AS (\n  SELECT\n    period_quarter,\n    SUM(amount) AS revenue_cr\n  FROM financial_transactions\n  WHERE region = 'APAC'\n    AND category = 'Revenue'\n    AND period_quarter LIKE '%FY2025-26%'\n  GROUP BY period_quarter\n), ranked AS (\n  SELECT\n    period_quarter,\n    revenue_cr,\n    LAG(revenue_cr) OVER (ORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER)) AS prev_revenue_cr\n  FROM q\n)\nSELECT\n  period_quarter,\n  revenue_cr,\n  prev_revenue_cr,\n  ROUND((revenue_cr - prev_revenue_cr) * 100.0 / prev_revenue_cr, 2) AS qoq_growth_pct\nFROM ranked\nORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER);\n```",
+        "confidence": 0.98,
+        "evidence": {
+          "sql": {
+            "query": "WITH q AS (\n  SELECT\n    period_quarter,\n    SUM(amount) AS revenue_cr\n  FROM financial_transactions\n  WHERE region = 'APAC'\n    AND category = 'Revenue'\n    AND period_quarter LIKE '%FY2025-26%'\n  GROUP BY period_quarter\n), ranked AS (\n  SELECT\n    period_quarter,\n    revenue_cr,\n    LAG(revenue_cr) OVER (ORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER)) AS prev_revenue_cr\n  FROM q\n)\nSELECT\n  period_quarter,\n  revenue_cr,\n  prev_revenue_cr,\n  ROUND((revenue_cr - prev_revenue_cr) * 100.0 / prev_revenue_cr, 2) AS qoq_growth_pct\nFROM ranked\nORDER BY CAST(SUBSTR(period_quarter, 2, 1) AS INTEGER);",
+            "rows_markdown": "| period_quarter   |   revenue_cr |   prev_revenue_cr |   qoq_growth_pct |\n|:-----------------|-------------:|------------------:|-----------------:|\n| Q1 FY2025-26     |       290.88 |            nan    |           nan    |\n| Q2 FY2025-26     |       309.06 |            290.88 |             6.25 |\n| Q3 FY2025-26     |       322.47 |            309.06 |             4.34 |\n| Q4 FY2025-26     |       342.31 |            322.47 |             6.15 |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 2 iter",
+          "critic -> pass (0.98)",
+          "finalise -> pass (0.98) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 23.0,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.98,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "APAC",
+    "FY2025-26"
+  ]
+}

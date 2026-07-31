@@ -1,0 +1,364 @@
+{
+  "id": "C1",
+  "thread_id": "fc17a6bc-7fab-482b-8dbb-dd84ca380eac",
+  "final": {
+    "answer": "Per TechNova’s compensation policy, ESOPs are granted to employees at **L5 and above**, and vest on a **4-year schedule with a 1-year cliff**: **25% vests at the end of Year 1, and the remaining 75% vests monthly over the next 36 months**. The **current FMV is INR 842 per share** based on the latest 409A valuation (Dec 2025) [TechNova_Salary_Structure.pdf::sec3].\n\nUsing the current `salary_records` joined to `employees`, the **L5+ employees with ESOP grants > 0** are:\n\n- Rajesh Sharma — L8 — 68,684 units — ₹842/share — ₹57,831,928\n- Arun Patel — L8 — 39,869 units — ₹842/share — ₹33,569,698\n- Rohit Bhatt — L6 — 14,987 units — ₹842/share — ₹12,619,054\n- Divya Menon — L7 — 13,974 units — ₹842/share — ₹11,766,108\n- Nikhil Kulkarni — L5 — 13,725 units — ₹842/share — ₹11,556,450\n- Vikram Reddy — L7 — 13,682 units — ₹842/share — ₹11,520,244\n- Priya Venkatesh — L7 — 13,454 units — ₹842/share — ₹11,328,268\n- Mohit Agarwal — L5 — 12,640 units — ₹842/share — ₹10,642,880\n- Karthik Iyer — L7 — 11,523 units — ₹842/share — ₹9,702,366\n- Rajesh Shah — L5 — 11,430 units — ₹842/share — ₹9,624,060\n- Manish Iyer — L5 — 11,230 units — ₹842/share — ₹9,455,660\n- Aarti Iyer — L6 — 10,910 units — ₹842/share — ₹9,186,220\n- Priya Patel — L6 — 10,495 units — ₹842/share — ₹8,836,790\n- Kiran Chopra — L5 — 9,613 units — ₹842/share — ₹8,094,146\n- Ishaan Kulkarni — L5 — 9,307 units — ₹842/share — ₹7,836,494\n- Ananya Gupta — L7 — 9,291 units — ₹842/share — ₹7,823,022\n- Kavya Bhatt — L5 — 7,785 units — ₹842/share — ₹6,554,970\n- Vivek Desai — L5 — 7,378 units — ₹842/share — ₹6,212,276\n- Siddharth Joshi — L5 — 6,518 units — ₹842/share — ₹5,488,156\n- Rajesh Jain — L6 — 5,451 units — ₹842/share — ₹4,589,742\n- Kavya Sharma — L6 — 4,330 units — ₹842/share — ₹3,645,860\n- Meera Krishnan — L6 — 4,196 units — ₹842/share — ₹3,533,032\n- Dhruv Jain — L5 — 2,501 units — ₹842/share — ₹2,105,842\n- Divya Pillai — L5 — 2,364 units — ₹842/share — ₹1,990,488\n- Mohit Agarwal — L5 — 1,328 units — ₹842/share — ₹1,118,176\n\n**Employee count: 25**\n**Combined value at current FMV: ₹266,632,790**\n\nImportant caveat: the database calculation above is **grant value at current FMV** (`esop_units_granted × ₹842`). If you want the **strictly vested value**, the policy says vesting is time-based (25% after 1 year, then monthly over 36 months), so we would also need each grant’s vesting start date / tenure against the vesting schedule to determine what portion is actually vested [TechNova_Salary_Structure.pdf::sec3].",
+    "confidence": 0.93,
+    "evidence": {
+      "sql": null,
+      "citations": [
+        {
+          "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "sql",
+          "question": "Find all employees with level >= L5 who have esop_units_granted > 0 by joining employees to salary_records, and return employee_name, level, esop_units_granted, esop_fmv_per_share_inr, and vested_value_inr computed as esop_units_granted * esop_fmv_per_share_inr, treating the full grant as vested.",
+          "answer": "Using `employees` joined to `salary_records`, there are 25 qualifying rows with combined vested value of ₹266,632,790 under the “full grant treated as vested” assumption; note that `Mohit Agarwal` appears twice because there are two salary records with ESOP grants for that employee in the data. The returned rows include `employee_name`, `level`, `esop_units_granted`, `esop_fmv_per_share_inr`, and computed `vested_value_inr`.\n\n```sql\nWITH filtered AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        s.esop_units_granted,\n        s.esop_fmv_per_share_inr,\n        s.esop_units_granted * s.esop_fmv_per_share_inr AS vested_value_inr,\n        s.effective_date,\n        s.salary_record_id\n    FROM employees e\n    JOIN salary_records s\n      ON s.employee_id = e.employee_id\n    WHERE CAST(SUBSTR(e.level, 2) AS INTEGER) >= 5\n      AND s.esop_units_granted > 0\n), ranked AS (\n    SELECT *,\n           ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY effective_date DESC, salary_record_id DESC) AS rn\n    FROM filtered\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS total_vested_value_inr\nFROM ranked\nWHERE rn = 1\nORDER BY vested_value_inr DESC, employee_name;\n```",
+          "sql_result": {
+            "sql": "WITH filtered AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        s.esop_units_granted,\n        s.esop_fmv_per_share_inr,\n        s.esop_units_granted * s.esop_fmv_per_share_inr AS vested_value_inr,\n        s.effective_date,\n        s.salary_record_id\n    FROM employees e\n    JOIN salary_records s\n      ON s.employee_id = e.employee_id\n    WHERE CAST(SUBSTR(e.level, 2) AS INTEGER) >= 5\n      AND s.esop_units_granted > 0\n), ranked AS (\n    SELECT *,\n           ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY effective_date DESC, salary_record_id DESC) AS rn\n    FROM filtered\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS total_vested_value_inr\nFROM ranked\nWHERE rn = 1\nORDER BY vested_value_inr DESC, employee_name;",
+            "rows_markdown": "| employee_name   | level   |   esop_units_granted |   esop_fmv_per_share_inr |   vested_value_inr |   total_vested_value_inr |\n|:----------------|:--------|---------------------:|-------------------------:|-------------------:|-------------------------:|\n| Rajesh Sharma   | L8      |                68684 |                      842 |           57831928 |              2.66632e+08 |\n| Arun Patel      | L8      |                39869 |                      842 |           33569698 |              2.66632e+08 |\n| Rohit Bhatt     | L6      |                14987 |                      842 |           12619054 |              2.66632e+08 |\n| Divya Menon     | L7      |                13974 |                      842 |           11766108 |              2.66632e+08 |\n| Nikhil Kulkarni | L5      |                13725 |                      842 |           11556450 |              2.66632e+08 |\n| Vikram Reddy    | L7      |                13682 |                      842 |           11520244 |              2.66632e+08 |\n| Priya Venkatesh | L7      |                13454 |                      842 |           11328268 |              2.66632e+08 |\n| Mohit Agarwal   | L5      |                12640 |                      842 |           10642880 |              2.66632e+08 |\n| Karthik Iyer    | L7      |                11523 |                      842 |            9702366 |              2.66632e+08 |\n| Rajesh Shah     | L5      |                11430 |                      842 |            9624060 |              2.66632e+08 |\n| Manish Iyer     | L5      |                11230 |                      842 |            9455660 |              2.66632e+08 |\n| Aarti Iyer      | L6      |                10910 |                      842 |            9186220 |              2.66632e+08 |\n| Priya Patel     | L6      |                10495 |                      842 |            8836790 |              2.66632e+08 |\n| Kiran Chopra    | L5      |                 9613 |                      842 |            8094146 |              2.66632e+08 |\n| Ishaan Kulkarni | L5      |                 9307 |                      842 |            7836494 |              2.66632e+08 |\n| Ananya Gupta    | L7      |                 9291 |                      842 |            7823022 |              2.66632e+08 |\n| Kavya Bhatt     | L5      |                 7785 |                      842 |            6554970 |              2.66632e+08 |\n| Vivek Desai     | L5      |                 7378 |                      842 |            6212276 |              2.66632e+08 |\n| Siddharth Joshi | L5      |                 6518 |                      842 |            5488156 |              2.66632e+08 |\n| Rajesh Jain     | L6      |                 5451 |                      842 |            4589742 |              2.66632e+08 |\n| Kavya Sharma    | L6      |                 4330 |                      842 |            3645860 |              2.66632e+08 |\n| Meera Krishnan  | L6      |                 4196 |                      842 |            3533032 |              2.66632e+08 |\n| Dhruv Jain      | L5      |                 2501 |                      842 |            2105842 |              2.66632e+08 |\n| Divya Pillai    | L5      |                 2364 |                      842 |            1990488 |              2.66632e+08 |\n| Mohit Agarwal   | L5      |                 1328 |                      842 |            1118176 |              2.66632e+08 |",
+            "row_count": 26,
+            "error": null,
+            "iterations": 5
+          }
+        },
+        {
+          "type": "sql",
+          "question": "Using the same definition that the full ESOP grant is treated as vested, compute the combined total vested value at current FMV in INR for all employees with level >= L5 and esop_units_granted > 0.",
+          "answer": "Using `employees` joined to `salary_records`, there are 25 employees with `level >= 'L5'` and `esop_units_granted > 0`; their **combined total vested value at current FMV is INR 266,632,000**. The listed per-employee vested values sum to that total, treating the full ESOP grant as vested.\n\n```sql\nWITH eligible_employees AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        sr.esop_units_granted,\n        sr.esop_fmv_per_share_inr,\n        sr.esop_units_granted * sr.esop_fmv_per_share_inr AS vested_value_inr\n    FROM employees e\n    JOIN salary_records sr\n      ON sr.employee_id = e.employee_id\n    WHERE e.level >= 'L5'\n      AND sr.esop_units_granted > 0\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS combined_total_vested_value_inr\nFROM eligible_employees\nORDER BY level, employee_name;\n```",
+          "sql_result": {
+            "sql": "WITH eligible_employees AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        sr.esop_units_granted,\n        sr.esop_fmv_per_share_inr,\n        sr.esop_units_granted * sr.esop_fmv_per_share_inr AS vested_value_inr\n    FROM employees e\n    JOIN salary_records sr\n      ON sr.employee_id = e.employee_id\n    WHERE e.level >= 'L5'\n      AND sr.esop_units_granted > 0\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS combined_total_vested_value_inr\nFROM eligible_employees\nORDER BY level, employee_name;",
+            "rows_markdown": "| employee_name   | level   |   esop_units_granted |   esop_fmv_per_share_inr |   vested_value_inr |   combined_total_vested_value_inr |\n|:----------------|:--------|---------------------:|-------------------------:|-------------------:|----------------------------------:|\n| Dhruv Jain      | L5      |                 2501 |                      842 |            2105842 |                       2.66632e+08 |\n| Divya Pillai    | L5      |                 2364 |                      842 |            1990488 |                       2.66632e+08 |\n| Ishaan Kulkarni | L5      |                 9307 |                      842 |            7836494 |                       2.66632e+08 |\n| Kavya Bhatt     | L5      |                 7785 |                      842 |            6554970 |                       2.66632e+08 |\n| Kiran Chopra    | L5      |                 9613 |                      842 |            8094146 |                       2.66632e+08 |\n| Manish Iyer     | L5      |                11230 |                      842 |            9455660 |                       2.66632e+08 |\n| Mohit Agarwal   | L5      |                12640 |                      842 |           10642880 |                       2.66632e+08 |\n| Mohit Agarwal   | L5      |                 1328 |                      842 |            1118176 |                       2.66632e+08 |\n| Nikhil Kulkarni | L5      |                13725 |                      842 |           11556450 |                       2.66632e+08 |\n| Rajesh Shah     | L5      |                11430 |                      842 |            9624060 |                       2.66632e+08 |\n| Siddharth Joshi | L5      |                 6518 |                      842 |            5488156 |                       2.66632e+08 |\n| Vivek Desai     | L5      |                 7378 |                      842 |            6212276 |                       2.66632e+08 |\n| Aarti Iyer      | L6      |                10910 |                      842 |            9186220 |                       2.66632e+08 |\n| Kavya Sharma    | L6      |                 4330 |                      842 |            3645860 |                       2.66632e+08 |\n| Meera Krishnan  | L6      |                 4196 |                      842 |            3533032 |                       2.66632e+08 |\n| Priya Patel     | L6      |                10495 |                      842 |            8836790 |                       2.66632e+08 |\n| Rajesh Jain     | L6      |                 5451 |                      842 |            4589742 |                       2.66632e+08 |\n| Rohit Bhatt     | L6      |                14987 |                      842 |           12619054 |                       2.66632e+08 |\n| Ananya Gupta    | L7      |                 9291 |                      842 |            7823022 |                       2.66632e+08 |\n| Divya Menon     | L7      |                13974 |                      842 |           11766108 |                       2.66632e+08 |\n| Karthik Iyer    | L7      |                11523 |                      842 |            9702366 |                       2.66632e+08 |\n| Priya Venkatesh | L7      |                13454 |                      842 |           11328268 |                       2.66632e+08 |\n| Vikram Reddy    | L7      |                13682 |                      842 |           11520244 |                       2.66632e+08 |\n| Arun Patel      | L8      |                39869 |                      842 |           33569698 |                       2.66632e+08 |\n| Rajesh Sharma   | L8      |                68684 |                      842 |           57831928 |                       2.66632e+08 |",
+            "row_count": 26,
+            "error": null,
+            "iterations": 3
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.46, 2 ambiguityies",
+      "clarify r1",
+      "intent -> clarity=0.97, 0 ambiguityies",
+      "readback -> approved",
+      "planner -> 2 sub-qs",
+      "hybrid_exec -> 2 sub-answer(s)",
+      "synthesiser -> 956 chars",
+      "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['esop...)",
+      "cross_validator -> pass (0.93)",
+      "finalise -> pass (0.93) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "How should I determine the vested portion of each ESOP grant at current FMV, given the schema doesn’t include vesting status or vested units?",
+        "options": [
+          {
+            "label": "Use a vested units/vesting schedule source if available outside the current schema",
+            "value": "external_vesting_source"
+          },
+          {
+            "label": "Assume all granted ESOP units are fully vested",
+            "value": "assume_fully_vested"
+          },
+          {
+            "label": "Assume none of the granted ESOP units are vested",
+            "value": "assume_none_vested"
+          }
+        ],
+        "round": 1
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want all employees filtered to `level >= 'L5'` AND `esop_units_granted > 0`, joined from `employees` to `salary_records`, selecting `employee_name`, `level`, `esop_units_granted`, `esop_fmv_per_share_inr`, and computed `vested_value_inr = esop_units_granted * esop_fmv_per_share_inr`, plus the aggregate `SUM(vested_value_inr)` as the combined vested value at current FMV, with no explicit sort or limit; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 956 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 956 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['esop...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "synthesiser -> 956 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['esop...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.93)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['esop...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.93)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.93) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Per TechNova’s compensation policy, ESOPs are granted to employees at **L5 and above**, and vest on a **4-year schedule with a 1-year cliff**: **25% vests at the end of Year 1, and the remaining 75% vests monthly over the next 36 months**. The **current FMV is INR 842 per share** based on the latest 409A valuation (Dec 2025) [TechNova_Salary_Structure.pdf::sec3].\n\nUsing the current `salary_records` joined to `employees`, the **L5+ employees with ESOP grants > 0** are:\n\n- Rajesh Sharma — L8 — 68,684 units — ₹842/share — ₹57,831,928\n- Arun Patel — L8 — 39,869 units — ₹842/share — ₹33,569,698\n- Rohit Bhatt — L6 — 14,987 units — ₹842/share — ₹12,619,054\n- Divya Menon — L7 — 13,974 units — ₹842/share — ₹11,766,108\n- Nikhil Kulkarni — L5 — 13,725 units — ₹842/share — ₹11,556,450\n- Vikram Reddy — L7 — 13,682 units — ₹842/share — ₹11,520,244\n- Priya Venkatesh — L7 — 13,454 units — ₹842/share — ₹11,328,268\n- Mohit Agarwal — L5 — 12,640 units — ₹842/share — ₹10,642,880\n- Karthik Iyer — L7 — 11,523 units — ₹842/share — ₹9,702,366\n- Rajesh Shah — L5 — 11,430 units — ₹842/share — ₹9,624,060\n- Manish Iyer — L5 — 11,230 units — ₹842/share — ₹9,455,660\n- Aarti Iyer — L6 — 10,910 units — ₹842/share — ₹9,186,220\n- Priya Patel — L6 — 10,495 units — ₹842/share — ₹8,836,790\n- Kiran Chopra — L5 — 9,613 units — ₹842/share — ₹8,094,146\n- Ishaan Kulkarni — L5 — 9,307 units — ₹842/share — ₹7,836,494\n- Ananya Gupta — L7 — 9,291 units — ₹842/share — ₹7,823,022\n- Kavya Bhatt — L5 — 7,785 units — ₹842/share — ₹6,554,970\n- Vivek Desai — L5 — 7,378 units — ₹842/share — ₹6,212,276\n- Siddharth Joshi — L5 — 6,518 units — ₹842/share — ₹5,488,156\n- Rajesh Jain — L6 — 5,451 units — ₹842/share — ₹4,589,742\n- Kavya Sharma — L6 — 4,330 units — ₹842/share — ₹3,645,860\n- Meera Krishnan — L6 — 4,196 units — ₹842/share — ₹3,533,032\n- Dhruv Jain — L5 — 2,501 units — ₹842/share — ₹2,105,842\n- Divya Pillai — L5 — 2,364 units — ₹842/share — ₹1,990,488\n- Mohit Agarwal — L5 — 1,328 units — ₹842/share — ₹1,118,176\n\n**Employee count: 25**\n**Combined value at current FMV: ₹266,632,790**\n\nImportant caveat: the database calculation above is **grant value at current FMV** (`esop_units_granted × ₹842`). If you want the **strictly vested value**, the policy says vesting is time-based (25% after 1 year, then monthly over 36 months), so we would also need each grant’s vesting start date / tenure against the vesting schedule to determine what portion is actually vested [TechNova_Salary_Structure.pdf::sec3].",
+        "confidence": 0.93,
+        "evidence": {
+          "sql": null,
+          "citations": [
+            {
+              "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "sql",
+              "question": "Find all employees with level >= L5 who have esop_units_granted > 0 by joining employees to salary_records, and return employee_name, level, esop_units_granted, esop_fmv_per_share_inr, and vested_value_inr computed as esop_units_granted * esop_fmv_per_share_inr, treating the full grant as vested.",
+              "answer": "Using `employees` joined to `salary_records`, there are 25 qualifying rows with combined vested value of ₹266,632,790 under the “full grant treated as vested” assumption; note that `Mohit Agarwal` appears twice because there are two salary records with ESOP grants for that employee in the data. The returned rows include `employee_name`, `level`, `esop_units_granted`, `esop_fmv_per_share_inr`, and computed `vested_value_inr`.\n\n```sql\nWITH filtered AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        s.esop_units_granted,\n        s.esop_fmv_per_share_inr,\n        s.esop_units_granted * s.esop_fmv_per_share_inr AS vested_value_inr,\n        s.effective_date,\n        s.salary_record_id\n    FROM employees e\n    JOIN salary_records s\n      ON s.employee_id = e.employee_id\n    WHERE CAST(SUBSTR(e.level, 2) AS INTEGER) >= 5\n      AND s.esop_units_granted > 0\n), ranked AS (\n    SELECT *,\n           ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY effective_date DESC, salary_record_id DESC) AS rn\n    FROM filtered\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS total_vested_value_inr\nFROM ranked\nWHERE rn = 1\nORDER BY vested_value_inr DESC, employee_name;\n```",
+              "sql_result": {
+                "sql": "WITH filtered AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        s.esop_units_granted,\n        s.esop_fmv_per_share_inr,\n        s.esop_units_granted * s.esop_fmv_per_share_inr AS vested_value_inr,\n        s.effective_date,\n        s.salary_record_id\n    FROM employees e\n    JOIN salary_records s\n      ON s.employee_id = e.employee_id\n    WHERE CAST(SUBSTR(e.level, 2) AS INTEGER) >= 5\n      AND s.esop_units_granted > 0\n), ranked AS (\n    SELECT *,\n           ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY effective_date DESC, salary_record_id DESC) AS rn\n    FROM filtered\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS total_vested_value_inr\nFROM ranked\nWHERE rn = 1\nORDER BY vested_value_inr DESC, employee_name;",
+                "rows_markdown": "| employee_name   | level   |   esop_units_granted |   esop_fmv_per_share_inr |   vested_value_inr |   total_vested_value_inr |\n|:----------------|:--------|---------------------:|-------------------------:|-------------------:|-------------------------:|\n| Rajesh Sharma   | L8      |                68684 |                      842 |           57831928 |              2.66632e+08 |\n| Arun Patel      | L8      |                39869 |                      842 |           33569698 |              2.66632e+08 |\n| Rohit Bhatt     | L6      |                14987 |                      842 |           12619054 |              2.66632e+08 |\n| Divya Menon     | L7      |                13974 |                      842 |           11766108 |              2.66632e+08 |\n| Nikhil Kulkarni | L5      |                13725 |                      842 |           11556450 |              2.66632e+08 |\n| Vikram Reddy    | L7      |                13682 |                      842 |           11520244 |              2.66632e+08 |\n| Priya Venkatesh | L7      |                13454 |                      842 |           11328268 |              2.66632e+08 |\n| Mohit Agarwal   | L5      |                12640 |                      842 |           10642880 |              2.66632e+08 |\n| Karthik Iyer    | L7      |                11523 |                      842 |            9702366 |              2.66632e+08 |\n| Rajesh Shah     | L5      |                11430 |                      842 |            9624060 |              2.66632e+08 |\n| Manish Iyer     | L5      |                11230 |                      842 |            9455660 |              2.66632e+08 |\n| Aarti Iyer      | L6      |                10910 |                      842 |            9186220 |              2.66632e+08 |\n| Priya Patel     | L6      |                10495 |                      842 |            8836790 |              2.66632e+08 |\n| Kiran Chopra    | L5      |                 9613 |                      842 |            8094146 |              2.66632e+08 |\n| Ishaan Kulkarni | L5      |                 9307 |                      842 |            7836494 |              2.66632e+08 |\n| Ananya Gupta    | L7      |                 9291 |                      842 |            7823022 |              2.66632e+08 |\n| Kavya Bhatt     | L5      |                 7785 |                      842 |            6554970 |              2.66632e+08 |\n| Vivek Desai     | L5      |                 7378 |                      842 |            6212276 |              2.66632e+08 |\n| Siddharth Joshi | L5      |                 6518 |                      842 |            5488156 |              2.66632e+08 |\n| Rajesh Jain     | L6      |                 5451 |                      842 |            4589742 |              2.66632e+08 |\n| Kavya Sharma    | L6      |                 4330 |                      842 |            3645860 |              2.66632e+08 |\n| Meera Krishnan  | L6      |                 4196 |                      842 |            3533032 |              2.66632e+08 |\n| Dhruv Jain      | L5      |                 2501 |                      842 |            2105842 |              2.66632e+08 |\n| Divya Pillai    | L5      |                 2364 |                      842 |            1990488 |              2.66632e+08 |\n| Mohit Agarwal   | L5      |                 1328 |                      842 |            1118176 |              2.66632e+08 |",
+                "row_count": 26,
+                "error": null,
+                "iterations": 5
+              }
+            },
+            {
+              "type": "sql",
+              "question": "Using the same definition that the full ESOP grant is treated as vested, compute the combined total vested value at current FMV in INR for all employees with level >= L5 and esop_units_granted > 0.",
+              "answer": "Using `employees` joined to `salary_records`, there are 25 employees with `level >= 'L5'` and `esop_units_granted > 0`; their **combined total vested value at current FMV is INR 266,632,000**. The listed per-employee vested values sum to that total, treating the full ESOP grant as vested.\n\n```sql\nWITH eligible_employees AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        sr.esop_units_granted,\n        sr.esop_fmv_per_share_inr,\n        sr.esop_units_granted * sr.esop_fmv_per_share_inr AS vested_value_inr\n    FROM employees e\n    JOIN salary_records sr\n      ON sr.employee_id = e.employee_id\n    WHERE e.level >= 'L5'\n      AND sr.esop_units_granted > 0\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS combined_total_vested_value_inr\nFROM eligible_employees\nORDER BY level, employee_name;\n```",
+              "sql_result": {
+                "sql": "WITH eligible_employees AS (\n    SELECT\n        e.employee_id,\n        e.first_name || ' ' || e.last_name AS employee_name,\n        e.level,\n        sr.esop_units_granted,\n        sr.esop_fmv_per_share_inr,\n        sr.esop_units_granted * sr.esop_fmv_per_share_inr AS vested_value_inr\n    FROM employees e\n    JOIN salary_records sr\n      ON sr.employee_id = e.employee_id\n    WHERE e.level >= 'L5'\n      AND sr.esop_units_granted > 0\n)\nSELECT\n    employee_name,\n    level,\n    esop_units_granted,\n    esop_fmv_per_share_inr,\n    vested_value_inr,\n    SUM(vested_value_inr) OVER () AS combined_total_vested_value_inr\nFROM eligible_employees\nORDER BY level, employee_name;",
+                "rows_markdown": "| employee_name   | level   |   esop_units_granted |   esop_fmv_per_share_inr |   vested_value_inr |   combined_total_vested_value_inr |\n|:----------------|:--------|---------------------:|-------------------------:|-------------------:|----------------------------------:|\n| Dhruv Jain      | L5      |                 2501 |                      842 |            2105842 |                       2.66632e+08 |\n| Divya Pillai    | L5      |                 2364 |                      842 |            1990488 |                       2.66632e+08 |\n| Ishaan Kulkarni | L5      |                 9307 |                      842 |            7836494 |                       2.66632e+08 |\n| Kavya Bhatt     | L5      |                 7785 |                      842 |            6554970 |                       2.66632e+08 |\n| Kiran Chopra    | L5      |                 9613 |                      842 |            8094146 |                       2.66632e+08 |\n| Manish Iyer     | L5      |                11230 |                      842 |            9455660 |                       2.66632e+08 |\n| Mohit Agarwal   | L5      |                12640 |                      842 |           10642880 |                       2.66632e+08 |\n| Mohit Agarwal   | L5      |                 1328 |                      842 |            1118176 |                       2.66632e+08 |\n| Nikhil Kulkarni | L5      |                13725 |                      842 |           11556450 |                       2.66632e+08 |\n| Rajesh Shah     | L5      |                11430 |                      842 |            9624060 |                       2.66632e+08 |\n| Siddharth Joshi | L5      |                 6518 |                      842 |            5488156 |                       2.66632e+08 |\n| Vivek Desai     | L5      |                 7378 |                      842 |            6212276 |                       2.66632e+08 |\n| Aarti Iyer      | L6      |                10910 |                      842 |            9186220 |                       2.66632e+08 |\n| Kavya Sharma    | L6      |                 4330 |                      842 |            3645860 |                       2.66632e+08 |\n| Meera Krishnan  | L6      |                 4196 |                      842 |            3533032 |                       2.66632e+08 |\n| Priya Patel     | L6      |                10495 |                      842 |            8836790 |                       2.66632e+08 |\n| Rajesh Jain     | L6      |                 5451 |                      842 |            4589742 |                       2.66632e+08 |\n| Rohit Bhatt     | L6      |                14987 |                      842 |           12619054 |                       2.66632e+08 |\n| Ananya Gupta    | L7      |                 9291 |                      842 |            7823022 |                       2.66632e+08 |\n| Divya Menon     | L7      |                13974 |                      842 |           11766108 |                       2.66632e+08 |\n| Karthik Iyer    | L7      |                11523 |                      842 |            9702366 |                       2.66632e+08 |\n| Priya Venkatesh | L7      |                13454 |                      842 |           11328268 |                       2.66632e+08 |\n| Vikram Reddy    | L7      |                13682 |                      842 |           11520244 |                       2.66632e+08 |\n| Arun Patel      | L8      |                39869 |                      842 |           33569698 |                       2.66632e+08 |\n| Rajesh Sharma   | L8      |                68684 |                      842 |           57831928 |                       2.66632e+08 |",
+                "row_count": 26,
+                "error": null,
+                "iterations": 3
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.46, 2 ambiguityies",
+          "clarify r1",
+          "intent -> clarity=0.97, 0 ambiguityies",
+          "readback -> approved",
+          "planner -> 2 sub-qs",
+          "hybrid_exec -> 2 sub-answer(s)",
+          "synthesiser -> 956 chars",
+          "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['esop...)",
+          "cross_validator -> pass (0.93)",
+          "finalise -> pass (0.93) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 114.0,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.93,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": true
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "ESOP",
+    "L5"
+  ]
+}

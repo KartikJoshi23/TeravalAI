@@ -1,0 +1,179 @@
+{
+  "id": "M5",
+  "thread_id": "96361b97-b44d-4c3b-842a-148054bb29a9",
+  "final": {
+    "answer": "Using `financial_transactions`, FY2025-26 Capital Expenditure totals **₹171.5 Cr** across 3 subcategories: **Singapore Data Center ₹120 Cr**, **GPU Hardware Purchase ₹43 Cr**, and **Zero Trust Infrastructure ₹8.5 Cr**.\n\n```sql\nSELECT subcategory, SUM(amount) AS total_capex_cr\nFROM financial_transactions\nWHERE category = 'Capital Expenditure'\n  AND period_quarter LIKE '%FY2025-26%'\nGROUP BY subcategory\nORDER BY total_capex_cr DESC, subcategory;\n```",
+    "confidence": 0.98,
+    "evidence": {
+      "sql": {
+        "query": "SELECT subcategory, SUM(amount) AS total_capex_cr\nFROM financial_transactions\nWHERE category = 'Capital Expenditure'\n  AND period_quarter LIKE '%FY2025-26%'\nGROUP BY subcategory\nORDER BY total_capex_cr DESC, subcategory;",
+        "rows_markdown": "| subcategory               |   total_capex_cr |\n|:--------------------------|-----------------:|\n| Singapore Data Center     |            120   |\n| GPU Hardware Purchase     |             43   |\n| Zero Trust Infrastructure |              8.5 |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 2 iter",
+      "critic -> pass (0.98)",
+      "finalise -> pass (0.98) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want `SUM(amount)` for `financial_transaction`, filtered to `category='Capital Expenditure'`` and `period_quarter LIKE 'FY2025-26'`, broken down by `subcategory` using `GROUP BY subcategory`; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "sql_agent -> 2 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.98)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.98) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Using `financial_transactions`, FY2025-26 Capital Expenditure totals **₹171.5 Cr** across 3 subcategories: **Singapore Data Center ₹120 Cr**, **GPU Hardware Purchase ₹43 Cr**, and **Zero Trust Infrastructure ₹8.5 Cr**.\n\n```sql\nSELECT subcategory, SUM(amount) AS total_capex_cr\nFROM financial_transactions\nWHERE category = 'Capital Expenditure'\n  AND period_quarter LIKE '%FY2025-26%'\nGROUP BY subcategory\nORDER BY total_capex_cr DESC, subcategory;\n```",
+        "confidence": 0.98,
+        "evidence": {
+          "sql": {
+            "query": "SELECT subcategory, SUM(amount) AS total_capex_cr\nFROM financial_transactions\nWHERE category = 'Capital Expenditure'\n  AND period_quarter LIKE '%FY2025-26%'\nGROUP BY subcategory\nORDER BY total_capex_cr DESC, subcategory;",
+            "rows_markdown": "| subcategory               |   total_capex_cr |\n|:--------------------------|-----------------:|\n| Singapore Data Center     |            120   |\n| GPU Hardware Purchase     |             43   |\n| Zero Trust Infrastructure |              8.5 |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 2 iter",
+          "critic -> pass (0.98)",
+          "finalise -> pass (0.98) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 16.2,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.98,
+    "matches": 3,
+    "matches_total": 3,
+    "cited_pdf": false
+  },
+  "level": "medium",
+  "expected_substrings": [
+    "Singapore",
+    "GPU Hardware",
+    "Zero Trust"
+  ]
+}

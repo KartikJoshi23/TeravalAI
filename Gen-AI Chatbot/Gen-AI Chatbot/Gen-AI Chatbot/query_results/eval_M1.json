@@ -1,0 +1,178 @@
+{
+  "id": "M1",
+  "thread_id": "f7d1db30-afdd-47b6-ade3-21911abb2f74",
+  "final": {
+    "answer": "Using `salary_records` joined to `employees`, the average total CTC by level is: L1 6.39, L2 8.98, L3 14.33, L4 22.27, L5 33.21, L6 50.48, L7 75.66, and L8 162.38 lakhs. Across these 8 level averages, the combined sum is 373.72 lakhs.\n\n```sql\nSELECT sr.level, ROUND(AVG(sr.total_ctc_inr_lakhs), 2) AS avg_total_ctc_inr_lakhs\nFROM salary_records sr\nJOIN employees e ON sr.employee_id = e.employee_id\nGROUP BY sr.level\nORDER BY sr.level;\n```",
+    "confidence": 0.97,
+    "evidence": {
+      "sql": {
+        "query": "SELECT sr.level, ROUND(AVG(sr.total_ctc_inr_lakhs), 2) AS avg_total_ctc_inr_lakhs\nFROM salary_records sr\nJOIN employees e ON sr.employee_id = e.employee_id\nGROUP BY sr.level\nORDER BY sr.level;",
+        "rows_markdown": "| level   |   avg_total_ctc_inr_lakhs |\n|:--------|--------------------------:|\n| L1      |                      6.39 |\n| L2      |                      8.98 |\n| L3      |                     14.33 |\n| L4      |                     22.27 |\n| L5      |                     33.21 |\n| L6      |                     50.48 |\n| L7      |                     75.66 |\n| L8      |                    162.38 |",
+        "error": null
+      },
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.98, 0 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 3 iter",
+      "critic -> pass (0.97)",
+      "finalise -> pass (0.97) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.98, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want `AVG(total_ctc_inr_lakhs)` for each `level` across the company, using a join from `salary_records` to `employees` and grouped by `level`; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.98, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.98, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "sql_agent -> 3 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.97) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Using `salary_records` joined to `employees`, the average total CTC by level is: L1 6.39, L2 8.98, L3 14.33, L4 22.27, L5 33.21, L6 50.48, L7 75.66, and L8 162.38 lakhs. Across these 8 level averages, the combined sum is 373.72 lakhs.\n\n```sql\nSELECT sr.level, ROUND(AVG(sr.total_ctc_inr_lakhs), 2) AS avg_total_ctc_inr_lakhs\nFROM salary_records sr\nJOIN employees e ON sr.employee_id = e.employee_id\nGROUP BY sr.level\nORDER BY sr.level;\n```",
+        "confidence": 0.97,
+        "evidence": {
+          "sql": {
+            "query": "SELECT sr.level, ROUND(AVG(sr.total_ctc_inr_lakhs), 2) AS avg_total_ctc_inr_lakhs\nFROM salary_records sr\nJOIN employees e ON sr.employee_id = e.employee_id\nGROUP BY sr.level\nORDER BY sr.level;",
+            "rows_markdown": "| level   |   avg_total_ctc_inr_lakhs |\n|:--------|--------------------------:|\n| L1      |                      6.39 |\n| L2      |                      8.98 |\n| L3      |                     14.33 |\n| L4      |                     22.27 |\n| L5      |                     33.21 |\n| L6      |                     50.48 |\n| L7      |                     75.66 |\n| L8      |                    162.38 |",
+            "error": null
+          },
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.98, 0 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 3 iter",
+          "critic -> pass (0.97)",
+          "finalise -> pass (0.97) via critic"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 19.7,
+  "score": {
+    "passed": true,
+    "reason": "ok",
+    "conf": 0.97,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "medium",
+  "expected_substrings": [
+    "L1",
+    "L8"
+  ]
+}

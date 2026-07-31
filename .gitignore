@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Env / secrets (NVIDIA NIM key lives here — never commit)
+.env
+.env.local
+**/.env
+# Explicit: the provided Gen-AI Chatbot .env holds a real OpenAI key — never commit
+Gen-AI Chatbot/**/.env
+
+# Gen-AI Chatbot heavy/binary artifacts (source is kept; these are regenerable)
+Gen-AI Chatbot/**/*.duckdb
+Gen-AI Chatbot/**/*.zip
+
+# Python
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

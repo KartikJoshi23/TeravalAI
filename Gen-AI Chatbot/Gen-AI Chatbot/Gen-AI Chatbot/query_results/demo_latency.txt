@@ -1,0 +1,53 @@
+
+======================================================================
+LATENCY DEMO � DEMO_LATENCY
+======================================================================
+
+USER QUERY:
+  Which active customers in our top revenue tier are based in regulated Asian markets, and who are their account managers? Sort by ARR descending.
+
+-> session opened (thread 73baa484)
+
+-> clarification: Which countries should count as 'regulated Asian markets' for this query?...
+   answering   : Top revenue tier = Tier 1. Regulated Asian markets = India, Japan, South Korea, Singapore....
+
+-> readback received -> auto-approving
+
+======================================================================
+LLM-POLISHED FINAL ANSWER (confidence=0.93)
+======================================================================
+
+Using TechNova’s strategy docs, “regulated APAC markets” explicitly includes **India, Japan, and South Korea** [TechNova_DRHP_Draft.pdf::sec2]. Separately, TechNova’s board/MD&A materials highlight **APAC localisation requirements** and the approved **Singapore data-centre expansion** to support them [TechNova_DRHP_Draft.pdf::sec3][TechNova_Board_Minutes_Q4.pdf::sec5]. Using your requested country set **(India, Japan, South Korea, Singapore)**, the active **Tier 1** customers and their account managers are:
+
+1. **Ember Retail** — Singapore — **₹1,743.02 L ARR** — **Aarti Iyer**
+2. **Beacon Logistics** — India — **₹1,720.14 L ARR** — **Divya Pillai**
+3. **Crescent Media** — Japan — **₹1,486.67 L ARR** — **Rohit Jain**
+4. **Atlas Telecom** — India — **₹1,325.29 L ARR** — **Kiran Malhotra**
+5. **Ascend Logistics** — Singapore — **₹1,186.54 L ARR** — **Rohit Jain**
+6. **Nova Systems** — Singapore — **₹1,029.43 L ARR** — **Divya Desai**
+7. **Ascend Motors** — India — **₹987.76 L ARR** — **Divya Pillai**
+8. **Zenith Capital** — Singapore — **₹893.94 L ARR** — **Divya Pillai**
+
+**Combined ARR: ₹10,372.80 L (≈ ₹103.73 Cr).**
+
+Note: there are **no matching active Tier 1 customers from South Korea** in the customer table for this filter set, even though Japan and South Korea are called out as APAC growth markets in the financial report [TechNova_Q4_Financial_Report.pdf::sec1].
+
+======================================================================
+TRACE
+======================================================================
+router -> sql -> intent -> clarity=0.62, 1 ambiguityy -> clarify r1 -> intent -> clarity=0.98, 0 ambiguityies -> readback -> approved -> sql_agent -> 3 iter -> critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['regu...) -> cross_validator -> pass (0.93) -> completeness -> pass (0 missing) -> finalise -> pass (0.93) via cross_validator
+
+======================================================================
+PER-STAGE TIMING (seconds from query firing)
+======================================================================
+     0.02s  (+ 0.02s)  session created
+     6.52s  (+ 6.50s)  first response stream complete
+    12.76s  (+ 6.24s)  clarification round 1 done
+    52.29s  (+39.53s)  readback approved
+    52.29s  (+ 0.00s)  FINAL received
+
+======================================================================
+TOTAL WALL-CLOCK: 52.29 seconds  (0.87 min)
+======================================================================
+
+Saved -> query_results\demo_latency.json

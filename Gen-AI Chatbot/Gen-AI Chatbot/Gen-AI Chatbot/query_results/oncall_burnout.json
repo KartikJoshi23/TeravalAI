@@ -1,0 +1,478 @@
+{
+  "id": "ONCALL_BURNOUT",
+  "thread_id": "8e025a7a-084b-4709-a3f6-a9c6ee2f6975",
+  "final": {
+    "answer": "The highest-burnout-risk engineers who also reported incidents in 2025 are the top 3 by cumulative burnout score: **Meera Gupta** (burnout **1665**, on-call stipend **₹175,500**, pages **207**, incidents **2**), **Kiran Joshi** (**1505**, **₹210,500**, **167**, **3**), and **Siddharth Joshi** (**1427**, **₹190,000**, **158**, **1**). Across these top 3, the totals are **cumulative burnout score 4,597**, **combined on-call stipend ₹576,000**, **total pages 532**, and **incident count 6**.\n\n| Rank | Engineer | Cumulative burnout score | Cumulative on-call stipend | Total pages received | Incident count | Latest CTC | Standard retention lock-in (30% of CTC) |\n|---|---|---:|---:|---:|---:|---:|---:|\n| 1 | Meera Gupta | 1665 | ₹175,500 | 207 | 2 | ₹25.76L | ₹7.728L |\n| 2 | Kiran Joshi | 1505 | ₹210,500 | 167 | 3 | ₹17.91L | ₹5.373L |\n| 3 | Siddharth Joshi | 1427 | ₹190,000 | 158 | 1 | ₹41.68L | ₹12.504L |\n\n**Combined retention lock-in cost: ₹25.605L**\n\nThe OnCall Runbook says the **primary on-call must acknowledge routine pages within 5 minutes during business hours and 15 minutes off-hours, with automatic escalation to the secondary if missed**; incident response targets are **SEV-1 = 5 minutes, SEV-2 = 15 minutes, SEV-3 = 30 minutes, SEV-4 = next business day** [F-OC-02] [TechNova_OnCall_Runbook.pdf::sec1] [TechNova_OnCall_Runbook.pdf::sec2]. On burnout/fatigue, it describes a **weekly primary/secondary rotation**, automatic secondary coverage, and a **compensatory day off if an engineer gets paged more than 3 times during off-hours in a week**; no broader burnout policy was found in the runbook [TechNova_OnCall_Runbook.pdf::sec1]. Under the standard retention policy, **HR may offer up to 30% of annual CTC for critical talent without additional approvals** [F-SAL-03] [F-AUTO-42748ED1A6] [F-AUTO-6117CA66E7] [TechNova_Salary_Structure.pdf::sec5] [TechNova_DRHP_Draft.pdf::sec4].\n\nSources: tables used — `oncall_rotations`, `incidents`, `salary_records`; chunks cited — `TechNova_OnCall_Runbook.pdf::sec1`, `TechNova_OnCall_Runbook.pdf::sec2`, `TechNova_Salary_Structure.pdf::sec5`, `TechNova_DRHP_Draft.pdf::sec4`.",
+    "confidence": 0.96,
+    "evidence": {
+      "sql": null,
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "sql",
+          "question": "Using oncall_rotations as the engineer population, find employees whose employee_id appears in incidents.reporter_employee_id for incidents with CAST(reported_date AS DATE) between '2025-01-01' and '2025-12-31'; for each such employee, aggregate across all available last-24-weeks oncall_rotations rows: SUM(burnout_risk_score) as cumulative_burnout_score, SUM(weekly_stipend_inr) + SUM(holiday_premium_paid_inr) as cumulative_oncall_stipend, SUM(pages_received_count) as total_pages_received, and COUNT(incidents.incident_id) as incident_count; rank by cumulative_burnout_score descending and return the top 3 plus the full ranked list if available.",
+          "answer": "Using `oncall_rotations`, `incidents`, and `salary_records`, the top 3 2025 incident reporters by cumulative burnout score are Meera Gupta (1665 burnout, ₹175,500 on-call stipend, 207 pages, 2 incidents), Kiran Joshi (1505, ₹210,500, 167 pages, 3 incidents), and Siddharth Joshi (1427, ₹190,000, 158 pages, 1 incident). Full ranked list has 16 engineers; combined across the top 3, cumulative burnout score is 4,597, cumulative on-call stipend is ₹576,000, total pages received is 532, incident count is 6, and the top-3 retention lock-in cost at 30% of latest CTC is 25.605 lakhs.\n\n```sql\nWITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score,\n        SUM(o.weekly_stipend_inr) + SUM(o.holiday_premium_paid_inr) AS cumulative_oncall_stipend,\n        SUM(o.pages_received_count) AS total_pages_received\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nlatest_salary AS (\n    SELECT employee_id, total_ctc_inr_lakhs\n    FROM (\n        SELECT\n            employee_id,\n            total_ctc_inr_lakhs,\n            ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY CAST(effective_date AS DATE) DESC, salary_record_id DESC) AS rn\n        FROM salary_records\n    ) s\n    WHERE rn = 1\n),\nranked AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        oa.cumulative_oncall_stipend,\n        oa.total_pages_received,\n        ri.incident_count,\n        ls.total_ctc_inr_lakhs,\n        0.30 * ls.total_ctc_inr_lakhs AS retention_bonus_cap_inr_lakhs,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, ri.incident_count DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri ON oa.employee_id = ri.employee_id\n    LEFT JOIN latest_salary ls ON oa.employee_id = ls.employee_id\n)\nSELECT\n    burnout_rank,\n    employee_id,\n    employee_name,\n    cumulative_burnout_score,\n    cumulative_oncall_stipend,\n    total_pages_received,\n    incident_count,\n    total_ctc_inr_lakhs,\n    retention_bonus_cap_inr_lakhs,\n    CASE WHEN burnout_rank <= 3 THEN 'Top 3' ELSE 'Full ranked list' END AS list_section\nFROM ranked\nORDER BY burnout_rank;\n```",
+          "sql_result": {
+            "sql": "WITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score,\n        SUM(o.weekly_stipend_inr) + SUM(o.holiday_premium_paid_inr) AS cumulative_oncall_stipend,\n        SUM(o.pages_received_count) AS total_pages_received\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nlatest_salary AS (\n    SELECT employee_id, total_ctc_inr_lakhs\n    FROM (\n        SELECT\n            employee_id,\n            total_ctc_inr_lakhs,\n            ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY CAST(effective_date AS DATE) DESC, salary_record_id DESC) AS rn\n        FROM salary_records\n    ) s\n    WHERE rn = 1\n),\nranked AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        oa.cumulative_oncall_stipend,\n        oa.total_pages_received,\n        ri.incident_count,\n        ls.total_ctc_inr_lakhs,\n        0.30 * ls.total_ctc_inr_lakhs AS retention_bonus_cap_inr_lakhs,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, ri.incident_count DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri ON oa.employee_id = ri.employee_id\n    LEFT JOIN latest_salary ls ON oa.employee_id = ls.employee_id\n)\nSELECT\n    burnout_rank,\n    employee_id,\n    employee_name,\n    cumulative_burnout_score,\n    cumulative_oncall_stipend,\n    total_pages_received,\n    incident_count,\n    total_ctc_inr_lakhs,\n    retention_bonus_cap_inr_lakhs,\n    CASE WHEN burnout_rank <= 3 THEN 'Top 3' ELSE 'Full ranked list' END AS list_section\nFROM ranked\nORDER BY burnout_rank;",
+            "rows_markdown": "|   burnout_rank |   employee_id | employee_name   |   cumulative_burnout_score |   cumulative_oncall_stipend |   total_pages_received |   incident_count |   total_ctc_inr_lakhs |   retention_bonus_cap_inr_lakhs | list_section     |\n|---------------:|--------------:|:----------------|---------------------------:|----------------------------:|-----------------------:|-----------------:|----------------------:|--------------------------------:|:-----------------|\n|              1 |          1040 | Meera Gupta     |                       1665 |                      175500 |                    207 |                2 |                 25.76 |                           7.728 | Top 3            |\n|              2 |          1045 | Kiran Joshi     |                       1505 |                      210500 |                    167 |                3 |                 17.91 |                           5.373 | Top 3            |\n|              3 |          1028 | Siddharth Joshi |                       1427 |                      190000 |                    158 |                1 |                 41.68 |                          12.504 | Top 3            |\n|              4 |          1032 | Kiran Saxena    |                       1308 |                      139000 |                    140 |                1 |                 11.64 |                           3.492 | Full ranked list |\n|              5 |          1024 | Vikram Kapoor   |                       1227 |                      157500 |                    149 |                1 |                 11.23 |                           3.369 | Full ranked list |\n|              6 |          1021 | Manish Iyer     |                       1187 |                      165500 |                    144 |                2 |                 40.05 |                          12.015 | Full ranked list |\n|              7 |          1025 | Kavya Bhatt     |                       1173 |                      146500 |                    141 |                2 |                 28.69 |                           8.607 | Full ranked list |\n|              8 |          1023 | Ananya Jain     |                       1123 |                      137500 |                    130 |                1 |                 13.86 |                           4.158 | Full ranked list |\n|              9 |          1043 | Meera Das       |                       1056 |                      142000 |                    137 |                1 |                 16.52 |                           4.956 | Full ranked list |\n|             10 |          1030 | Sneha Reddy     |                       1046 |                      113000 |                    113 |                1 |                 11.42 |                           3.426 | Full ranked list |\n|             11 |          1035 | Mohit Agarwal   |                       1026 |                      106500 |                    121 |                3 |                 41.51 |                          12.453 | Full ranked list |\n|             12 |          1015 | Arun Shah       |                       1020 |                      109000 |                    110 |                1 |                 17.62 |                           5.286 | Full ranked list |\n|             13 |          1016 | Swati Agarwal   |                        993 |                      106000 |                    126 |                5 |                 17.97 |                           5.391 | Full ranked list |\n|             14 |          1031 | Dhruv Jain      |                        866 |                      124500 |                    115 |                2 |                 28.23 |                           8.469 | Full ranked list |\n|             15 |          1019 | Pooja Gupta     |                        808 |                      104000 |                     93 |                5 |                 15.69 |                           4.707 | Full ranked list |\n|             16 |          1034 | Vikram Das      |                        779 |                      109500 |                     91 |                4 |                 23.7  |                           7.11  | Full ranked list |",
+            "row_count": 17,
+            "error": null,
+            "iterations": 3
+          }
+        },
+        {
+          "type": "rag",
+          "question": "Using pre-extracted facts F-OC-02, F-AUTO-08B54491BA, and F-AUTO-14E5B8B6B3, summarize what the OnCall Runbook says about response-time SLAs; additionally retrieve any OnCall Runbook guidance specifically about burnout, fatigue, workload rotation, or escalation/coverage practices related to burnout risk.",
+          "answer": "From the OnCall Runbook, the response-time SLAs are:\n\n- For routine on-call paging, the **primary on-call must acknowledge pages within 5 minutes during business hours (09:00–21:00 IST)** and **within 15 minutes during off-hours**. If they do not acknowledge in time, the page **automatically escalates to the secondary on-call**. The runbook also says each team maintains both a **primary and secondary on-call engineer** on a weekly rotation. [TechNova_OnCall_Runbook.pdf::sec1]\n- For incident severity response targets, the runbook defines:\n  - **SEV-1:** response in **5 minutes**\n  - **SEV-2:** response in **15 minutes**\n  - **SEV-3:** response in **30 minutes**\n  - **SEV-4:** response by the **next business day** [TechNova_OnCall_Runbook.pdf::sec2]\n\nOn burnout, fatigue, workload rotation, and escalation/coverage practices, the OnCall Runbook guidance I found is:\n\n- **Weekly rotation structure:** on-call runs on a **weekly schedule** from **Monday 09:00 IST to the following Monday 09:00 IST**, which is the workload rotation mechanism described in the runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Coverage model to reduce single-person risk:** each team has both a **primary and secondary on-call engineer**, and missed acknowledgments by the primary **trigger automatic escalation to the secondary**, which is the clearest burnout-risk-related coverage practice in the document. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Fatigue / overload relief:** if an engineer is **paged more than 3 times during off-hours in a single week**, they are **entitled to a compensatory day off within 30 days**. This is the only explicit burnout/fatigue mitigation guidance I found in the OnCall Runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n\nI do not find additional OnCall Runbook guidance specifically mentioning “burnout,” “fatigue,” or broader workload-balancing practices beyond the weekly rotation, secondary coverage/escalation, and comp-off rule above. [TechNova_OnCall_Runbook.pdf::sec1]\n\n- TechNova_OnCall_Runbook.pdf::sec1\n- TechNova_OnCall_Runbook.pdf::sec2",
+          "rag_result": {
+            "answer": "From the OnCall Runbook, the response-time SLAs are:\n\n- For routine on-call paging, the **primary on-call must acknowledge pages within 5 minutes during business hours (09:00–21:00 IST)** and **within 15 minutes during off-hours**. If they do not acknowledge in time, the page **automatically escalates to the secondary on-call**. The runbook also says each team maintains both a **primary and secondary on-call engineer** on a weekly rotation. [TechNova_OnCall_Runbook.pdf::sec1]\n- For incident severity response targets, the runbook defines:\n  - **SEV-1:** response in **5 minutes**\n  - **SEV-2:** response in **15 minutes**\n  - **SEV-3:** response in **30 minutes**\n  - **SEV-4:** response by the **next business day** [TechNova_OnCall_Runbook.pdf::sec2]\n\nOn burnout, fatigue, workload rotation, and escalation/coverage practices, the OnCall Runbook guidance I found is:\n\n- **Weekly rotation structure:** on-call runs on a **weekly schedule** from **Monday 09:00 IST to the following Monday 09:00 IST**, which is the workload rotation mechanism described in the runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Coverage model to reduce single-person risk:** each team has both a **primary and secondary on-call engineer**, and missed acknowledgments by the primary **trigger automatic escalation to the secondary**, which is the clearest burnout-risk-related coverage practice in the document. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Fatigue / overload relief:** if an engineer is **paged more than 3 times during off-hours in a single week**, they are **entitled to a compensatory day off within 30 days**. This is the only explicit burnout/fatigue mitigation guidance I found in the OnCall Runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n\nI do not find additional OnCall Runbook guidance specifically mentioning “burnout,” “fatigue,” or broader workload-balancing practices beyond the weekly rotation, secondary coverage/escalation, and comp-off rule above. [TechNova_OnCall_Runbook.pdf::sec1]\n\n- TechNova_OnCall_Runbook.pdf::sec1\n- TechNova_OnCall_Runbook.pdf::sec2",
+            "citations": [
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_ISMS_Policy.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_DR_BCP_Plan.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_DR_BCP_Plan.pdf::sec4"
+              }
+            ]
+          }
+        },
+        {
+          "type": "sql",
+          "question": "For the top 3 engineers by cumulative_burnout_score from the prior SQL result, get each employee's latest salary_records row by effective_date and compute standard retention lock-in cost as 0.30 * total_ctc_inr_lakhs per employee, plus the summed total across the top 3.",
+          "answer": "Using `oncall_rotations`, `incidents`, and `salary_records`, the top 3 engineers by cumulative burnout score have latest salary rows dated 2025-04-01: Meera Gupta (CTC ₹25.76L → retention lock-in ₹7.728L), Kiran Joshi (₹17.91L → ₹5.373L), and Siddharth Joshi (₹41.68L → ₹12.504L). **Total CTC across the top 3 is ₹85.35L; summed standard retention lock-in cost at 30% is ₹25.605L.**\n\n```sql\nWITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nranked_engineers AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        ri.incident_count,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri\n      ON oa.employee_id = ri.employee_id\n),\nlatest_salary AS (\n    SELECT\n        sr.employee_id,\n        sr.salary_record_id,\n        CAST(sr.effective_date AS DATE) AS effective_date,\n        sr.total_ctc_inr_lakhs,\n        ROW_NUMBER() OVER (\n            PARTITION BY sr.employee_id\n            ORDER BY CAST(sr.effective_date AS DATE) DESC, sr.salary_record_id DESC\n        ) AS rn\n    FROM salary_records sr\n)\nSELECT\n    re.burnout_rank,\n    re.employee_id,\n    re.employee_name,\n    re.cumulative_burnout_score,\n    ls.salary_record_id,\n    ls.effective_date,\n    ls.total_ctc_inr_lakhs,\n    ROUND(0.30 * ls.total_ctc_inr_lakhs, 3) AS retention_lock_in_cost_inr_lakhs,\n    ROUND(SUM(0.30 * ls.total_ctc_inr_lakhs) OVER (), 3) AS total_retention_lock_in_cost_top3_inr_lakhs\nFROM ranked_engineers re\nJOIN latest_salary ls\n  ON re.employee_id = ls.employee_id\n AND ls.rn = 1\nWHERE re.burnout_rank <= 3\nORDER BY re.burnout_rank;\n```",
+          "sql_result": {
+            "sql": "WITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nranked_engineers AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        ri.incident_count,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri\n      ON oa.employee_id = ri.employee_id\n),\nlatest_salary AS (\n    SELECT\n        sr.employee_id,\n        sr.salary_record_id,\n        CAST(sr.effective_date AS DATE) AS effective_date,\n        sr.total_ctc_inr_lakhs,\n        ROW_NUMBER() OVER (\n            PARTITION BY sr.employee_id\n            ORDER BY CAST(sr.effective_date AS DATE) DESC, sr.salary_record_id DESC\n        ) AS rn\n    FROM salary_records sr\n)\nSELECT\n    re.burnout_rank,\n    re.employee_id,\n    re.employee_name,\n    re.cumulative_burnout_score,\n    ls.salary_record_id,\n    ls.effective_date,\n    ls.total_ctc_inr_lakhs,\n    ROUND(0.30 * ls.total_ctc_inr_lakhs, 3) AS retention_lock_in_cost_inr_lakhs,\n    ROUND(SUM(0.30 * ls.total_ctc_inr_lakhs) OVER (), 3) AS total_retention_lock_in_cost_top3_inr_lakhs\nFROM ranked_engineers re\nJOIN latest_salary ls\n  ON re.employee_id = ls.employee_id\n AND ls.rn = 1\nWHERE re.burnout_rank <= 3\nORDER BY re.burnout_rank;",
+            "rows_markdown": "|   burnout_rank |   employee_id | employee_name   |   cumulative_burnout_score |   salary_record_id | effective_date      |   total_ctc_inr_lakhs |   retention_lock_in_cost_inr_lakhs |   total_retention_lock_in_cost_top3_inr_lakhs |\n|---------------:|--------------:|:----------------|---------------------------:|-------------------:|:--------------------|----------------------:|-----------------------------------:|----------------------------------------------:|\n|              1 |          1040 | Meera Gupta     |                       1665 |               5038 | 2025-04-01 00:00:00 |                 25.76 |                              7.728 |                                        25.605 |\n|              2 |          1045 | Kiran Joshi     |                       1505 |               5042 | 2025-04-01 00:00:00 |                 17.91 |                              5.373 |                                        25.605 |\n|              3 |          1028 | Siddharth Joshi |                       1427 |               5027 | 2025-04-01 00:00:00 |                 41.68 |                             12.504 |                                        25.605 |",
+            "row_count": 4,
+            "error": null,
+            "iterations": 3
+          }
+        },
+        {
+          "type": "rag",
+          "question": "Using pre-extracted facts F-SAL-03, F-AUTO-42748ED1A6, and F-AUTO-6117CA66E7, summarize the standard retention policy applicable to locking in critical talent, including the 30% of annual CTC cap and approval posture.",
+          "answer": "The standard policy for locking in critical talent is that **HR may offer a retention bonus of up to 30% of annual CTC without additional approvals**, but this applies specifically to **critical talent identified via the 9-box grid as high-potential/high-performance**. That is the default approval posture for standard retention actions. [TechNova_Salary_Structure.pdf::sec5]\n\nRelated approval posture in the same policy distinguishes this from **counter-offers**: for employees with competing offers, **VP-level approval** is needed for adjustments **up to 25%**, and **C-suite approval** is required for adjustments **above 25%**; the **maximum counter-offer is capped at 40% above current CTC**. [TechNova_Salary_Structure.pdf::sec5]\n\nThis same 30% figure is also reflected elsewhere as the policy cap for retention bonuses tied to talent-retention risk. [TechNova_DRHP_Draft.pdf::sec4]\n\n- TechNova_Salary_Structure.pdf::sec5\n- TechNova_DRHP_Draft.pdf::sec4",
+          "rag_result": {
+            "answer": "The standard policy for locking in critical talent is that **HR may offer a retention bonus of up to 30% of annual CTC without additional approvals**, but this applies specifically to **critical talent identified via the 9-box grid as high-potential/high-performance**. That is the default approval posture for standard retention actions. [TechNova_Salary_Structure.pdf::sec5]\n\nRelated approval posture in the same policy distinguishes this from **counter-offers**: for employees with competing offers, **VP-level approval** is needed for adjustments **up to 25%**, and **C-suite approval** is required for adjustments **above 25%**; the **maximum counter-offer is capped at 40% above current CTC**. [TechNova_Salary_Structure.pdf::sec5]\n\nThis same 30% figure is also reflected elsewhere as the policy cap for retention bonuses tied to talent-retention risk. [TechNova_DRHP_Draft.pdf::sec4]\n\n- TechNova_Salary_Structure.pdf::sec5\n- TechNova_DRHP_Draft.pdf::sec4",
+            "citations": [
+              {
+                "chunk_id": "TechNova_Salary_Structure.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_DRHP_Draft.pdf::sec4"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_Salary_Structure.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Salary_Structure.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_DRHP_Draft.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_DRHP_Draft.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Salary_Structure.pdf::sec1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.41, 6 ambiguityies",
+      "clarify r1",
+      "intent -> clarity=0.97, 0 ambiguityies",
+      "readback -> approved",
+      "planner -> 4 sub-qs",
+      "hybrid_exec -> 4 sub-answer(s)",
+      "synthesiser -> 2141 chars",
+      "critic -> pass (0.96)",
+      "completeness -> pass (1 missing)",
+      "finalise -> pass (0.96) via critic"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.41, 6 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "How should I define 'highest burnout risk' for ranking these engineers?",
+        "options": [
+          {
+            "label": "Use the OnCall Runbook's burnout criteria/SLA guidance if it defines a ranking",
+            "value": "runbook_defined"
+          },
+          {
+            "label": "Rank by total pages received over the last 24 weeks",
+            "value": "pages_received"
+          },
+          {
+            "label": "Rank by cumulative on-call rotations/shifts over the last 24 weeks",
+            "value": "on_call_rotations"
+          },
+          {
+            "label": "Use a combined score from on-call load and pages received",
+            "value": "combined_oncall_and_pages"
+          }
+        ],
+        "round": 1
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.41, 6 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.41, 6 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want the `TOP 3` engineers whose `employee_id` appears in `oncall_rotations` over the last `24 weeks` and who also appear as `incidents.reporter_employee_id` with `CAST(reported_date AS DATE)` between `2025-01-01` and `2025-12-31`, ranked by `SUM(oncall_rotations.burnout_risk_score) DESC` as `cumulative_burnout_score`, showing for each `SUM(oncall_rotations.weekly_stipend_inr) + SUM(oncall_rotations.holiday_premium_paid_inr)` as `cumulative_oncall_stipend`, `SUM(oncall_rotations.pages_received_count)` as `total_pages_received`, and `COUNT(incidents.incident_id)` as `incident_count`, plus retrieving the `OnCall Runbook` guidance on burnout and response-time SLAs and calculating the standard retention-policy lock-in cost as `SUM(0.30 * latest salary_records.total_ctc_inr_lakhs)` across the top `3` using the latest `salary_records` by `effective_date`; Shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.97, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 2141 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 2141 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> pass (0.96)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "synthesiser -> 2141 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "critic -> pass (0.96)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "completeness -> pass (1 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> pass (0.96)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "completeness -> pass (1 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.96) via critic"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "The highest-burnout-risk engineers who also reported incidents in 2025 are the top 3 by cumulative burnout score: **Meera Gupta** (burnout **1665**, on-call stipend **₹175,500**, pages **207**, incidents **2**), **Kiran Joshi** (**1505**, **₹210,500**, **167**, **3**), and **Siddharth Joshi** (**1427**, **₹190,000**, **158**, **1**). Across these top 3, the totals are **cumulative burnout score 4,597**, **combined on-call stipend ₹576,000**, **total pages 532**, and **incident count 6**.\n\n| Rank | Engineer | Cumulative burnout score | Cumulative on-call stipend | Total pages received | Incident count | Latest CTC | Standard retention lock-in (30% of CTC) |\n|---|---|---:|---:|---:|---:|---:|---:|\n| 1 | Meera Gupta | 1665 | ₹175,500 | 207 | 2 | ₹25.76L | ₹7.728L |\n| 2 | Kiran Joshi | 1505 | ₹210,500 | 167 | 3 | ₹17.91L | ₹5.373L |\n| 3 | Siddharth Joshi | 1427 | ₹190,000 | 158 | 1 | ₹41.68L | ₹12.504L |\n\n**Combined retention lock-in cost: ₹25.605L**\n\nThe OnCall Runbook says the **primary on-call must acknowledge routine pages within 5 minutes during business hours and 15 minutes off-hours, with automatic escalation to the secondary if missed**; incident response targets are **SEV-1 = 5 minutes, SEV-2 = 15 minutes, SEV-3 = 30 minutes, SEV-4 = next business day** [F-OC-02] [TechNova_OnCall_Runbook.pdf::sec1] [TechNova_OnCall_Runbook.pdf::sec2]. On burnout/fatigue, it describes a **weekly primary/secondary rotation**, automatic secondary coverage, and a **compensatory day off if an engineer gets paged more than 3 times during off-hours in a week**; no broader burnout policy was found in the runbook [TechNova_OnCall_Runbook.pdf::sec1]. Under the standard retention policy, **HR may offer up to 30% of annual CTC for critical talent without additional approvals** [F-SAL-03] [F-AUTO-42748ED1A6] [F-AUTO-6117CA66E7] [TechNova_Salary_Structure.pdf::sec5] [TechNova_DRHP_Draft.pdf::sec4].\n\nSources: tables used — `oncall_rotations`, `incidents`, `salary_records`; chunks cited — `TechNova_OnCall_Runbook.pdf::sec1`, `TechNova_OnCall_Runbook.pdf::sec2`, `TechNova_Salary_Structure.pdf::sec5`, `TechNova_DRHP_Draft.pdf::sec4`.",
+        "confidence": 0.96,
+        "evidence": {
+          "sql": null,
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "sql",
+              "question": "Using oncall_rotations as the engineer population, find employees whose employee_id appears in incidents.reporter_employee_id for incidents with CAST(reported_date AS DATE) between '2025-01-01' and '2025-12-31'; for each such employee, aggregate across all available last-24-weeks oncall_rotations rows: SUM(burnout_risk_score) as cumulative_burnout_score, SUM(weekly_stipend_inr) + SUM(holiday_premium_paid_inr) as cumulative_oncall_stipend, SUM(pages_received_count) as total_pages_received, and COUNT(incidents.incident_id) as incident_count; rank by cumulative_burnout_score descending and return the top 3 plus the full ranked list if available.",
+              "answer": "Using `oncall_rotations`, `incidents`, and `salary_records`, the top 3 2025 incident reporters by cumulative burnout score are Meera Gupta (1665 burnout, ₹175,500 on-call stipend, 207 pages, 2 incidents), Kiran Joshi (1505, ₹210,500, 167 pages, 3 incidents), and Siddharth Joshi (1427, ₹190,000, 158 pages, 1 incident). Full ranked list has 16 engineers; combined across the top 3, cumulative burnout score is 4,597, cumulative on-call stipend is ₹576,000, total pages received is 532, incident count is 6, and the top-3 retention lock-in cost at 30% of latest CTC is 25.605 lakhs.\n\n```sql\nWITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score,\n        SUM(o.weekly_stipend_inr) + SUM(o.holiday_premium_paid_inr) AS cumulative_oncall_stipend,\n        SUM(o.pages_received_count) AS total_pages_received\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nlatest_salary AS (\n    SELECT employee_id, total_ctc_inr_lakhs\n    FROM (\n        SELECT\n            employee_id,\n            total_ctc_inr_lakhs,\n            ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY CAST(effective_date AS DATE) DESC, salary_record_id DESC) AS rn\n        FROM salary_records\n    ) s\n    WHERE rn = 1\n),\nranked AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        oa.cumulative_oncall_stipend,\n        oa.total_pages_received,\n        ri.incident_count,\n        ls.total_ctc_inr_lakhs,\n        0.30 * ls.total_ctc_inr_lakhs AS retention_bonus_cap_inr_lakhs,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, ri.incident_count DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri ON oa.employee_id = ri.employee_id\n    LEFT JOIN latest_salary ls ON oa.employee_id = ls.employee_id\n)\nSELECT\n    burnout_rank,\n    employee_id,\n    employee_name,\n    cumulative_burnout_score,\n    cumulative_oncall_stipend,\n    total_pages_received,\n    incident_count,\n    total_ctc_inr_lakhs,\n    retention_bonus_cap_inr_lakhs,\n    CASE WHEN burnout_rank <= 3 THEN 'Top 3' ELSE 'Full ranked list' END AS list_section\nFROM ranked\nORDER BY burnout_rank;\n```",
+              "sql_result": {
+                "sql": "WITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score,\n        SUM(o.weekly_stipend_inr) + SUM(o.holiday_premium_paid_inr) AS cumulative_oncall_stipend,\n        SUM(o.pages_received_count) AS total_pages_received\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nlatest_salary AS (\n    SELECT employee_id, total_ctc_inr_lakhs\n    FROM (\n        SELECT\n            employee_id,\n            total_ctc_inr_lakhs,\n            ROW_NUMBER() OVER (PARTITION BY employee_id ORDER BY CAST(effective_date AS DATE) DESC, salary_record_id DESC) AS rn\n        FROM salary_records\n    ) s\n    WHERE rn = 1\n),\nranked AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        oa.cumulative_oncall_stipend,\n        oa.total_pages_received,\n        ri.incident_count,\n        ls.total_ctc_inr_lakhs,\n        0.30 * ls.total_ctc_inr_lakhs AS retention_bonus_cap_inr_lakhs,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, ri.incident_count DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri ON oa.employee_id = ri.employee_id\n    LEFT JOIN latest_salary ls ON oa.employee_id = ls.employee_id\n)\nSELECT\n    burnout_rank,\n    employee_id,\n    employee_name,\n    cumulative_burnout_score,\n    cumulative_oncall_stipend,\n    total_pages_received,\n    incident_count,\n    total_ctc_inr_lakhs,\n    retention_bonus_cap_inr_lakhs,\n    CASE WHEN burnout_rank <= 3 THEN 'Top 3' ELSE 'Full ranked list' END AS list_section\nFROM ranked\nORDER BY burnout_rank;",
+                "rows_markdown": "|   burnout_rank |   employee_id | employee_name   |   cumulative_burnout_score |   cumulative_oncall_stipend |   total_pages_received |   incident_count |   total_ctc_inr_lakhs |   retention_bonus_cap_inr_lakhs | list_section     |\n|---------------:|--------------:|:----------------|---------------------------:|----------------------------:|-----------------------:|-----------------:|----------------------:|--------------------------------:|:-----------------|\n|              1 |          1040 | Meera Gupta     |                       1665 |                      175500 |                    207 |                2 |                 25.76 |                           7.728 | Top 3            |\n|              2 |          1045 | Kiran Joshi     |                       1505 |                      210500 |                    167 |                3 |                 17.91 |                           5.373 | Top 3            |\n|              3 |          1028 | Siddharth Joshi |                       1427 |                      190000 |                    158 |                1 |                 41.68 |                          12.504 | Top 3            |\n|              4 |          1032 | Kiran Saxena    |                       1308 |                      139000 |                    140 |                1 |                 11.64 |                           3.492 | Full ranked list |\n|              5 |          1024 | Vikram Kapoor   |                       1227 |                      157500 |                    149 |                1 |                 11.23 |                           3.369 | Full ranked list |\n|              6 |          1021 | Manish Iyer     |                       1187 |                      165500 |                    144 |                2 |                 40.05 |                          12.015 | Full ranked list |\n|              7 |          1025 | Kavya Bhatt     |                       1173 |                      146500 |                    141 |                2 |                 28.69 |                           8.607 | Full ranked list |\n|              8 |          1023 | Ananya Jain     |                       1123 |                      137500 |                    130 |                1 |                 13.86 |                           4.158 | Full ranked list |\n|              9 |          1043 | Meera Das       |                       1056 |                      142000 |                    137 |                1 |                 16.52 |                           4.956 | Full ranked list |\n|             10 |          1030 | Sneha Reddy     |                       1046 |                      113000 |                    113 |                1 |                 11.42 |                           3.426 | Full ranked list |\n|             11 |          1035 | Mohit Agarwal   |                       1026 |                      106500 |                    121 |                3 |                 41.51 |                          12.453 | Full ranked list |\n|             12 |          1015 | Arun Shah       |                       1020 |                      109000 |                    110 |                1 |                 17.62 |                           5.286 | Full ranked list |\n|             13 |          1016 | Swati Agarwal   |                        993 |                      106000 |                    126 |                5 |                 17.97 |                           5.391 | Full ranked list |\n|             14 |          1031 | Dhruv Jain      |                        866 |                      124500 |                    115 |                2 |                 28.23 |                           8.469 | Full ranked list |\n|             15 |          1019 | Pooja Gupta     |                        808 |                      104000 |                     93 |                5 |                 15.69 |                           4.707 | Full ranked list |\n|             16 |          1034 | Vikram Das      |                        779 |                      109500 |                     91 |                4 |                 23.7  |                           7.11  | Full ranked list |",
+                "row_count": 17,
+                "error": null,
+                "iterations": 3
+              }
+            },
+            {
+              "type": "rag",
+              "question": "Using pre-extracted facts F-OC-02, F-AUTO-08B54491BA, and F-AUTO-14E5B8B6B3, summarize what the OnCall Runbook says about response-time SLAs; additionally retrieve any OnCall Runbook guidance specifically about burnout, fatigue, workload rotation, or escalation/coverage practices related to burnout risk.",
+              "answer": "From the OnCall Runbook, the response-time SLAs are:\n\n- For routine on-call paging, the **primary on-call must acknowledge pages within 5 minutes during business hours (09:00–21:00 IST)** and **within 15 minutes during off-hours**. If they do not acknowledge in time, the page **automatically escalates to the secondary on-call**. The runbook also says each team maintains both a **primary and secondary on-call engineer** on a weekly rotation. [TechNova_OnCall_Runbook.pdf::sec1]\n- For incident severity response targets, the runbook defines:\n  - **SEV-1:** response in **5 minutes**\n  - **SEV-2:** response in **15 minutes**\n  - **SEV-3:** response in **30 minutes**\n  - **SEV-4:** response by the **next business day** [TechNova_OnCall_Runbook.pdf::sec2]\n\nOn burnout, fatigue, workload rotation, and escalation/coverage practices, the OnCall Runbook guidance I found is:\n\n- **Weekly rotation structure:** on-call runs on a **weekly schedule** from **Monday 09:00 IST to the following Monday 09:00 IST**, which is the workload rotation mechanism described in the runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Coverage model to reduce single-person risk:** each team has both a **primary and secondary on-call engineer**, and missed acknowledgments by the primary **trigger automatic escalation to the secondary**, which is the clearest burnout-risk-related coverage practice in the document. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Fatigue / overload relief:** if an engineer is **paged more than 3 times during off-hours in a single week**, they are **entitled to a compensatory day off within 30 days**. This is the only explicit burnout/fatigue mitigation guidance I found in the OnCall Runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n\nI do not find additional OnCall Runbook guidance specifically mentioning “burnout,” “fatigue,” or broader workload-balancing practices beyond the weekly rotation, secondary coverage/escalation, and comp-off rule above. [TechNova_OnCall_Runbook.pdf::sec1]\n\n- TechNova_OnCall_Runbook.pdf::sec1\n- TechNova_OnCall_Runbook.pdf::sec2",
+              "rag_result": {
+                "answer": "From the OnCall Runbook, the response-time SLAs are:\n\n- For routine on-call paging, the **primary on-call must acknowledge pages within 5 minutes during business hours (09:00–21:00 IST)** and **within 15 minutes during off-hours**. If they do not acknowledge in time, the page **automatically escalates to the secondary on-call**. The runbook also says each team maintains both a **primary and secondary on-call engineer** on a weekly rotation. [TechNova_OnCall_Runbook.pdf::sec1]\n- For incident severity response targets, the runbook defines:\n  - **SEV-1:** response in **5 minutes**\n  - **SEV-2:** response in **15 minutes**\n  - **SEV-3:** response in **30 minutes**\n  - **SEV-4:** response by the **next business day** [TechNova_OnCall_Runbook.pdf::sec2]\n\nOn burnout, fatigue, workload rotation, and escalation/coverage practices, the OnCall Runbook guidance I found is:\n\n- **Weekly rotation structure:** on-call runs on a **weekly schedule** from **Monday 09:00 IST to the following Monday 09:00 IST**, which is the workload rotation mechanism described in the runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Coverage model to reduce single-person risk:** each team has both a **primary and secondary on-call engineer**, and missed acknowledgments by the primary **trigger automatic escalation to the secondary**, which is the clearest burnout-risk-related coverage practice in the document. [TechNova_OnCall_Runbook.pdf::sec1]\n- **Fatigue / overload relief:** if an engineer is **paged more than 3 times during off-hours in a single week**, they are **entitled to a compensatory day off within 30 days**. This is the only explicit burnout/fatigue mitigation guidance I found in the OnCall Runbook. [TechNova_OnCall_Runbook.pdf::sec1]\n\nI do not find additional OnCall Runbook guidance specifically mentioning “burnout,” “fatigue,” or broader workload-balancing practices beyond the weekly rotation, secondary coverage/escalation, and comp-off rule above. [TechNova_OnCall_Runbook.pdf::sec1]\n\n- TechNova_OnCall_Runbook.pdf::sec1\n- TechNova_OnCall_Runbook.pdf::sec2",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_ISMS_Policy.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_DR_BCP_Plan.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_DR_BCP_Plan.pdf::sec4"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "sql",
+              "question": "For the top 3 engineers by cumulative_burnout_score from the prior SQL result, get each employee's latest salary_records row by effective_date and compute standard retention lock-in cost as 0.30 * total_ctc_inr_lakhs per employee, plus the summed total across the top 3.",
+              "answer": "Using `oncall_rotations`, `incidents`, and `salary_records`, the top 3 engineers by cumulative burnout score have latest salary rows dated 2025-04-01: Meera Gupta (CTC ₹25.76L → retention lock-in ₹7.728L), Kiran Joshi (₹17.91L → ₹5.373L), and Siddharth Joshi (₹41.68L → ₹12.504L). **Total CTC across the top 3 is ₹85.35L; summed standard retention lock-in cost at 30% is ₹25.605L.**\n\n```sql\nWITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nranked_engineers AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        ri.incident_count,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri\n      ON oa.employee_id = ri.employee_id\n),\nlatest_salary AS (\n    SELECT\n        sr.employee_id,\n        sr.salary_record_id,\n        CAST(sr.effective_date AS DATE) AS effective_date,\n        sr.total_ctc_inr_lakhs,\n        ROW_NUMBER() OVER (\n            PARTITION BY sr.employee_id\n            ORDER BY CAST(sr.effective_date AS DATE) DESC, sr.salary_record_id DESC\n        ) AS rn\n    FROM salary_records sr\n)\nSELECT\n    re.burnout_rank,\n    re.employee_id,\n    re.employee_name,\n    re.cumulative_burnout_score,\n    ls.salary_record_id,\n    ls.effective_date,\n    ls.total_ctc_inr_lakhs,\n    ROUND(0.30 * ls.total_ctc_inr_lakhs, 3) AS retention_lock_in_cost_inr_lakhs,\n    ROUND(SUM(0.30 * ls.total_ctc_inr_lakhs) OVER (), 3) AS total_retention_lock_in_cost_top3_inr_lakhs\nFROM ranked_engineers re\nJOIN latest_salary ls\n  ON re.employee_id = ls.employee_id\n AND ls.rn = 1\nWHERE re.burnout_rank <= 3\nORDER BY re.burnout_rank;\n```",
+              "sql_result": {
+                "sql": "WITH reporter_incidents AS (\n    SELECT\n        reporter_employee_id AS employee_id,\n        COUNT(incident_id) AS incident_count\n    FROM incidents\n    WHERE CAST(reported_date AS DATE) BETWEEN DATE '2025-01-01' AND DATE '2025-12-31'\n    GROUP BY reporter_employee_id\n),\noncall_agg AS (\n    SELECT\n        o.employee_id,\n        MAX(o.employee_name) AS employee_name,\n        SUM(o.burnout_risk_score) AS cumulative_burnout_score\n    FROM oncall_rotations o\n    GROUP BY o.employee_id\n),\nranked_engineers AS (\n    SELECT\n        oa.employee_id,\n        oa.employee_name,\n        oa.cumulative_burnout_score,\n        ri.incident_count,\n        ROW_NUMBER() OVER (ORDER BY oa.cumulative_burnout_score DESC, oa.employee_id) AS burnout_rank\n    FROM oncall_agg oa\n    JOIN reporter_incidents ri\n      ON oa.employee_id = ri.employee_id\n),\nlatest_salary AS (\n    SELECT\n        sr.employee_id,\n        sr.salary_record_id,\n        CAST(sr.effective_date AS DATE) AS effective_date,\n        sr.total_ctc_inr_lakhs,\n        ROW_NUMBER() OVER (\n            PARTITION BY sr.employee_id\n            ORDER BY CAST(sr.effective_date AS DATE) DESC, sr.salary_record_id DESC\n        ) AS rn\n    FROM salary_records sr\n)\nSELECT\n    re.burnout_rank,\n    re.employee_id,\n    re.employee_name,\n    re.cumulative_burnout_score,\n    ls.salary_record_id,\n    ls.effective_date,\n    ls.total_ctc_inr_lakhs,\n    ROUND(0.30 * ls.total_ctc_inr_lakhs, 3) AS retention_lock_in_cost_inr_lakhs,\n    ROUND(SUM(0.30 * ls.total_ctc_inr_lakhs) OVER (), 3) AS total_retention_lock_in_cost_top3_inr_lakhs\nFROM ranked_engineers re\nJOIN latest_salary ls\n  ON re.employee_id = ls.employee_id\n AND ls.rn = 1\nWHERE re.burnout_rank <= 3\nORDER BY re.burnout_rank;",
+                "rows_markdown": "|   burnout_rank |   employee_id | employee_name   |   cumulative_burnout_score |   salary_record_id | effective_date      |   total_ctc_inr_lakhs |   retention_lock_in_cost_inr_lakhs |   total_retention_lock_in_cost_top3_inr_lakhs |\n|---------------:|--------------:|:----------------|---------------------------:|-------------------:|:--------------------|----------------------:|-----------------------------------:|----------------------------------------------:|\n|              1 |          1040 | Meera Gupta     |                       1665 |               5038 | 2025-04-01 00:00:00 |                 25.76 |                              7.728 |                                        25.605 |\n|              2 |          1045 | Kiran Joshi     |                       1505 |               5042 | 2025-04-01 00:00:00 |                 17.91 |                              5.373 |                                        25.605 |\n|              3 |          1028 | Siddharth Joshi |                       1427 |               5027 | 2025-04-01 00:00:00 |                 41.68 |                             12.504 |                                        25.605 |",
+                "row_count": 4,
+                "error": null,
+                "iterations": 3
+              }
+            },
+            {
+              "type": "rag",
+              "question": "Using pre-extracted facts F-SAL-03, F-AUTO-42748ED1A6, and F-AUTO-6117CA66E7, summarize the standard retention policy applicable to locking in critical talent, including the 30% of annual CTC cap and approval posture.",
+              "answer": "The standard policy for locking in critical talent is that **HR may offer a retention bonus of up to 30% of annual CTC without additional approvals**, but this applies specifically to **critical talent identified via the 9-box grid as high-potential/high-performance**. That is the default approval posture for standard retention actions. [TechNova_Salary_Structure.pdf::sec5]\n\nRelated approval posture in the same policy distinguishes this from **counter-offers**: for employees with competing offers, **VP-level approval** is needed for adjustments **up to 25%**, and **C-suite approval** is required for adjustments **above 25%**; the **maximum counter-offer is capped at 40% above current CTC**. [TechNova_Salary_Structure.pdf::sec5]\n\nThis same 30% figure is also reflected elsewhere as the policy cap for retention bonuses tied to talent-retention risk. [TechNova_DRHP_Draft.pdf::sec4]\n\n- TechNova_Salary_Structure.pdf::sec5\n- TechNova_DRHP_Draft.pdf::sec4",
+              "rag_result": {
+                "answer": "The standard policy for locking in critical talent is that **HR may offer a retention bonus of up to 30% of annual CTC without additional approvals**, but this applies specifically to **critical talent identified via the 9-box grid as high-potential/high-performance**. That is the default approval posture for standard retention actions. [TechNova_Salary_Structure.pdf::sec5]\n\nRelated approval posture in the same policy distinguishes this from **counter-offers**: for employees with competing offers, **VP-level approval** is needed for adjustments **up to 25%**, and **C-suite approval** is required for adjustments **above 25%**; the **maximum counter-offer is capped at 40% above current CTC**. [TechNova_Salary_Structure.pdf::sec5]\n\nThis same 30% figure is also reflected elsewhere as the policy cap for retention bonuses tied to talent-retention risk. [TechNova_DRHP_Draft.pdf::sec4]\n\n- TechNova_Salary_Structure.pdf::sec5\n- TechNova_DRHP_Draft.pdf::sec4",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_Salary_Structure.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_DRHP_Draft.pdf::sec4"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_Salary_Structure.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Salary_Structure.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_DRHP_Draft.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_DRHP_Draft.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Salary_Structure.pdf::sec1"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.41, 6 ambiguityies",
+          "clarify r1",
+          "intent -> clarity=0.97, 0 ambiguityies",
+          "readback -> approved",
+          "planner -> 4 sub-qs",
+          "hybrid_exec -> 4 sub-answer(s)",
+          "synthesiser -> 2141 chars",
+          "critic -> pass (0.96)",
+          "completeness -> pass (1 missing)",
+          "finalise -> pass (0.96) via critic"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,424 @@
+{
+  "id": "C8",
+  "thread_id": "99fbfa01-bc34-432e-80e2-e1fd8a27ab7f",
+  "final": {
+    "answer": "FY2025-26 total AI infrastructure spend across the relevant departments is **₹334.20 Cr**.\n\nBreakdown:\n- **Data & AI Research — GPU Compute:** ₹133.99 Cr\n- **Data & AI Research — Data Warehouse:** ₹49.68 Cr\n- **Data & AI Research — Salaries & Benefits:** ₹107.53 Cr\n- **Engineering — GPU Hardware Purchase:** ₹43.00 Cr\n- **Combined FY2025-26 AI infrastructure spend:** **₹334.20 Cr**\n\nFor FY2026-27, the planned **AI/ML budget allocation** is **38% of ₹485 Cr = ₹184.30 Cr** [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nComparison:\n- **Delta:** ₹334.20 Cr − ₹184.30 Cr = **₹149.90 Cr**\n- **FY2025-26 spend vs FY2026-27 AI/ML budget:** FY2025-26 actual infrastructure spend is **₹149.90 Cr higher**\n- **Percentage difference:** **81.3% above** the FY2026-27 AI/ML budget\n\nImportant reconciliation note: I would **not** use the earlier ₹336.315 Cr figure, because that appears to add `salary_records` compensation on top of `financial_transactions` Salaries & Benefits, which would double-count pay costs. The clean answer is therefore **₹334.20 Cr vs ₹184.30 Cr**, with FY2025-26 higher by **₹149.90 Cr** [TechNova_Product_Roadmap_2026.pdf::sec1].",
+    "confidence": 0.95,
+    "evidence": {
+      "sql": null,
+      "citations": [
+        {
+          "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "rag",
+          "question": "From the Product Roadmap, extract the FY2026-27 AI/ML planned budget allocation figure and confirm that it is defined as 38% of ₹485 Cr.",
+          "answer": "From the Product Roadmap, the FY2026–27 total product investment budget is **₹485 crores**, with **AI/ML capabilities allocated 38%** of that total [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nSo the planned AI/ML budget allocation is:\n\n**0.38 × 485 = ₹184.3 crores**\n\nYes, this is explicitly defined as **38% of ₹485 Cr** in the roadmap [TechNova_Product_Roadmap_2026.pdf::sec1].\n\n- TechNova_Product_Roadmap_2026.pdf::sec1",
+          "rag_result": {
+            "answer": "From the Product Roadmap, the FY2026–27 total product investment budget is **₹485 crores**, with **AI/ML capabilities allocated 38%** of that total [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nSo the planned AI/ML budget allocation is:\n\n**0.38 × 485 = ₹184.3 crores**\n\nYes, this is explicitly defined as **38% of ₹485 Cr** in the roadmap [TechNova_Product_Roadmap_2026.pdf::sec1].\n\n- TechNova_Product_Roadmap_2026.pdf::sec1",
+            "citations": [
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+              }
+            ]
+          }
+        },
+        {
+          "type": "sql",
+          "question": "Compute total FY2025-26 AI infrastructure spend by summing amount across financial transactions and salary records for period_quarter LIKE 'FY2025-26', including both OpEx and CapEx, restricted to these components only: GPU Compute (OpEx, department 'Data & AI Research') + GPU Hardware Purchase (CapEx, department 'Engineering') + Data Warehouse (OpEx, department 'Data & AI Research') + Salaries & Benefits (OpEx, department 'Data & AI Research').",
+          "answer": "Using `financial_transactions`, `salary_records`, `employees`, and `departments`, the FY2025-26 AI infrastructure spend for the specified components is **₹336.315 Cr**: GPU Compute **₹133.99 Cr**, GPU Hardware Purchase **₹43.00 Cr**, Data Warehouse **₹49.68 Cr**, and Salaries & Benefits **₹109.645 Cr** (₹107.53 Cr from `financial_transactions` + ₹2.1152 Cr from `salary_records`). Compared with the FY2026-27 AI/ML budget proxy of **₹184.30 Cr** (= 0.38 × 485), spend is **₹152.015 Cr higher**; this gap likely reflects a reconciliation issue because Salaries & Benefits appears in both `financial_transactions` and `salary_records`, so compensation may be double-counted across sources.\n\n```sql\nWITH ft_components AS (\n    SELECT\n        d.department_name,\n        ft.category,\n        ft.subcategory,\n        SUM(ft.amount) AS amount_cr\n    FROM financial_transactions ft\n    JOIN departments d ON ft.department_id = d.department_id\n    WHERE ft.period_quarter LIKE '%FY2025-26%'\n      AND (\n        (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND ft.subcategory IN ('GPU Compute', 'Data Warehouse', 'Salaries & Benefits'))\n        OR\n        (d.department_name = 'Engineering' AND ft.category = 'Capital Expenditure' AND ft.subcategory = 'GPU Hardware Purchase')\n      )\n    GROUP BY d.department_name, ft.category, ft.subcategory\n),\nsalary_component AS (\n    SELECT\n        'Data & AI Research' AS department_name,\n        'Salary Records' AS category,\n        'Salaries & Benefits' AS subcategory,\n        ROUND(SUM(sr.total_ctc_inr_lakhs) / 100.0, 4) AS amount_cr\n    FROM salary_records sr\n    JOIN employees e ON sr.employee_id = e.employee_id\n    JOIN departments d ON e.department_id = d.department_id\n    WHERE sr.review_cycle = 'FY2025-26'\n      AND d.department_name = 'Data & AI Research'\n),\ncombined AS (\n    SELECT * FROM ft_components\n    UNION ALL\n    SELECT * FROM salary_component\n),\nbudget AS (\n    SELECT ROUND(0.38 * 485, 2) AS fy2026_27_ai_ml_budget_cr\n)\nSELECT\n    ROUND(SUM(amount_cr), 4) AS fy2025_26_ai_infrastructure_spend_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'GPU Compute' AND category = 'Operating Expense' THEN amount_cr END) AS gpu_compute_cr,\n    MAX(CASE WHEN department_name = 'Engineering' AND subcategory = 'GPU Hardware Purchase' AND category = 'Capital Expenditure' THEN amount_cr END) AS gpu_hardware_purchase_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'Data Warehouse' AND category = 'Operating Expense' THEN amount_cr END) AS data_warehouse_cr,\n    SUM(CASE WHEN subcategory = 'Salaries & Benefits' THEN amount_cr ELSE 0 END) AS salaries_and_benefits_total_cr,\n    (SELECT fy2026_27_ai_ml_budget_cr FROM budget) AS fy2026_27_ai_ml_budget_cr,\n    ROUND((SELECT fy2026_27_ai_ml_budget_cr FROM budget) - SUM(amount_cr), 4) AS budget_minus_spend_cr\nFROM combined;\n```",
+          "sql_result": {
+            "sql": "WITH ft_components AS (\n    SELECT\n        d.department_name,\n        ft.category,\n        ft.subcategory,\n        SUM(ft.amount) AS amount_cr\n    FROM financial_transactions ft\n    JOIN departments d ON ft.department_id = d.department_id\n    WHERE ft.period_quarter LIKE '%FY2025-26%'\n      AND (\n        (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND ft.subcategory IN ('GPU Compute', 'Data Warehouse', 'Salaries & Benefits'))\n        OR\n        (d.department_name = 'Engineering' AND ft.category = 'Capital Expenditure' AND ft.subcategory = 'GPU Hardware Purchase')\n      )\n    GROUP BY d.department_name, ft.category, ft.subcategory\n),\nsalary_component AS (\n    SELECT\n        'Data & AI Research' AS department_name,\n        'Salary Records' AS category,\n        'Salaries & Benefits' AS subcategory,\n        ROUND(SUM(sr.total_ctc_inr_lakhs) / 100.0, 4) AS amount_cr\n    FROM salary_records sr\n    JOIN employees e ON sr.employee_id = e.employee_id\n    JOIN departments d ON e.department_id = d.department_id\n    WHERE sr.review_cycle = 'FY2025-26'\n      AND d.department_name = 'Data & AI Research'\n),\ncombined AS (\n    SELECT * FROM ft_components\n    UNION ALL\n    SELECT * FROM salary_component\n),\nbudget AS (\n    SELECT ROUND(0.38 * 485, 2) AS fy2026_27_ai_ml_budget_cr\n)\nSELECT\n    ROUND(SUM(amount_cr), 4) AS fy2025_26_ai_infrastructure_spend_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'GPU Compute' AND category = 'Operating Expense' THEN amount_cr END) AS gpu_compute_cr,\n    MAX(CASE WHEN department_name = 'Engineering' AND subcategory = 'GPU Hardware Purchase' AND category = 'Capital Expenditure' THEN amount_cr END) AS gpu_hardware_purchase_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'Data Warehouse' AND category = 'Operating Expense' THEN amount_cr END) AS data_warehouse_cr,\n    SUM(CASE WHEN subcategory = 'Salaries & Benefits' THEN amount_cr ELSE 0 END) AS salaries_and_benefits_total_cr,\n    (SELECT fy2026_27_ai_ml_budget_cr FROM budget) AS fy2026_27_ai_ml_budget_cr,\n    ROUND((SELECT fy2026_27_ai_ml_budget_cr FROM budget) - SUM(amount_cr), 4) AS budget_minus_spend_cr\nFROM combined;",
+            "rows_markdown": "|   fy2025_26_ai_infrastructure_spend_cr |   gpu_compute_cr |   gpu_hardware_purchase_cr |   data_warehouse_cr |   salaries_and_benefits_total_cr |   fy2026_27_ai_ml_budget_cr |   budget_minus_spend_cr |\n|---------------------------------------:|-----------------:|---------------------------:|--------------------:|---------------------------------:|----------------------------:|------------------------:|\n|                                336.315 |           133.99 |                         43 |               49.68 |                          109.645 |                       184.3 |                -152.015 |",
+            "row_count": 2,
+            "error": null,
+            "iterations": 4
+          }
+        },
+        {
+          "type": "sql",
+          "question": "Using the FY2025-26 AI infrastructure spend total from the previous SQL result and the FY2026-27 AI/ML planned budget figure from the Product Roadmap, calculate the absolute difference and percentage comparison between actual FY2025-26 spend and planned FY2026-27 budget.",
+          "answer": "Using `financial_transactions` and `departments`, FY2025-26 actual AI infrastructure spend is **₹334.20 Cr** versus the FY2026-27 Product Roadmap AI/ML planned budget of **₹184.30 Cr** (`0.38 × 485`), so the **absolute difference is ₹149.90 Cr**. **Combined comparison summary:** actual FY2025-26 spend is **181.33% of** the FY2026-27 planned budget, meaning the planned budget is **44.85% lower than** the prior year actual.\n\n```sql\nWITH scoped_subcategories AS (\n  SELECT DISTINCT ft.subcategory\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense')\n      OR (ft.category = 'Capital Expenditure')\n    )\n), ai_spend AS (\n  SELECT SUM(ft.amount) AS fy2025_26_ai_infrastructure_spend_cr\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%data warehouse%'\n         OR LOWER(ft.subcategory) LIKE '%salaries%'\n      ))\n      OR\n      (ft.category = 'Capital Expenditure' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%ai%'\n         OR LOWER(ft.subcategory) LIKE '%ml%'\n      ))\n    )\n), budget AS (\n  SELECT 0.38 * 485.0 AS fy2026_27_ai_ml_budget_cr\n)\nSELECT \n  ROUND(a.fy2025_26_ai_infrastructure_spend_cr, 2) AS fy2025_26_actual_spend_cr,\n  ROUND(b.fy2026_27_ai_ml_budget_cr, 2) AS fy2026_27_planned_budget_cr,\n  ROUND(ABS(a.fy2025_26_ai_infrastructure_spend_cr - b.fy2026_27_ai_ml_budget_cr), 2) AS absolute_difference_cr,\n  ROUND((a.fy2025_26_ai_infrastructure_spend_cr / b.fy2026_27_ai_ml_budget_cr) * 100.0, 2) AS actual_as_pct_of_budget,\n  ROUND(((b.fy2026_27_ai_ml_budget_cr - a.fy2025_26_ai_infrastructure_spend_cr) / a.fy2025_26_ai_infrastructure_spend_cr) * 100.0, 2) AS budget_vs_actual_pct\nFROM ai_spend a\nCROSS JOIN budget b;\n```",
+          "sql_result": {
+            "sql": "WITH scoped_subcategories AS (\n  SELECT DISTINCT ft.subcategory\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense')\n      OR (ft.category = 'Capital Expenditure')\n    )\n), ai_spend AS (\n  SELECT SUM(ft.amount) AS fy2025_26_ai_infrastructure_spend_cr\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%data warehouse%'\n         OR LOWER(ft.subcategory) LIKE '%salaries%'\n      ))\n      OR\n      (ft.category = 'Capital Expenditure' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%ai%'\n         OR LOWER(ft.subcategory) LIKE '%ml%'\n      ))\n    )\n), budget AS (\n  SELECT 0.38 * 485.0 AS fy2026_27_ai_ml_budget_cr\n)\nSELECT \n  ROUND(a.fy2025_26_ai_infrastructure_spend_cr, 2) AS fy2025_26_actual_spend_cr,\n  ROUND(b.fy2026_27_ai_ml_budget_cr, 2) AS fy2026_27_planned_budget_cr,\n  ROUND(ABS(a.fy2025_26_ai_infrastructure_spend_cr - b.fy2026_27_ai_ml_budget_cr), 2) AS absolute_difference_cr,\n  ROUND((a.fy2025_26_ai_infrastructure_spend_cr / b.fy2026_27_ai_ml_budget_cr) * 100.0, 2) AS actual_as_pct_of_budget,\n  ROUND(((b.fy2026_27_ai_ml_budget_cr - a.fy2025_26_ai_infrastructure_spend_cr) / a.fy2025_26_ai_infrastructure_spend_cr) * 100.0, 2) AS budget_vs_actual_pct\nFROM ai_spend a\nCROSS JOIN budget b;",
+            "rows_markdown": "|   fy2025_26_actual_spend_cr |   fy2026_27_planned_budget_cr |   absolute_difference_cr |   actual_as_pct_of_budget |   budget_vs_actual_pct |\n|----------------------------:|------------------------------:|-------------------------:|--------------------------:|-----------------------:|\n|                       334.2 |                         184.3 |                    149.9 |                    181.33 |                 -44.85 |",
+            "row_count": 2,
+            "error": null,
+            "iterations": 3
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.24, 4 ambiguityies",
+      "clarify r1",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "planner -> 3 sub-qs",
+      "hybrid_exec -> 3 sub-answer(s)",
+      "synthesiser -> 1601 chars",
+      "critic -> retry (0.62)",
+      "cross_validator -> pass (0.95)",
+      "finalise -> pass (0.95) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.24, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "Which data source should I use for the FY2025-26 AI infrastructure spend and FY2026-27 AI/ML planned budget figures?",
+        "options": [
+          {
+            "label": "Finance actuals and budget transactions table",
+            "value": "finance_transactions"
+          },
+          {
+            "label": "Department budget planning table",
+            "value": "department_budget_plans"
+          },
+          {
+            "label": "Procurement / vendor spend table",
+            "value": "procurement_spend"
+          }
+        ],
+        "round": 1
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.24, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.24, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want `SUM(amount)` for `period_quarter LIKE 'FY2025-26'`, filtered to `department_name IN ('Data & AI Research','Engineering')` and `category IN ('GPU Compute','GPU Hardware Purchase','Data Warehouse','Salaries & Benefits')`, computed as `fy2025_26_ai_infrastructure_spend = GPU Compute (OpEx, Data & AI Research) + GPU Hardware Purchase (CapEx, Engineering) + Data Warehouse (OpEx, Data & AI Research) + Salaries & Benefits (OpEx, Data & AI Research)`, then compared against `fy2026_27_ai_ml_budget = 0.38 * 485`; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 3 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 3 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 3 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 3 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 3 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 1601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 3 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 1601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (0.62)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "synthesiser -> 1601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (0.62)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (0.62)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.95) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "FY2025-26 total AI infrastructure spend across the relevant departments is **₹334.20 Cr**.\n\nBreakdown:\n- **Data & AI Research — GPU Compute:** ₹133.99 Cr\n- **Data & AI Research — Data Warehouse:** ₹49.68 Cr\n- **Data & AI Research — Salaries & Benefits:** ₹107.53 Cr\n- **Engineering — GPU Hardware Purchase:** ₹43.00 Cr\n- **Combined FY2025-26 AI infrastructure spend:** **₹334.20 Cr**\n\nFor FY2026-27, the planned **AI/ML budget allocation** is **38% of ₹485 Cr = ₹184.30 Cr** [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nComparison:\n- **Delta:** ₹334.20 Cr − ₹184.30 Cr = **₹149.90 Cr**\n- **FY2025-26 spend vs FY2026-27 AI/ML budget:** FY2025-26 actual infrastructure spend is **₹149.90 Cr higher**\n- **Percentage difference:** **81.3% above** the FY2026-27 AI/ML budget\n\nImportant reconciliation note: I would **not** use the earlier ₹336.315 Cr figure, because that appears to add `salary_records` compensation on top of `financial_transactions` Salaries & Benefits, which would double-count pay costs. The clean answer is therefore **₹334.20 Cr vs ₹184.30 Cr**, with FY2025-26 higher by **₹149.90 Cr** [TechNova_Product_Roadmap_2026.pdf::sec1].",
+        "confidence": 0.95,
+        "evidence": {
+          "sql": null,
+          "citations": [
+            {
+              "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "rag",
+              "question": "From the Product Roadmap, extract the FY2026-27 AI/ML planned budget allocation figure and confirm that it is defined as 38% of ₹485 Cr.",
+              "answer": "From the Product Roadmap, the FY2026–27 total product investment budget is **₹485 crores**, with **AI/ML capabilities allocated 38%** of that total [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nSo the planned AI/ML budget allocation is:\n\n**0.38 × 485 = ₹184.3 crores**\n\nYes, this is explicitly defined as **38% of ₹485 Cr** in the roadmap [TechNova_Product_Roadmap_2026.pdf::sec1].\n\n- TechNova_Product_Roadmap_2026.pdf::sec1",
+              "rag_result": {
+                "answer": "From the Product Roadmap, the FY2026–27 total product investment budget is **₹485 crores**, with **AI/ML capabilities allocated 38%** of that total [TechNova_Product_Roadmap_2026.pdf::sec1].\n\nSo the planned AI/ML budget allocation is:\n\n**0.38 × 485 = ₹184.3 crores**\n\nYes, this is explicitly defined as **38% of ₹485 Cr** in the roadmap [TechNova_Product_Roadmap_2026.pdf::sec1].\n\n- TechNova_Product_Roadmap_2026.pdf::sec1",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "sql",
+              "question": "Compute total FY2025-26 AI infrastructure spend by summing amount across financial transactions and salary records for period_quarter LIKE 'FY2025-26', including both OpEx and CapEx, restricted to these components only: GPU Compute (OpEx, department 'Data & AI Research') + GPU Hardware Purchase (CapEx, department 'Engineering') + Data Warehouse (OpEx, department 'Data & AI Research') + Salaries & Benefits (OpEx, department 'Data & AI Research').",
+              "answer": "Using `financial_transactions`, `salary_records`, `employees`, and `departments`, the FY2025-26 AI infrastructure spend for the specified components is **₹336.315 Cr**: GPU Compute **₹133.99 Cr**, GPU Hardware Purchase **₹43.00 Cr**, Data Warehouse **₹49.68 Cr**, and Salaries & Benefits **₹109.645 Cr** (₹107.53 Cr from `financial_transactions` + ₹2.1152 Cr from `salary_records`). Compared with the FY2026-27 AI/ML budget proxy of **₹184.30 Cr** (= 0.38 × 485), spend is **₹152.015 Cr higher**; this gap likely reflects a reconciliation issue because Salaries & Benefits appears in both `financial_transactions` and `salary_records`, so compensation may be double-counted across sources.\n\n```sql\nWITH ft_components AS (\n    SELECT\n        d.department_name,\n        ft.category,\n        ft.subcategory,\n        SUM(ft.amount) AS amount_cr\n    FROM financial_transactions ft\n    JOIN departments d ON ft.department_id = d.department_id\n    WHERE ft.period_quarter LIKE '%FY2025-26%'\n      AND (\n        (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND ft.subcategory IN ('GPU Compute', 'Data Warehouse', 'Salaries & Benefits'))\n        OR\n        (d.department_name = 'Engineering' AND ft.category = 'Capital Expenditure' AND ft.subcategory = 'GPU Hardware Purchase')\n      )\n    GROUP BY d.department_name, ft.category, ft.subcategory\n),\nsalary_component AS (\n    SELECT\n        'Data & AI Research' AS department_name,\n        'Salary Records' AS category,\n        'Salaries & Benefits' AS subcategory,\n        ROUND(SUM(sr.total_ctc_inr_lakhs) / 100.0, 4) AS amount_cr\n    FROM salary_records sr\n    JOIN employees e ON sr.employee_id = e.employee_id\n    JOIN departments d ON e.department_id = d.department_id\n    WHERE sr.review_cycle = 'FY2025-26'\n      AND d.department_name = 'Data & AI Research'\n),\ncombined AS (\n    SELECT * FROM ft_components\n    UNION ALL\n    SELECT * FROM salary_component\n),\nbudget AS (\n    SELECT ROUND(0.38 * 485, 2) AS fy2026_27_ai_ml_budget_cr\n)\nSELECT\n    ROUND(SUM(amount_cr), 4) AS fy2025_26_ai_infrastructure_spend_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'GPU Compute' AND category = 'Operating Expense' THEN amount_cr END) AS gpu_compute_cr,\n    MAX(CASE WHEN department_name = 'Engineering' AND subcategory = 'GPU Hardware Purchase' AND category = 'Capital Expenditure' THEN amount_cr END) AS gpu_hardware_purchase_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'Data Warehouse' AND category = 'Operating Expense' THEN amount_cr END) AS data_warehouse_cr,\n    SUM(CASE WHEN subcategory = 'Salaries & Benefits' THEN amount_cr ELSE 0 END) AS salaries_and_benefits_total_cr,\n    (SELECT fy2026_27_ai_ml_budget_cr FROM budget) AS fy2026_27_ai_ml_budget_cr,\n    ROUND((SELECT fy2026_27_ai_ml_budget_cr FROM budget) - SUM(amount_cr), 4) AS budget_minus_spend_cr\nFROM combined;\n```",
+              "sql_result": {
+                "sql": "WITH ft_components AS (\n    SELECT\n        d.department_name,\n        ft.category,\n        ft.subcategory,\n        SUM(ft.amount) AS amount_cr\n    FROM financial_transactions ft\n    JOIN departments d ON ft.department_id = d.department_id\n    WHERE ft.period_quarter LIKE '%FY2025-26%'\n      AND (\n        (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND ft.subcategory IN ('GPU Compute', 'Data Warehouse', 'Salaries & Benefits'))\n        OR\n        (d.department_name = 'Engineering' AND ft.category = 'Capital Expenditure' AND ft.subcategory = 'GPU Hardware Purchase')\n      )\n    GROUP BY d.department_name, ft.category, ft.subcategory\n),\nsalary_component AS (\n    SELECT\n        'Data & AI Research' AS department_name,\n        'Salary Records' AS category,\n        'Salaries & Benefits' AS subcategory,\n        ROUND(SUM(sr.total_ctc_inr_lakhs) / 100.0, 4) AS amount_cr\n    FROM salary_records sr\n    JOIN employees e ON sr.employee_id = e.employee_id\n    JOIN departments d ON e.department_id = d.department_id\n    WHERE sr.review_cycle = 'FY2025-26'\n      AND d.department_name = 'Data & AI Research'\n),\ncombined AS (\n    SELECT * FROM ft_components\n    UNION ALL\n    SELECT * FROM salary_component\n),\nbudget AS (\n    SELECT ROUND(0.38 * 485, 2) AS fy2026_27_ai_ml_budget_cr\n)\nSELECT\n    ROUND(SUM(amount_cr), 4) AS fy2025_26_ai_infrastructure_spend_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'GPU Compute' AND category = 'Operating Expense' THEN amount_cr END) AS gpu_compute_cr,\n    MAX(CASE WHEN department_name = 'Engineering' AND subcategory = 'GPU Hardware Purchase' AND category = 'Capital Expenditure' THEN amount_cr END) AS gpu_hardware_purchase_cr,\n    MAX(CASE WHEN department_name = 'Data & AI Research' AND subcategory = 'Data Warehouse' AND category = 'Operating Expense' THEN amount_cr END) AS data_warehouse_cr,\n    SUM(CASE WHEN subcategory = 'Salaries & Benefits' THEN amount_cr ELSE 0 END) AS salaries_and_benefits_total_cr,\n    (SELECT fy2026_27_ai_ml_budget_cr FROM budget) AS fy2026_27_ai_ml_budget_cr,\n    ROUND((SELECT fy2026_27_ai_ml_budget_cr FROM budget) - SUM(amount_cr), 4) AS budget_minus_spend_cr\nFROM combined;",
+                "rows_markdown": "|   fy2025_26_ai_infrastructure_spend_cr |   gpu_compute_cr |   gpu_hardware_purchase_cr |   data_warehouse_cr |   salaries_and_benefits_total_cr |   fy2026_27_ai_ml_budget_cr |   budget_minus_spend_cr |\n|---------------------------------------:|-----------------:|---------------------------:|--------------------:|---------------------------------:|----------------------------:|------------------------:|\n|                                336.315 |           133.99 |                         43 |               49.68 |                          109.645 |                       184.3 |                -152.015 |",
+                "row_count": 2,
+                "error": null,
+                "iterations": 4
+              }
+            },
+            {
+              "type": "sql",
+              "question": "Using the FY2025-26 AI infrastructure spend total from the previous SQL result and the FY2026-27 AI/ML planned budget figure from the Product Roadmap, calculate the absolute difference and percentage comparison between actual FY2025-26 spend and planned FY2026-27 budget.",
+              "answer": "Using `financial_transactions` and `departments`, FY2025-26 actual AI infrastructure spend is **₹334.20 Cr** versus the FY2026-27 Product Roadmap AI/ML planned budget of **₹184.30 Cr** (`0.38 × 485`), so the **absolute difference is ₹149.90 Cr**. **Combined comparison summary:** actual FY2025-26 spend is **181.33% of** the FY2026-27 planned budget, meaning the planned budget is **44.85% lower than** the prior year actual.\n\n```sql\nWITH scoped_subcategories AS (\n  SELECT DISTINCT ft.subcategory\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense')\n      OR (ft.category = 'Capital Expenditure')\n    )\n), ai_spend AS (\n  SELECT SUM(ft.amount) AS fy2025_26_ai_infrastructure_spend_cr\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%data warehouse%'\n         OR LOWER(ft.subcategory) LIKE '%salaries%'\n      ))\n      OR\n      (ft.category = 'Capital Expenditure' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%ai%'\n         OR LOWER(ft.subcategory) LIKE '%ml%'\n      ))\n    )\n), budget AS (\n  SELECT 0.38 * 485.0 AS fy2026_27_ai_ml_budget_cr\n)\nSELECT \n  ROUND(a.fy2025_26_ai_infrastructure_spend_cr, 2) AS fy2025_26_actual_spend_cr,\n  ROUND(b.fy2026_27_ai_ml_budget_cr, 2) AS fy2026_27_planned_budget_cr,\n  ROUND(ABS(a.fy2025_26_ai_infrastructure_spend_cr - b.fy2026_27_ai_ml_budget_cr), 2) AS absolute_difference_cr,\n  ROUND((a.fy2025_26_ai_infrastructure_spend_cr / b.fy2026_27_ai_ml_budget_cr) * 100.0, 2) AS actual_as_pct_of_budget,\n  ROUND(((b.fy2026_27_ai_ml_budget_cr - a.fy2025_26_ai_infrastructure_spend_cr) / a.fy2025_26_ai_infrastructure_spend_cr) * 100.0, 2) AS budget_vs_actual_pct\nFROM ai_spend a\nCROSS JOIN budget b;\n```",
+              "sql_result": {
+                "sql": "WITH scoped_subcategories AS (\n  SELECT DISTINCT ft.subcategory\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense')\n      OR (ft.category = 'Capital Expenditure')\n    )\n), ai_spend AS (\n  SELECT SUM(ft.amount) AS fy2025_26_ai_infrastructure_spend_cr\n  FROM financial_transactions ft\n  JOIN departments d ON ft.department_id = d.department_id\n  WHERE ft.period_quarter LIKE '%FY2025-26%'\n    AND (\n      (d.department_name = 'Data & AI Research' AND ft.category = 'Operating Expense' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%data warehouse%'\n         OR LOWER(ft.subcategory) LIKE '%salaries%'\n      ))\n      OR\n      (ft.category = 'Capital Expenditure' AND (\n         LOWER(ft.subcategory) LIKE '%gpu%'\n         OR LOWER(ft.subcategory) LIKE '%ai%'\n         OR LOWER(ft.subcategory) LIKE '%ml%'\n      ))\n    )\n), budget AS (\n  SELECT 0.38 * 485.0 AS fy2026_27_ai_ml_budget_cr\n)\nSELECT \n  ROUND(a.fy2025_26_ai_infrastructure_spend_cr, 2) AS fy2025_26_actual_spend_cr,\n  ROUND(b.fy2026_27_ai_ml_budget_cr, 2) AS fy2026_27_planned_budget_cr,\n  ROUND(ABS(a.fy2025_26_ai_infrastructure_spend_cr - b.fy2026_27_ai_ml_budget_cr), 2) AS absolute_difference_cr,\n  ROUND((a.fy2025_26_ai_infrastructure_spend_cr / b.fy2026_27_ai_ml_budget_cr) * 100.0, 2) AS actual_as_pct_of_budget,\n  ROUND(((b.fy2026_27_ai_ml_budget_cr - a.fy2025_26_ai_infrastructure_spend_cr) / a.fy2025_26_ai_infrastructure_spend_cr) * 100.0, 2) AS budget_vs_actual_pct\nFROM ai_spend a\nCROSS JOIN budget b;",
+                "rows_markdown": "|   fy2025_26_actual_spend_cr |   fy2026_27_planned_budget_cr |   absolute_difference_cr |   actual_as_pct_of_budget |   budget_vs_actual_pct |\n|----------------------------:|------------------------------:|-------------------------:|--------------------------:|-----------------------:|\n|                       334.2 |                         184.3 |                    149.9 |                    181.33 |                 -44.85 |",
+                "row_count": 2,
+                "error": null,
+                "iterations": 3
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.24, 4 ambiguityies",
+          "clarify r1",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "planner -> 3 sub-qs",
+          "hybrid_exec -> 3 sub-answer(s)",
+          "synthesiser -> 1601 chars",
+          "critic -> retry (0.62)",
+          "cross_validator -> pass (0.95)",
+          "finalise -> pass (0.95) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 140.4,
+  "score": {
+    "passed": false,
+    "reason": "coverage 50% < 80%",
+    "conf": 0.95,
+    "matches": 1,
+    "matches_total": 2,
+    "cited_pdf": true
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "FY26",
+    "AI"
+  ]
+}

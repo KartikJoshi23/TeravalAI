@@ -1,0 +1,329 @@
+{
+  "id": "Q3",
+  "thread_id": "f745cf49-b6c9-4a44-9a42-0604f22adf0f",
+  "final": {
+    "answer": "Using the Tier 1 customers in India, Japan, and South Korea, and independently recomputing the employee checks with subqueries, I found **2 major accounts** whose account managers are **below L5** and have **0 completed tracked external certifications**.\n\nWhy these are flagged:\n- **ESOPs:** TechNova’s compensation policy says **ESOPs are granted to employees at L5 and above**; therefore L4 managers are outside the stated eligibility band [TechNova_Salary_Structure.pdf::sec3].\n- **Certifications:** TechNova’s training policy identifies the tracked role-specific external certifications as **AWS Solutions Architect (Professional), CKA, Google Professional Machine Learning Engineer, and CIPP/A** [TechNova_Training_Compliance.pdf::sec2].\n\nFlagged accounts:\n1. **Crescent Media** — Japan — **₹1486.67L ARR**\n   - Account manager: **Rohit Jain**\n   - Level: **L4** → below ESOP eligibility threshold [TechNova_Salary_Structure.pdf::sec3]\n   - ESOP units granted: **0**\n   - Completed tracked external certifications: **0**\n   - Customer status / employee status: **Active / Active**\n\n2. **Atlas Telecom** — India — **₹1325.29L ARR**\n   - Account manager: **Kiran Malhotra**\n   - Level: **L4** → below ESOP eligibility threshold [TechNova_Salary_Structure.pdf::sec3]\n   - ESOP units granted: **0**\n   - Completed tracked external certifications: **0**\n   - Customer status / employee status: **Active / Active**\n\n**Combined ARR: ₹2841.43L (≈ ₹28.41 Cr)**\n\nCaveat: this certification screen is specifically for **tracked external certifications** named in policy / training records, not every mandatory LMS compliance module or every possible credential [TechNova_Training_Compliance.pdf::sec1] [TechNova_Training_Compliance.pdf::sec2].",
+    "confidence": 0.88,
+    "evidence": {
+      "sql": {
+        "query": "WITH external_cert_counts AS (\n  SELECT\n    tc.employee_id,\n    COUNT(*) FILTER (\n      WHERE tc.status = 'Completed'\n        AND tc.module_name IN (\n          'AWS Solutions Architect (Professional)',\n          'CIPP/A',\n          'CKA - Kubernetes Administrator',\n          'Google Professional ML Engineer'\n        )\n    ) AS completed_external_certs\n  FROM training_compliance tc\n  GROUP BY tc.employee_id\n)\nSELECT\n  c.customer_name,\n  c.country,\n  c.industry,\n  c.account_status,\n  c.arr_inr_lakhs,\n  e.employee_id AS account_manager_employee_id,\n  e.first_name || ' ' || e.last_name AS account_manager,\n  e.level AS employee_level,\n  e.employment_status,\n  sr.esop_units_granted,\n  COALESCE(ecc.completed_external_certs, 0) AS completed_external_certs\nFROM customers c\nJOIN employees e\n  ON c.account_manager_employee_id = e.employee_id\nLEFT JOIN salary_records sr\n  ON sr.employee_id = e.employee_id\nLEFT JOIN external_cert_counts ecc\n  ON ecc.employee_id = e.employee_id\nWHERE c.tier = 'Tier 1'\n  AND c.country IN ('India', 'Japan', 'South Korea')\n  AND CAST(SUBSTR(e.level, 2) AS INTEGER) < 5\n  AND COALESCE(ecc.completed_external_certs, 0) = 0\nORDER BY c.arr_inr_lakhs DESC;",
+        "rows_markdown": "| customer_name   | country   | industry   | account_status   |   arr_inr_lakhs |   account_manager_employee_id | account_manager   | employee_level   | employment_status   |   esop_units_granted |   completed_external_certs |\n|:----------------|:----------|:-----------|:-----------------|----------------:|------------------------------:|:------------------|:-----------------|:--------------------|---------------------:|---------------------------:|\n| Crescent Media  | Japan     | Energy     | Active           |         1486.67 |                          1071 | Rohit Jain        | L4               | Active              |                    0 |                          0 |\n| Atlas Telecom   | India     | Telecom    | Active           |         1325.29 |                          1075 | Kiran Malhotra    | L4               | Active              |                    0 |                          0 |",
+        "error": null
+      },
+      "citations": [
+        {
+          "chunk_id": "TechNova_Training_Compliance.pdf::sec1"
+        },
+        {
+          "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+        },
+        {
+          "chunk_id": "TechNova_Training_Compliance.pdf::sec2"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": null
+    },
+    "trace": [
+      "router -> sql",
+      "intent -> clarity=0.31, 3 ambiguityies",
+      "clarify r1",
+      "intent -> clarity=0.46, 2 ambiguityies",
+      "clarify r2",
+      "intent -> clarity=0.79, 3 ambiguityies",
+      "readback -> approved",
+      "sql_agent -> 6 iter",
+      "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['cert...)",
+      "cross_validator -> pass (0.88)",
+      "finalise -> pass (0.88) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.31, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "Which field should I use for 'haven't bothered with any certifications' for the account manager?",
+        "options": [
+          {
+            "label": "No certification records at all",
+            "value": "no_certification_records"
+          },
+          {
+            "label": "No active/current certifications",
+            "value": "no_active_certifications"
+          },
+          {
+            "label": "Only missing required compliance certifications",
+            "value": "missing_required_compliance_certifications"
+          }
+        ],
+        "round": 1
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "router -> sql"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.31, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.31, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "Which field should I use for 'haven't bothered with any certifications' when filtering account managers?",
+        "options": [],
+        "round": 2
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.46, 2 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.79, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want the biggest `customer` accounts by `arr DESC`, joining `customers -> employees -> salary_records -> training_compliance`, filtered to `tier='Tier 1'`, `country IN ('India','Japan','South Korea')`, `level<'L5'`, and `completed_external_certs=0`, to find accounts managed by employees without ESOPs, with no explicit filter on active `employee` or active `customer` status; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.79, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "intent -> clarity=0.79, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "sql_agent",
+        "text": "sql_agent -> 6 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "sql_agent -> 6 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['cert...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "sql_agent -> 6 iter"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['cert...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.88)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['cert...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.88)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.88) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Using the Tier 1 customers in India, Japan, and South Korea, and independently recomputing the employee checks with subqueries, I found **2 major accounts** whose account managers are **below L5** and have **0 completed tracked external certifications**.\n\nWhy these are flagged:\n- **ESOPs:** TechNova’s compensation policy says **ESOPs are granted to employees at L5 and above**; therefore L4 managers are outside the stated eligibility band [TechNova_Salary_Structure.pdf::sec3].\n- **Certifications:** TechNova’s training policy identifies the tracked role-specific external certifications as **AWS Solutions Architect (Professional), CKA, Google Professional Machine Learning Engineer, and CIPP/A** [TechNova_Training_Compliance.pdf::sec2].\n\nFlagged accounts:\n1. **Crescent Media** — Japan — **₹1486.67L ARR**\n   - Account manager: **Rohit Jain**\n   - Level: **L4** → below ESOP eligibility threshold [TechNova_Salary_Structure.pdf::sec3]\n   - ESOP units granted: **0**\n   - Completed tracked external certifications: **0**\n   - Customer status / employee status: **Active / Active**\n\n2. **Atlas Telecom** — India — **₹1325.29L ARR**\n   - Account manager: **Kiran Malhotra**\n   - Level: **L4** → below ESOP eligibility threshold [TechNova_Salary_Structure.pdf::sec3]\n   - ESOP units granted: **0**\n   - Completed tracked external certifications: **0**\n   - Customer status / employee status: **Active / Active**\n\n**Combined ARR: ₹2841.43L (≈ ₹28.41 Cr)**\n\nCaveat: this certification screen is specifically for **tracked external certifications** named in policy / training records, not every mandatory LMS compliance module or every possible credential [TechNova_Training_Compliance.pdf::sec1] [TechNova_Training_Compliance.pdf::sec2].",
+        "confidence": 0.88,
+        "evidence": {
+          "sql": {
+            "query": "WITH external_cert_counts AS (\n  SELECT\n    tc.employee_id,\n    COUNT(*) FILTER (\n      WHERE tc.status = 'Completed'\n        AND tc.module_name IN (\n          'AWS Solutions Architect (Professional)',\n          'CIPP/A',\n          'CKA - Kubernetes Administrator',\n          'Google Professional ML Engineer'\n        )\n    ) AS completed_external_certs\n  FROM training_compliance tc\n  GROUP BY tc.employee_id\n)\nSELECT\n  c.customer_name,\n  c.country,\n  c.industry,\n  c.account_status,\n  c.arr_inr_lakhs,\n  e.employee_id AS account_manager_employee_id,\n  e.first_name || ' ' || e.last_name AS account_manager,\n  e.level AS employee_level,\n  e.employment_status,\n  sr.esop_units_granted,\n  COALESCE(ecc.completed_external_certs, 0) AS completed_external_certs\nFROM customers c\nJOIN employees e\n  ON c.account_manager_employee_id = e.employee_id\nLEFT JOIN salary_records sr\n  ON sr.employee_id = e.employee_id\nLEFT JOIN external_cert_counts ecc\n  ON ecc.employee_id = e.employee_id\nWHERE c.tier = 'Tier 1'\n  AND c.country IN ('India', 'Japan', 'South Korea')\n  AND CAST(SUBSTR(e.level, 2) AS INTEGER) < 5\n  AND COALESCE(ecc.completed_external_certs, 0) = 0\nORDER BY c.arr_inr_lakhs DESC;",
+            "rows_markdown": "| customer_name   | country   | industry   | account_status   |   arr_inr_lakhs |   account_manager_employee_id | account_manager   | employee_level   | employment_status   |   esop_units_granted |   completed_external_certs |\n|:----------------|:----------|:-----------|:-----------------|----------------:|------------------------------:|:------------------|:-----------------|:--------------------|---------------------:|---------------------------:|\n| Crescent Media  | Japan     | Energy     | Active           |         1486.67 |                          1071 | Rohit Jain        | L4               | Active              |                    0 |                          0 |\n| Atlas Telecom   | India     | Telecom    | Active           |         1325.29 |                          1075 | Kiran Malhotra    | L4               | Active              |                    0 |                          0 |",
+            "error": null
+          },
+          "citations": [
+            {
+              "chunk_id": "TechNova_Training_Compliance.pdf::sec1"
+            },
+            {
+              "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+            },
+            {
+              "chunk_id": "TechNova_Training_Compliance.pdf::sec2"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": null
+        },
+        "trace": [
+          "router -> sql",
+          "intent -> clarity=0.31, 3 ambiguityies",
+          "clarify r1",
+          "intent -> clarity=0.46, 2 ambiguityies",
+          "clarify r2",
+          "intent -> clarity=0.79, 3 ambiguityies",
+          "readback -> approved",
+          "sql_agent -> 6 iter",
+          "critic -> retry (gate: grounding: Question uses policy/fuzzy terms ['cert...)",
+          "cross_validator -> pass (0.88)",
+          "finalise -> pass (0.88) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 95.7
+}

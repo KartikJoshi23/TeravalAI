@@ -1,0 +1,21 @@
+event: trace
+data: {"phase": "clarification", "text": "router -> sql"}
+
+event: trace
+data: {"phase": "clarification", "text": "intent -> clarity=0.42, 4 ambiguityies"}
+
+event: trace
+data: {"phase": "clarification", "text": "clarify r1"}
+
+event: trace
+data: {"phase": "intent_classifier", "text": "intent -> clarity=0.42, 4 ambiguityies"}
+
+event: trace
+data: {"phase": "intent_classifier", "text": "clarify r1"}
+
+event: trace
+data: {"phase": "intent_classifier", "text": "intent -> clarity=0.93, 0 ambiguityies"}
+
+event: readback
+data: {"readback": "To confirm: you want `service` records filtered to `service_criticality='Critical'`, joined `services->teams->training` with `training_status='behind mandatory training'`, joined `services->vendors` with `risk_status IN ('Conditional','Suspended')`, returning `training_gap` and `vendor_name`; shall I run this?"}
+

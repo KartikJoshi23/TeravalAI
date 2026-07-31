@@ -1,0 +1,343 @@
+{
+  "id": "C7",
+  "thread_id": "8713006b-0272-479b-a79d-26612910eb7e",
+  "final": {
+    "answer": "There are **no Tier-1 APAC customers** currently marked **Churned** or **At Risk** in the `customers` table.\n\n**Customers matching filter:** none  \n**Combined ARR represented:** **₹0.00 lakhs**\n\nApplied filters: `tier = 'Tier 1'`, `region = 'APAC'`, `account_status IN ('Churned', 'At Risk')`.",
+    "confidence": 0.97,
+    "evidence": {
+      "sql": null,
+      "citations": null,
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "rag",
+          "question": "What do the board minutes, investor updates, or strategic planning documents say about IPO timing, readiness priorities, and customer-retention expectations heading into the IPO?",
+          "answer": "Heading into the IPO, the documents point to a fairly specific timeline and a readiness agenda centered on scale, retention, compliance, and investor-grade reporting.\n\n- **IPO timing:** The board minutes say TechNova is targeting a **DRHP filing with SEBI by September 2026**, with a **BSE/NSE listing in Q3 FY2027-28**. The same discussion frames the IPO as a formal, actively managed process, with BRLMs appointed and an IPO Committee constituted to oversee execution. [TechNova_Board_Minutes_Q4.pdf::sec3]\n\n- **Readiness priorities:** The strategic/product planning materials define the main IPO-readiness milestones as:\n  - reaching **3,500 paying enterprise customers by Q2 FY2027** from a current base of 2,847,\n  - sustaining **120%+ net revenue retention (NRR) for 4 consecutive quarters** from a current 118.3%,\n  - completing **SOC 2 Type II and ISO 27001 certification for all product modules by December 2026**, and\n  - building an **investor-facing analytics dashboard** covering platform health, customer growth, and AI adoption. [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- **Customer-retention expectations:** The clearest expectation is that retention must improve from the current **118.3% NRR** to **120%+ for four straight quarters** to support the IPO narrative. That implies management wants not just low churn, but strong expansion within the installed base and consistency over time. The Q4 financial report confirms the current NRR baseline at **118.3%**, while the roadmap elevates that metric into an IPO gate. [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec3]\n\nOverall, the documents suggest TechNova is aiming to enter the public markets only after it can show: a credible filing/listing schedule, stronger customer scale, sustained best-in-class retention/expansion, completed compliance certifications, and reporting infrastructure suitable for investors. [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Q4_Financial_Report.pdf::sec3",
+          "rag_result": {
+            "answer": "Heading into the IPO, the documents point to a fairly specific timeline and a readiness agenda centered on scale, retention, compliance, and investor-grade reporting.\n\n- **IPO timing:** The board minutes say TechNova is targeting a **DRHP filing with SEBI by September 2026**, with a **BSE/NSE listing in Q3 FY2027-28**. The same discussion frames the IPO as a formal, actively managed process, with BRLMs appointed and an IPO Committee constituted to oversee execution. [TechNova_Board_Minutes_Q4.pdf::sec3]\n\n- **Readiness priorities:** The strategic/product planning materials define the main IPO-readiness milestones as:\n  - reaching **3,500 paying enterprise customers by Q2 FY2027** from a current base of 2,847,\n  - sustaining **120%+ net revenue retention (NRR) for 4 consecutive quarters** from a current 118.3%,\n  - completing **SOC 2 Type II and ISO 27001 certification for all product modules by December 2026**, and\n  - building an **investor-facing analytics dashboard** covering platform health, customer growth, and AI adoption. [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- **Customer-retention expectations:** The clearest expectation is that retention must improve from the current **118.3% NRR** to **120%+ for four straight quarters** to support the IPO narrative. That implies management wants not just low churn, but strong expansion within the installed base and consistency over time. The Q4 financial report confirms the current NRR baseline at **118.3%**, while the roadmap elevates that metric into an IPO gate. [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec3]\n\nOverall, the documents suggest TechNova is aiming to enter the public markets only after it can show: a credible filing/listing schedule, stronger customer scale, sustained best-in-class retention/expansion, completed compliance certifications, and reporting infrastructure suitable for investors. [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Q4_Financial_Report.pdf::sec3",
+            "citations": [
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec3"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec3"
+              }
+            ]
+          }
+        },
+        {
+          "type": "sql",
+          "question": "Find all customers with tier = 'Tier 1' and region = 'APAC' whose account_status is either 'Churned' or 'At Risk', and return each customer plus its ARR and the total sum of ARR (arr_inr_lakhs) across those customers.",
+          "answer": "No customers in `customers` match `tier = 'Tier 1'`, `region = 'APAC'`, and `account_status IN ('Churned', 'At Risk')`; therefore the combined ARR is 0.00 lakhs.  \nTables used: `customers`.\n\n```sql\nSELECT customer_name, arr_inr_lakhs, SUM(arr_inr_lakhs) OVER () AS total_arr_inr_lakhs\nFROM customers\nWHERE tier = 'Tier 1'\n  AND region = 'APAC'\n  AND account_status IN ('Churned', 'At Risk')\nORDER BY arr_inr_lakhs DESC, customer_name;\n```",
+          "sql_result": {
+            "sql": "SELECT customer_name, arr_inr_lakhs, SUM(arr_inr_lakhs) OVER () AS total_arr_inr_lakhs\nFROM customers\nWHERE tier = 'Tier 1'\n  AND region = 'APAC'\n  AND account_status IN ('Churned', 'At Risk')\nORDER BY arr_inr_lakhs DESC, customer_name;",
+            "rows_markdown": "(no rows)",
+            "row_count": 0,
+            "error": null,
+            "iterations": 2
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.96, 0 ambiguityies",
+      "readback -> approved",
+      "planner -> 2 sub-qs",
+      "hybrid_exec -> 2 sub-answer(s)",
+      "synthesiser -> 881 chars",
+      "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['118.3', ...)",
+      "cross_validator -> pass (0.97)",
+      "finalise -> pass (0.97) via cross_validator"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want `customer` records filtered to `tier='Tier 1'` AND `region='APAC'` AND `account_status IN ('Churned','At Risk')`, returning the matching customers and the aggregated `SUM(arr_inr_lakhs)` they represent; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.96, 0 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 2 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 881 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 2 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 881 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['118.3', ...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "synthesiser -> 881 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['118.3', ...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['118.3', ...)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "cross_validator -> pass (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.97) via cross_validator"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "There are **no Tier-1 APAC customers** currently marked **Churned** or **At Risk** in the `customers` table.\n\n**Customers matching filter:** none  \n**Combined ARR represented:** **₹0.00 lakhs**\n\nApplied filters: `tier = 'Tier 1'`, `region = 'APAC'`, `account_status IN ('Churned', 'At Risk')`.",
+        "confidence": 0.97,
+        "evidence": {
+          "sql": null,
+          "citations": null,
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "rag",
+              "question": "What do the board minutes, investor updates, or strategic planning documents say about IPO timing, readiness priorities, and customer-retention expectations heading into the IPO?",
+              "answer": "Heading into the IPO, the documents point to a fairly specific timeline and a readiness agenda centered on scale, retention, compliance, and investor-grade reporting.\n\n- **IPO timing:** The board minutes say TechNova is targeting a **DRHP filing with SEBI by September 2026**, with a **BSE/NSE listing in Q3 FY2027-28**. The same discussion frames the IPO as a formal, actively managed process, with BRLMs appointed and an IPO Committee constituted to oversee execution. [TechNova_Board_Minutes_Q4.pdf::sec3]\n\n- **Readiness priorities:** The strategic/product planning materials define the main IPO-readiness milestones as:\n  - reaching **3,500 paying enterprise customers by Q2 FY2027** from a current base of 2,847,\n  - sustaining **120%+ net revenue retention (NRR) for 4 consecutive quarters** from a current 118.3%,\n  - completing **SOC 2 Type II and ISO 27001 certification for all product modules by December 2026**, and\n  - building an **investor-facing analytics dashboard** covering platform health, customer growth, and AI adoption. [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- **Customer-retention expectations:** The clearest expectation is that retention must improve from the current **118.3% NRR** to **120%+ for four straight quarters** to support the IPO narrative. That implies management wants not just low churn, but strong expansion within the installed base and consistency over time. The Q4 financial report confirms the current NRR baseline at **118.3%**, while the roadmap elevates that metric into an IPO gate. [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec3]\n\nOverall, the documents suggest TechNova is aiming to enter the public markets only after it can show: a credible filing/listing schedule, stronger customer scale, sustained best-in-class retention/expansion, completed compliance certifications, and reporting infrastructure suitable for investors. [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Q4_Financial_Report.pdf::sec3",
+              "rag_result": {
+                "answer": "Heading into the IPO, the documents point to a fairly specific timeline and a readiness agenda centered on scale, retention, compliance, and investor-grade reporting.\n\n- **IPO timing:** The board minutes say TechNova is targeting a **DRHP filing with SEBI by September 2026**, with a **BSE/NSE listing in Q3 FY2027-28**. The same discussion frames the IPO as a formal, actively managed process, with BRLMs appointed and an IPO Committee constituted to oversee execution. [TechNova_Board_Minutes_Q4.pdf::sec3]\n\n- **Readiness priorities:** The strategic/product planning materials define the main IPO-readiness milestones as:\n  - reaching **3,500 paying enterprise customers by Q2 FY2027** from a current base of 2,847,\n  - sustaining **120%+ net revenue retention (NRR) for 4 consecutive quarters** from a current 118.3%,\n  - completing **SOC 2 Type II and ISO 27001 certification for all product modules by December 2026**, and\n  - building an **investor-facing analytics dashboard** covering platform health, customer growth, and AI adoption. [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- **Customer-retention expectations:** The clearest expectation is that retention must improve from the current **118.3% NRR** to **120%+ for four straight quarters** to support the IPO narrative. That implies management wants not just low churn, but strong expansion within the installed base and consistency over time. The Q4 financial report confirms the current NRR baseline at **118.3%**, while the roadmap elevates that metric into an IPO gate. [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec3]\n\nOverall, the documents suggest TechNova is aiming to enter the public markets only after it can show: a credible filing/listing schedule, stronger customer scale, sustained best-in-class retention/expansion, completed compliance certifications, and reporting infrastructure suitable for investors. [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5]\n\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Q4_Financial_Report.pdf::sec3",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec3"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec3"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "sql",
+              "question": "Find all customers with tier = 'Tier 1' and region = 'APAC' whose account_status is either 'Churned' or 'At Risk', and return each customer plus its ARR and the total sum of ARR (arr_inr_lakhs) across those customers.",
+              "answer": "No customers in `customers` match `tier = 'Tier 1'`, `region = 'APAC'`, and `account_status IN ('Churned', 'At Risk')`; therefore the combined ARR is 0.00 lakhs.  \nTables used: `customers`.\n\n```sql\nSELECT customer_name, arr_inr_lakhs, SUM(arr_inr_lakhs) OVER () AS total_arr_inr_lakhs\nFROM customers\nWHERE tier = 'Tier 1'\n  AND region = 'APAC'\n  AND account_status IN ('Churned', 'At Risk')\nORDER BY arr_inr_lakhs DESC, customer_name;\n```",
+              "sql_result": {
+                "sql": "SELECT customer_name, arr_inr_lakhs, SUM(arr_inr_lakhs) OVER () AS total_arr_inr_lakhs\nFROM customers\nWHERE tier = 'Tier 1'\n  AND region = 'APAC'\n  AND account_status IN ('Churned', 'At Risk')\nORDER BY arr_inr_lakhs DESC, customer_name;",
+                "rows_markdown": "(no rows)",
+                "row_count": 0,
+                "error": null,
+                "iterations": 2
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.96, 0 ambiguityies",
+          "readback -> approved",
+          "planner -> 2 sub-qs",
+          "hybrid_exec -> 2 sub-answer(s)",
+          "synthesiser -> 881 chars",
+          "critic -> retry (gate: numeric_sanity: Answer mentions numbers ['118.3', ...)",
+          "cross_validator -> pass (0.97)",
+          "finalise -> pass (0.97) via cross_validator"
+        ]
+      }
+    }
+  ],
+  "elapsed_s": 63.9,
+  "score": {
+    "passed": false,
+    "reason": "no PDF citation",
+    "conf": 0.97,
+    "matches": 2,
+    "matches_total": 2,
+    "cited_pdf": false
+  },
+  "level": "complex",
+  "expected_substrings": [
+    "Tier 1",
+    "APAC"
+  ]
+}

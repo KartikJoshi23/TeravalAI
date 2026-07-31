@@ -1,0 +1,775 @@
+{
+  "id": "IPO_BREACH",
+  "thread_id": "1984c3da-02b4-4fdc-be2f-9ac5b1bdf6d1",
+  "final": {
+    "answer": "Yes — a breach tomorrow on the closest comparable critical AI/analytics service looks like a real IPO-timeline risk, but mainly because it could disrupt compliance/certification and enterprise retention, not because TechNova would run out of company cash.\n\nUsing the November breach as the baseline analogue, the most defensible end-to-end modeled cost for **one critical Engineering AI/analytics service** is:\n\n- **Direct remediation baseline:** **₹0.00L** from incident `INC-2025-0847` in the incidents table.\n- **People lock-in / retention proxy:** **₹39.24L** = 30% of the combined CTC of the incident reporter plus the identified Engineering on-call/DevOps pool.\n- **Customer-loss proxy:** **₹3,841.95L (₹38.42 Cr)** = 15% of active Tier 1 + Tier 2 ARR used as the enterprise churn-risk proxy.\n- **Security / regulatory program floor:** **₹850.00L (₹8.50 Cr)** from the board-approved Zero Trust acceleration budget after the November incident [TechNova_Board_Minutes_Q4.pdf::sec5].\n- **Vendor fallout:** **2 risky Engineering-owned vendors flagged** (VendorConnect Solutions = Suspended; NVIDIA (DGX) = Conditional), but **no grounded INR breakage amount is available in the schema**, so they should be treated as qualitative downside risk, not added as a fabricated rupee figure [TechNova_Vendor_Contracts.pdf::sec4].\n\n**Total modeled scenario cost: ₹4,731.18L (₹47.31 Cr)**\n\n**Arithmetic summary**\n- People lock-in: **₹39.24L**\n- Customer-loss proxy: **₹3,841.95L**\n- Direct remediation: **₹0.00L**\n- Zero Trust / security floor: **₹850.00L**\n- **Combined total: ₹4,731.18L (₹47.31 Cr)**\n\nAgainst budget:\n- **Engineering Q4 budget:** **₹210 Cr**\n- **Engineering unspent Q4 headroom:** **₹11.13 Cr** [TechNova_Q4_Financial_Report.pdf::sec4]\n- **Budget gap vs modeled breach cost:** **₹47.31 Cr − ₹11.13 Cr = ₹36.18 Cr**\n\nSo **no, Engineering’s remaining Q4 headroom would not absorb this scenario**. On a departmental-budget basis, the breach is too large to contain inside current Engineering headroom before the IPO filing window.\n\nThat said, **it is not an existential liquidity problem** at the company level:\n- Cash on balance sheet is **₹892.4 Cr** with **zero long-term debt** [TechNova_Q4_Financial_Report.pdf::sec2].\n- Q4 free cash flow was **₹156.8 Cr** [TechNova_Board_Minutes_Q4.pdf::sec2].\n- Cyber insurance provides **₹50 Cr** coverage for **breach notification costs, regulatory fines, and business interruption** [TechNova_Vendor_Contracts.pdf::sec4].\n\nSo the sharper question is not “can the company pay?” but “would a breach now damage IPO readiness?”\n\nOn that, the answer is **yes, plausibly**:\n- The board is targeting **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- IPO readiness requires **SOC 2 Type II** and **ISO 27001** for all product modules by **December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- IPO readiness also requires **3,500 paying enterprise customers**; current count is **2,847**, leaving a **653-customer gap** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- IPO readiness also requires **120%+ NRR for 4 consecutive quarters**; current NRR is **118.3%**, so the clock has not started yet [TechNova_Product_Roadmap_2026.pdf::sec5].\n\nA fresh breach on a critical AI service would therefore threaten the IPO timeline in three ways:\n1. **Certification slippage:** another incident could delay SOC 2 / ISO workstreams, which are explicit IPO milestones [TechNova_Product_Roadmap_2026.pdf::sec5].\n2. **Enterprise customer confidence:** the November incident already required Tier 1 notifications and affected 847 accounts in the analytics cluster [TechNova_Security_Incident_Report.pdf::sec2]; repeating that on a critical AI service would likely worsen churn risk exactly when TechNova still needs 653 more enterprise logos.\n3. **Narrative damage:** with NRR already below the 120% threshold, any breach-driven contraction or delayed expansion would weaken the IPO story [TechNova_Product_Roadmap_2026.pdf::sec5].\n\nImportant caveats:\n- The November incident’s legal assessment found **mandatory DPDP Board notification was not triggered** because the exfiltrated data was anonymized, though CERT-In reporting was required [TechNova_Security_Incident_Report.pdf::sec5]. If a new AI-service breach involved personal data instead, the legal/regulatory bill could be worse than this model.\n- The AI stack has concentrated infrastructure: the platform architecture shows a dedicated AI EKS cluster with **16 NVIDIA A100 nodes / 128 GPUs**, and the architecture evidence does not show regional redundancy for AI workloads, which increases operational sensitivity if a critical AI service is hit [TechNova_Platform_Architecture.pdf::sec4].\n\n**Bottom line:**\n- **Modeled end-to-end breach cost now:** **₹47.31 Cr**\n- **Engineering unspent Q4 headroom:** **₹11.13 Cr**\n- **Gap:** **₹36.18 Cr**\n- **IPO implication:** **Yes, a breach right now is a credible threat to the IPO timeline** — less because TechNova cannot fund it, and more because it could derail certification milestones, hurt enterprise retention, and weaken already-tight IPO readiness metrics before the planned **September 2026 DRHP filing** [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5].",
+    "confidence": 0.95,
+    "evidence": {
+      "sql": null,
+      "citations": [
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+        },
+        {
+          "chunk_id": "TechNova_Platform_Architecture.pdf::sec4"
+        },
+        {
+          "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+        },
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+        },
+        {
+          "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+        },
+        {
+          "chunk_id": "TechNova_Security_Incident_Report.pdf::sec5"
+        },
+        {
+          "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+        },
+        {
+          "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+        },
+        {
+          "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec2"
+        },
+        {
+          "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+        }
+      ],
+      "chunks_seen": null,
+      "hybrid_sub_results": [
+        {
+          "type": "sql",
+          "question": "Using incident INC-2025-0847 as the baseline, identify all candidate affected services from products_services where criticality_tier='Critical' AND (domain IN ('AI Services','Analytics Engine') OR service_name ILIKE '%ai%' OR service_name ILIKE '%ml%' OR service_name ILIKE '%analytics%'); for each candidate service, return its owning department, map the incident baseline severity/customers_affected_count/remediation_cost_inr_lakhs onto that service, and compute scenario components available from SQL: retention cost for the incident reporters plus the on-call engineers responsible for that service as 30% of their total_ctc_inr_lakhs, and customer-loss proxy as 15% of ARR for Tier-1 and Tier-2 customers exposed to that service.",
+          "answer": "Using `incidents`, `products_services`, `departments`, `employees`, `salary_records`, and `customers`, I found 7 candidate critical AI/analytics services for baseline incident `INC-2025-0847`: 4 owned by Engineering and 3 by Data & AI Research. Baseline mapped to each service is `SEV-2`, `847` customers affected, and `₹0.00L` remediation cost; retention-cost proxy is `₹39.24L` per Engineering service vs `₹37.07L` per Data & AI Research service, and the Tier-1/Tier-2 customer-loss proxy is `₹3841.95L` per service, giving scenario totals of `₹3881.19L` for each Engineering analytics service and `₹3879.02L` for each Data & AI Research AI service. **Combined scenario total across all 7 candidate rows = ₹27161.82L (≈₹271.62 Cr).**\n\n```sql\nWITH baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        i.reporter_employee_id\n    FROM incidents i\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        ps.service_id,\n        ps.service_name,\n        ps.domain,\n        ps.owner_department_id,\n        d.department_name\n    FROM products_services ps\n    JOIN departments d\n      ON ps.owner_department_id = d.department_id\n    WHERE ps.criticality_tier = 'Critical'\n      AND (\n        ps.domain IN ('AI Services','Analytics Engine')\n        OR ps.service_name ILIKE '%ai%'\n        OR ps.service_name ILIKE '%ml%'\n        OR ps.service_name ILIKE '%analytics%'\n      )\n),\nincident_reporters AS (\n    SELECT DISTINCT b.reporter_employee_id AS employee_id\n    FROM baseline b\n),\noncall_engineers AS (\n    SELECT DISTINCT e.employee_id, cs.service_id\n    FROM candidate_services cs\n    JOIN employees e\n      ON e.department_id = cs.owner_department_id\n    WHERE e.employment_status = 'Active'\n      AND (\n        LOWER(e.job_title) LIKE '%site reliability%'\n        OR LOWER(e.job_title) LIKE '%sre%'\n        OR LOWER(e.job_title) LIKE '%platform engineer%'\n        OR LOWER(e.job_title) LIKE '%devops%'\n        OR LOWER(e.job_title) LIKE '%infrastructure%'\n      )\n),\nservice_people AS (\n    SELECT cs.service_id, ir.employee_id\n    FROM candidate_services cs\n    CROSS JOIN incident_reporters ir\n    UNION\n    SELECT oe.service_id, oe.employee_id\n    FROM oncall_engineers oe\n),\nretention_by_service AS (\n    SELECT \n        sp.service_id,\n        ROUND(SUM(0.30 * sr.total_ctc_inr_lakhs), 2) AS retention_cost_inr_lakhs\n    FROM service_people sp\n    JOIN salary_records sr\n      ON sr.employee_id = sp.employee_id\n    GROUP BY sp.service_id\n),\nexposed_customers AS (\n    SELECT \n        cs.service_id,\n        c.customer_id,\n        c.customer_name,\n        c.tier,\n        c.arr_inr_lakhs,\n        ROW_NUMBER() OVER (PARTITION BY cs.service_id ORDER BY c.arr_inr_lakhs DESC, c.customer_id) AS rn\n    FROM candidate_services cs\n    JOIN customers c\n      ON c.account_status = 'Active'\n     AND c.tier IN ('Tier 1','Tier 2')\n),\ncustomer_loss_by_service AS (\n    SELECT \n        ec.service_id,\n        ROUND(SUM(0.15 * ec.arr_inr_lakhs), 2) AS customer_loss_proxy_inr_lakhs\n    FROM exposed_customers ec\n    JOIN baseline b\n      ON ec.rn <= b.customers_affected_count\n    GROUP BY ec.service_id\n)\nSELECT \n    cs.service_id,\n    cs.service_name,\n    cs.domain,\n    cs.department_name AS owning_department,\n    b.severity AS baseline_severity,\n    b.customers_affected_count AS baseline_customers_affected_count,\n    b.remediation_cost_inr_lakhs AS baseline_remediation_cost_inr_lakhs,\n    COALESCE(rbs.retention_cost_inr_lakhs, 0) AS retention_cost_inr_lakhs,\n    COALESCE(cls.customer_loss_proxy_inr_lakhs, 0) AS customer_loss_proxy_inr_lakhs,\n    ROUND(b.remediation_cost_inr_lakhs + COALESCE(rbs.retention_cost_inr_lakhs, 0) + COALESCE(cls.customer_loss_proxy_inr_lakhs, 0), 2) AS scenario_total_inr_lakhs\nFROM candidate_services cs\nCROSS JOIN baseline b\nLEFT JOIN retention_by_service rbs\n  ON cs.service_id = rbs.service_id\nLEFT JOIN customer_loss_by_service cls\n  ON cs.service_id = cls.service_id\nORDER BY scenario_total_inr_lakhs DESC, cs.service_id;\n```",
+          "sql_result": {
+            "sql": "WITH baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        i.reporter_employee_id\n    FROM incidents i\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        ps.service_id,\n        ps.service_name,\n        ps.domain,\n        ps.owner_department_id,\n        d.department_name\n    FROM products_services ps\n    JOIN departments d\n      ON ps.owner_department_id = d.department_id\n    WHERE ps.criticality_tier = 'Critical'\n      AND (\n        ps.domain IN ('AI Services','Analytics Engine')\n        OR ps.service_name ILIKE '%ai%'\n        OR ps.service_name ILIKE '%ml%'\n        OR ps.service_name ILIKE '%analytics%'\n      )\n),\nincident_reporters AS (\n    SELECT DISTINCT b.reporter_employee_id AS employee_id\n    FROM baseline b\n),\noncall_engineers AS (\n    SELECT DISTINCT e.employee_id, cs.service_id\n    FROM candidate_services cs\n    JOIN employees e\n      ON e.department_id = cs.owner_department_id\n    WHERE e.employment_status = 'Active'\n      AND (\n        LOWER(e.job_title) LIKE '%site reliability%'\n        OR LOWER(e.job_title) LIKE '%sre%'\n        OR LOWER(e.job_title) LIKE '%platform engineer%'\n        OR LOWER(e.job_title) LIKE '%devops%'\n        OR LOWER(e.job_title) LIKE '%infrastructure%'\n      )\n),\nservice_people AS (\n    SELECT cs.service_id, ir.employee_id\n    FROM candidate_services cs\n    CROSS JOIN incident_reporters ir\n    UNION\n    SELECT oe.service_id, oe.employee_id\n    FROM oncall_engineers oe\n),\nretention_by_service AS (\n    SELECT \n        sp.service_id,\n        ROUND(SUM(0.30 * sr.total_ctc_inr_lakhs), 2) AS retention_cost_inr_lakhs\n    FROM service_people sp\n    JOIN salary_records sr\n      ON sr.employee_id = sp.employee_id\n    GROUP BY sp.service_id\n),\nexposed_customers AS (\n    SELECT \n        cs.service_id,\n        c.customer_id,\n        c.customer_name,\n        c.tier,\n        c.arr_inr_lakhs,\n        ROW_NUMBER() OVER (PARTITION BY cs.service_id ORDER BY c.arr_inr_lakhs DESC, c.customer_id) AS rn\n    FROM candidate_services cs\n    JOIN customers c\n      ON c.account_status = 'Active'\n     AND c.tier IN ('Tier 1','Tier 2')\n),\ncustomer_loss_by_service AS (\n    SELECT \n        ec.service_id,\n        ROUND(SUM(0.15 * ec.arr_inr_lakhs), 2) AS customer_loss_proxy_inr_lakhs\n    FROM exposed_customers ec\n    JOIN baseline b\n      ON ec.rn <= b.customers_affected_count\n    GROUP BY ec.service_id\n)\nSELECT \n    cs.service_id,\n    cs.service_name,\n    cs.domain,\n    cs.department_name AS owning_department,\n    b.severity AS baseline_severity,\n    b.customers_affected_count AS baseline_customers_affected_count,\n    b.remediation_cost_inr_lakhs AS baseline_remediation_cost_inr_lakhs,\n    COALESCE(rbs.retention_cost_inr_lakhs, 0) AS retention_cost_inr_lakhs,\n    COALESCE(cls.customer_loss_proxy_inr_lakhs, 0) AS customer_loss_proxy_inr_lakhs,\n    ROUND(b.remediation_cost_inr_lakhs + COALESCE(rbs.retention_cost_inr_lakhs, 0) + COALESCE(cls.customer_loss_proxy_inr_lakhs, 0), 2) AS scenario_total_inr_lakhs\nFROM candidate_services cs\nCROSS JOIN baseline b\nLEFT JOIN retention_by_service rbs\n  ON cs.service_id = rbs.service_id\nLEFT JOIN customer_loss_by_service cls\n  ON cs.service_id = cls.service_id\nORDER BY scenario_total_inr_lakhs DESC, cs.service_id;",
+            "rows_markdown": "|   service_id | service_name     | domain           | owning_department   | baseline_severity   |   baseline_customers_affected_count |   baseline_remediation_cost_inr_lakhs |   retention_cost_inr_lakhs |   customer_loss_proxy_inr_lakhs |   scenario_total_inr_lakhs |\n|-------------:|:-----------------|:-----------------|:--------------------|:--------------------|------------------------------------:|--------------------------------------:|---------------------------:|--------------------------------:|---------------------------:|\n|         9041 | analytics-svc-01 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9063 | analytics-svc-23 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9066 | analytics-svc-26 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9072 | analytics-svc-32 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9117 | ai-svc-02        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |\n|         9118 | ai-svc-03        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |\n|         9123 | ai-svc-08        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |",
+            "row_count": 8,
+            "error": null,
+            "iterations": 4
+          }
+        },
+        {
+          "type": "sql",
+          "question": "For the same candidate critical AI services and owning department(s) identified in the previous step, estimate vendor-contract fallout from vendors owned by the affected department with risk_status IN ('Conditional','Suspended'), using available contract-value or spend fields if present; also return the direct regulatory/legal baseline by carrying forward INC-2025-0847 remediation_cost_inr_lakhs so it can be combined with the 8.5 Cr Zero Trust floor already provided in fact [F-DATA-02].",
+          "answer": "Using `incidents`, `products_services`, `departments`, and `vendors`, INC-2025-0847 maps to the critical AI-adjacent service `analytics-svc-01` owned by **Engineering**; that department has **2 risky owned vendors** (`VendorConnect Solutions` suspended, `NVIDIA (DGX)` conditional) with **combined annual committed spend of USD 1.38M** as the available vendor-contract fallout proxy. The direct regulatory/legal baseline carried forward is **0 lakhs remediation cost + 8.5 Cr Zero Trust floor = 8.5 Cr**; combined vendor fallout cannot be converted into INR crores from the available fields because both risky vendor contract values are stored in **USD**.\n\n```sql\nWITH incident_baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        ps.service_name AS incident_service,\n        d.department_id,\n        d.department_name\n    FROM incidents i\n    JOIN products_services ps ON i.affected_service_id = ps.service_id\n    JOIN departments d ON ps.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\nrisky_vendors AS (\n    SELECT \n        v.vendor_id,\n        v.vendor_name,\n        v.category,\n        v.contract_currency,\n        v.annual_committed_spend,\n        v.risk_status,\n        d.department_name AS owner_department_name\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE v.owner_department_id IN (SELECT department_id FROM incident_baseline)\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nsummary AS (\n    SELECT \n        COUNT(*) AS risky_vendor_count,\n        SUM(CASE WHEN contract_currency = 'USD' THEN annual_committed_spend ELSE 0 END) AS total_usd_annual_committed_spend,\n        SUM(CASE WHEN contract_currency = 'INR' THEN annual_committed_spend ELSE 0 END) AS total_inr_annual_committed_spend\n    FROM risky_vendors\n)\nSELECT \n    ib.incident_ref,\n    ib.severity,\n    ib.customers_affected_count,\n    ib.remediation_cost_inr_lakhs,\n    ib.incident_service,\n    ib.department_name AS affected_department,\n    rv.vendor_name,\n    rv.category,\n    rv.risk_status,\n    rv.contract_currency,\n    rv.annual_committed_spend,\n    s.risky_vendor_count,\n    s.total_usd_annual_committed_spend,\n    s.total_inr_annual_committed_spend,\n    8.5 AS zero_trust_floor_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 AS remediation_cost_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 + 8.5 AS direct_regulatory_legal_baseline_inr_crores\nFROM incident_baseline ib\nCROSS JOIN summary s\nLEFT JOIN risky_vendors rv ON rv.owner_department_name = ib.department_name\nORDER BY rv.risk_status DESC, rv.vendor_name;\n```",
+          "sql_result": {
+            "sql": "WITH incident_baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        ps.service_name AS incident_service,\n        d.department_id,\n        d.department_name\n    FROM incidents i\n    JOIN products_services ps ON i.affected_service_id = ps.service_id\n    JOIN departments d ON ps.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\nrisky_vendors AS (\n    SELECT \n        v.vendor_id,\n        v.vendor_name,\n        v.category,\n        v.contract_currency,\n        v.annual_committed_spend,\n        v.risk_status,\n        d.department_name AS owner_department_name\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE v.owner_department_id IN (SELECT department_id FROM incident_baseline)\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nsummary AS (\n    SELECT \n        COUNT(*) AS risky_vendor_count,\n        SUM(CASE WHEN contract_currency = 'USD' THEN annual_committed_spend ELSE 0 END) AS total_usd_annual_committed_spend,\n        SUM(CASE WHEN contract_currency = 'INR' THEN annual_committed_spend ELSE 0 END) AS total_inr_annual_committed_spend\n    FROM risky_vendors\n)\nSELECT \n    ib.incident_ref,\n    ib.severity,\n    ib.customers_affected_count,\n    ib.remediation_cost_inr_lakhs,\n    ib.incident_service,\n    ib.department_name AS affected_department,\n    rv.vendor_name,\n    rv.category,\n    rv.risk_status,\n    rv.contract_currency,\n    rv.annual_committed_spend,\n    s.risky_vendor_count,\n    s.total_usd_annual_committed_spend,\n    s.total_inr_annual_committed_spend,\n    8.5 AS zero_trust_floor_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 AS remediation_cost_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 + 8.5 AS direct_regulatory_legal_baseline_inr_crores\nFROM incident_baseline ib\nCROSS JOIN summary s\nLEFT JOIN risky_vendors rv ON rv.owner_department_name = ib.department_name\nORDER BY rv.risk_status DESC, rv.vendor_name;",
+            "rows_markdown": "| incident_ref   | severity   |   customers_affected_count |   remediation_cost_inr_lakhs | incident_service   | affected_department   | vendor_name             | category            | risk_status   | contract_currency   |   annual_committed_spend |   risky_vendor_count |   total_usd_annual_committed_spend |   total_inr_annual_committed_spend |   zero_trust_floor_inr_crores |   remediation_cost_inr_crores |   direct_regulatory_legal_baseline_inr_crores |\n|:---------------|:-----------|---------------------------:|-----------------------------:|:-------------------|:----------------------|:------------------------|:--------------------|:--------------|:--------------------|-------------------------:|---------------------:|-----------------------------------:|-----------------------------------:|------------------------------:|------------------------------:|----------------------------------------------:|\n| INC-2025-0847  | SEV-2      |                        847 |                            0 | analytics-svc-01   | Engineering           | VendorConnect Solutions | Integration Partner | Suspended     | USD                 |                   180000 |                    2 |                           1.38e+06 |                                  0 |                           8.5 |                             0 |                                           8.5 |\n| INC-2025-0847  | SEV-2      |                        847 |                            0 | analytics-svc-01   | Engineering           | NVIDIA (DGX)            | Hardware            | Conditional   | USD                 |                  1200000 |                    2 |                           1.38e+06 |                                  0 |                           8.5 |                             0 |                                           8.5 |",
+            "row_count": 3,
+            "error": null,
+            "iterations": 4
+          }
+        },
+        {
+          "type": "sql",
+          "question": "Combine the prior SQL outputs into an end-to-end breach-cost scenario per candidate critical AI service: retention cost + 15% churn-risk ARR + vendor-contract fallout + INC-2025-0847 remediation_cost_inr_lakhs + 8.5 Cr Zero Trust floor from fact [F-DATA-02]; then compare each total against Engineering's remaining unspent Q4 budget headroom from fact [F-FIN-06] (INR 11.13 Cr) and report whether the total exceeds that headroom.",
+          "answer": "Using `incidents`, `products_services`, `salary_records`, `customers`, `vendors`, and `departments`, all four candidate critical Engineering AI/analytics services in the result set land at the same modeled breach-cost total: **₹2,017.85 lakhs (₹20.18 Cr)** each, versus **Engineering’s remaining unspent Q4 headroom of ₹11.13 Cr**, so **each scenario exceeds headroom by ₹9.05 Cr**. Combined across the 4 candidate services listed, the modeled total is **₹8,071.40 lakhs (₹80.71 Cr)**, though note the SQL could only proxy customer exposure from the incident reporter’s book and vendor fallout from Engineering-owned flagged vendors, so the per-service totals are scenario estimates rather than service-specific contract valuations.\n\n```sql\nWITH incident_base AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        s.service_id AS incident_service_id,\n        s.service_name AS incident_service_name,\n        s.domain AS incident_service_domain,\n        d.department_name,\n        i.reporter_employee_id\n    FROM incidents i\n    JOIN products_services s ON i.affected_service_id = s.service_id\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        s.service_id,\n        s.service_name,\n        s.domain,\n        d.department_name\n    FROM products_services s\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE s.criticality_tier = 'Critical'\n      AND d.department_name = 'Engineering'\n      AND (\n        s.domain IN ('AI Services', 'Analytics Engine')\n        OR LOWER(s.service_name) LIKE '%ai%'\n        OR LOWER(s.service_name) LIKE '%ml%'\n        OR LOWER(s.service_name) LIKE '%analytics%'\n      )\n),\nreporter_ctc AS (\n    SELECT COALESCE(SUM(0.3 * sr.total_ctc_inr_lakhs), 0) AS retention_cost_inr_lakhs\n    FROM incident_base ib\n    JOIN salary_records sr ON ib.reporter_employee_id = sr.employee_id\n    WHERE sr.review_cycle = 'FY2025-26'\n),\ncustomer_exposure AS (\n    SELECT \n        cs.service_id,\n        cs.service_name,\n        COUNT(c.customer_id) AS exposed_customers,\n        COALESCE(SUM(0.15 * c.arr_inr_lakhs), 0) AS churn_risk_arr_inr_lakhs\n    FROM candidate_services cs\n    LEFT JOIN customers c ON c.account_manager_employee_id = (\n        SELECT reporter_employee_id FROM incident_base LIMIT 1\n    )\n       AND c.tier IN ('Tier 1', 'Tier 2')\n       AND c.account_status IN ('Active', 'At Risk')\n    GROUP BY cs.service_id, cs.service_name\n),\nvendor_fallout AS (\n    SELECT \n        COUNT(v.vendor_id) AS flagged_vendors,\n        COALESCE(SUM(CASE \n            WHEN v.contract_currency = 'USD' THEN v.annual_committed_spend * 83.0 / 10000000.0\n            WHEN v.contract_currency = 'INR' THEN v.annual_committed_spend / 10000000.0\n            WHEN v.contract_currency = 'EUR' THEN v.annual_committed_spend * 90.0 / 10000000.0\n            ELSE 0 END), 0) AS vendor_contract_fallout_inr_crores\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE d.department_name = 'Engineering'\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nengineering_budget AS (\n    SELECT 11.13 AS remaining_unspent_q4_budget_inr_crores\n)\nSELECT \n    cs.service_name,\n    cs.domain,\n    cs.department_name,\n    ROUND(rc.retention_cost_inr_lakhs, 2) AS retention_cost_inr_lakhs,\n    ROUND(ce.churn_risk_arr_inr_lakhs, 2) AS churn_risk_arr_inr_lakhs,\n    ROUND(vf.vendor_contract_fallout_inr_crores * 100.0, 2) AS vendor_contract_fallout_inr_lakhs,\n    ib.remediation_cost_inr_lakhs,\n    850.0 AS zero_trust_floor_inr_lakhs,\n    ROUND(\n        (rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0),\n        2\n    ) AS total_scenario_cost_inr_lakhs,\n    11.13 AS engineering_remaining_headroom_inr_crores,\n    ROUND(11.13 * 100.0, 2) AS engineering_remaining_headroom_inr_lakhs,\n    ROUND(\n        ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0),\n        2\n    ) AS total_scenario_cost_inr_crores,\n    CASE \n        WHEN ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0) > 11.13\n        THEN 'Exceeds headroom'\n        ELSE 'Within headroom'\n    END AS headroom_comparison\nFROM candidate_services cs\nCROSS JOIN reporter_ctc rc\nJOIN customer_exposure ce ON cs.service_id = ce.service_id\nCROSS JOIN vendor_fallout vf\nCROSS JOIN incident_base ib\nORDER BY total_scenario_cost_inr_lakhs DESC, cs.service_name;\n```",
+          "sql_result": {
+            "sql": "WITH incident_base AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        s.service_id AS incident_service_id,\n        s.service_name AS incident_service_name,\n        s.domain AS incident_service_domain,\n        d.department_name,\n        i.reporter_employee_id\n    FROM incidents i\n    JOIN products_services s ON i.affected_service_id = s.service_id\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        s.service_id,\n        s.service_name,\n        s.domain,\n        d.department_name\n    FROM products_services s\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE s.criticality_tier = 'Critical'\n      AND d.department_name = 'Engineering'\n      AND (\n        s.domain IN ('AI Services', 'Analytics Engine')\n        OR LOWER(s.service_name) LIKE '%ai%'\n        OR LOWER(s.service_name) LIKE '%ml%'\n        OR LOWER(s.service_name) LIKE '%analytics%'\n      )\n),\nreporter_ctc AS (\n    SELECT COALESCE(SUM(0.3 * sr.total_ctc_inr_lakhs), 0) AS retention_cost_inr_lakhs\n    FROM incident_base ib\n    JOIN salary_records sr ON ib.reporter_employee_id = sr.employee_id\n    WHERE sr.review_cycle = 'FY2025-26'\n),\ncustomer_exposure AS (\n    SELECT \n        cs.service_id,\n        cs.service_name,\n        COUNT(c.customer_id) AS exposed_customers,\n        COALESCE(SUM(0.15 * c.arr_inr_lakhs), 0) AS churn_risk_arr_inr_lakhs\n    FROM candidate_services cs\n    LEFT JOIN customers c ON c.account_manager_employee_id = (\n        SELECT reporter_employee_id FROM incident_base LIMIT 1\n    )\n       AND c.tier IN ('Tier 1', 'Tier 2')\n       AND c.account_status IN ('Active', 'At Risk')\n    GROUP BY cs.service_id, cs.service_name\n),\nvendor_fallout AS (\n    SELECT \n        COUNT(v.vendor_id) AS flagged_vendors,\n        COALESCE(SUM(CASE \n            WHEN v.contract_currency = 'USD' THEN v.annual_committed_spend * 83.0 / 10000000.0\n            WHEN v.contract_currency = 'INR' THEN v.annual_committed_spend / 10000000.0\n            WHEN v.contract_currency = 'EUR' THEN v.annual_committed_spend * 90.0 / 10000000.0\n            ELSE 0 END), 0) AS vendor_contract_fallout_inr_crores\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE d.department_name = 'Engineering'\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nengineering_budget AS (\n    SELECT 11.13 AS remaining_unspent_q4_budget_inr_crores\n)\nSELECT \n    cs.service_name,\n    cs.domain,\n    cs.department_name,\n    ROUND(rc.retention_cost_inr_lakhs, 2) AS retention_cost_inr_lakhs,\n    ROUND(ce.churn_risk_arr_inr_lakhs, 2) AS churn_risk_arr_inr_lakhs,\n    ROUND(vf.vendor_contract_fallout_inr_crores * 100.0, 2) AS vendor_contract_fallout_inr_lakhs,\n    ib.remediation_cost_inr_lakhs,\n    850.0 AS zero_trust_floor_inr_lakhs,\n    ROUND(\n        (rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0),\n        2\n    ) AS total_scenario_cost_inr_lakhs,\n    11.13 AS engineering_remaining_headroom_inr_crores,\n    ROUND(11.13 * 100.0, 2) AS engineering_remaining_headroom_inr_lakhs,\n    ROUND(\n        ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0),\n        2\n    ) AS total_scenario_cost_inr_crores,\n    CASE \n        WHEN ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0) > 11.13\n        THEN 'Exceeds headroom'\n        ELSE 'Within headroom'\n    END AS headroom_comparison\nFROM candidate_services cs\nCROSS JOIN reporter_ctc rc\nJOIN customer_exposure ce ON cs.service_id = ce.service_id\nCROSS JOIN vendor_fallout vf\nCROSS JOIN incident_base ib\nORDER BY total_scenario_cost_inr_lakhs DESC, cs.service_name;",
+            "rows_markdown": "| service_name     | domain           | department_name   |   retention_cost_inr_lakhs |   churn_risk_arr_inr_lakhs |   vendor_contract_fallout_inr_lakhs |   remediation_cost_inr_lakhs |   zero_trust_floor_inr_lakhs |   total_scenario_cost_inr_lakhs |   engineering_remaining_headroom_inr_crores |   engineering_remaining_headroom_inr_lakhs |   total_scenario_cost_inr_crores | headroom_comparison   |\n|:-----------------|:-----------------|:------------------|---------------------------:|---------------------------:|------------------------------------:|-----------------------------:|-----------------------------:|--------------------------------:|--------------------------------------------:|-------------------------------------------:|---------------------------------:|:----------------------|\n| analytics-svc-01 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-23 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-26 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-32 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |",
+            "row_count": 5,
+            "error": null,
+            "iterations": 4
+          }
+        },
+        {
+          "type": "rag",
+          "question": "Using pre-extracted facts only, assess whether a breach right now threatens the IPO timeline by grounding the comparison against fact [F-FIN-06] (Engineering unspent Q4 headroom INR 11.13 Cr), fact [F-IPO-08] / [F-AUTO-00CE00CD8E] / [F-AUTO-76068AB05E] (IPO security-certification milestones), fact [F-IPO-07] / [F-AUTO-228B9C28E7] (NRR milestone currently below threshold), fact [F-AUTO-CB42E8DB51] (enterprise-customer milestone), and relevant incident/insurance context from facts [F-SEC-03], [F-AUTO-1A5C93CD9D], [F-AUTO-93F35BD5F7], and [F-ARCH-01] to determine whether exceeding budget headroom would plausibly threaten the DRHP/IPO timeline.",
+          "answer": "Using the retrieved facts only, a breach **would not automatically threaten the DRHP/IPO timeline just because it exceeds Engineering’s current Q4 unspent headroom**, but it **could plausibly become a timeline risk if it materially delays the IPO-linked security certification program or worsens already-below-target IPO readiness metrics**.\n\nWhy:\n\n- Engineering’s Q4 budget was INR 210 crores and utilization was 94.7%, implying about **INR 11.13 crores unspent headroom** (210 × 5.3%) [TechNova_Q4_Financial_Report.pdf::sec4].\n- After incident INC-2025-0847, the Board already **approved an additional INR 8.5 crores** and **accelerated Zero Trust implementation from March 2026 to February 2026**, which shows management treated the incident as something to absorb and remediate rather than as an immediate IPO blocker [TechNova_Board_Minutes_Q4.pdf::sec5].\n- The IPO timeline targets **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- The explicit product-side IPO readiness gates are: **3,500 paying enterprise customers by Q2 FY2027 (currently 2,847)**, **120%+ NRR for 4 consecutive quarters (currently 118.3%)**, and **SOC 2 Type II + ISO 27001 for all product modules by December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- That means the company is **already below threshold on NRR** and **still short on enterprise-customer count**, so IPO readiness already depends on executing multiple milestones, not just staying within one quarter’s Engineering budget [TechNova_Product_Roadmap_2026.pdf::sec5].\n- Incident context is serious but not worst-case: the breach involved the **Analytics Engine cluster** via a compromised third-party API key [TechNova_Security_Incident_Report.pdf::sec1], affected **847 customer accounts** including **23 Tier 1** and **312 Tier 2** accounts, but the exfiltrated data was **anonymized analytics metadata** and **no PII, credentials, financial data, or source code** were compromised [TechNova_Security_Incident_Report.pdf::sec2]. Architecturally, Analytics Engine and AI Services are core domains in the platform [TechNova_Platform_Architecture.pdf::sec2].\n- There is also **INR 50 crores of cyber liability insurance** covering breach notification, regulatory fines, and business interruption, and the implicated vendor has been suspended pending remediation [TechNova_Vendor_Contracts.pdf::sec4].\n\nAssessment:\n- **Budget overrun alone**: exceeding the INR 11.13 crores Q4 headroom does **not by itself** show the DRHP timeline is threatened, because the Board has already shown willingness to fund remediation separately with an extra INR 8.5 crores and to accelerate security work [TechNova_Board_Minutes_Q4.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec4].\n- **What would make it a plausible IPO threat**: if the breach causes slippage in the **security-certification milestone** for all modules, or if enterprise-customer / NRR performance deteriorates further because affected enterprise customers lose confidence, then the IPO narrative and readiness package could weaken materially [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Security_Incident_Report.pdf::sec2].\n- **Net conclusion**: based on the available facts, the more credible risk to the IPO timeline is **milestone slippage** (especially certifications and commercial metrics), not merely that remediation costs exceed current Engineering Q4 headroom. So, **exceeding headroom is a warning sign, but not enough on its own to conclude the DRHP/IPO timeline is threatened right now** [TechNova_Q4_Financial_Report.pdf::sec4] [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Board_Minutes_Q4.pdf::sec3].\n\n- TechNova_Q4_Financial_Report.pdf::sec4\n- TechNova_Board_Minutes_Q4.pdf::sec5\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Security_Incident_Report.pdf::sec1\n- TechNova_Security_Incident_Report.pdf::sec2\n- TechNova_Platform_Architecture.pdf::sec2\n- TechNova_Vendor_Contracts.pdf::sec4",
+          "rag_result": {
+            "answer": "Using the retrieved facts only, a breach **would not automatically threaten the DRHP/IPO timeline just because it exceeds Engineering’s current Q4 unspent headroom**, but it **could plausibly become a timeline risk if it materially delays the IPO-linked security certification program or worsens already-below-target IPO readiness metrics**.\n\nWhy:\n\n- Engineering’s Q4 budget was INR 210 crores and utilization was 94.7%, implying about **INR 11.13 crores unspent headroom** (210 × 5.3%) [TechNova_Q4_Financial_Report.pdf::sec4].\n- After incident INC-2025-0847, the Board already **approved an additional INR 8.5 crores** and **accelerated Zero Trust implementation from March 2026 to February 2026**, which shows management treated the incident as something to absorb and remediate rather than as an immediate IPO blocker [TechNova_Board_Minutes_Q4.pdf::sec5].\n- The IPO timeline targets **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- The explicit product-side IPO readiness gates are: **3,500 paying enterprise customers by Q2 FY2027 (currently 2,847)**, **120%+ NRR for 4 consecutive quarters (currently 118.3%)**, and **SOC 2 Type II + ISO 27001 for all product modules by December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- That means the company is **already below threshold on NRR** and **still short on enterprise-customer count**, so IPO readiness already depends on executing multiple milestones, not just staying within one quarter’s Engineering budget [TechNova_Product_Roadmap_2026.pdf::sec5].\n- Incident context is serious but not worst-case: the breach involved the **Analytics Engine cluster** via a compromised third-party API key [TechNova_Security_Incident_Report.pdf::sec1], affected **847 customer accounts** including **23 Tier 1** and **312 Tier 2** accounts, but the exfiltrated data was **anonymized analytics metadata** and **no PII, credentials, financial data, or source code** were compromised [TechNova_Security_Incident_Report.pdf::sec2]. Architecturally, Analytics Engine and AI Services are core domains in the platform [TechNova_Platform_Architecture.pdf::sec2].\n- There is also **INR 50 crores of cyber liability insurance** covering breach notification, regulatory fines, and business interruption, and the implicated vendor has been suspended pending remediation [TechNova_Vendor_Contracts.pdf::sec4].\n\nAssessment:\n- **Budget overrun alone**: exceeding the INR 11.13 crores Q4 headroom does **not by itself** show the DRHP timeline is threatened, because the Board has already shown willingness to fund remediation separately with an extra INR 8.5 crores and to accelerate security work [TechNova_Board_Minutes_Q4.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec4].\n- **What would make it a plausible IPO threat**: if the breach causes slippage in the **security-certification milestone** for all modules, or if enterprise-customer / NRR performance deteriorates further because affected enterprise customers lose confidence, then the IPO narrative and readiness package could weaken materially [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Security_Incident_Report.pdf::sec2].\n- **Net conclusion**: based on the available facts, the more credible risk to the IPO timeline is **milestone slippage** (especially certifications and commercial metrics), not merely that remediation costs exceed current Engineering Q4 headroom. So, **exceeding headroom is a warning sign, but not enough on its own to conclude the DRHP/IPO timeline is threatened right now** [TechNova_Q4_Financial_Report.pdf::sec4] [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Board_Minutes_Q4.pdf::sec3].\n\n- TechNova_Q4_Financial_Report.pdf::sec4\n- TechNova_Board_Minutes_Q4.pdf::sec5\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Security_Incident_Report.pdf::sec1\n- TechNova_Security_Incident_Report.pdf::sec2\n- TechNova_Platform_Architecture.pdf::sec2\n- TechNova_Vendor_Contracts.pdf::sec4",
+            "citations": [
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Security_Incident_Report.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Platform_Architecture.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+              }
+            ],
+            "chunks_seen": [
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+              },
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+              },
+              {
+                "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+              },
+              {
+                "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Platform_Architecture.pdf::sec2"
+              },
+              {
+                "chunk_id": "TechNova_Security_Incident_Report.pdf::sec1"
+              },
+              {
+                "chunk_id": "TechNova_OnCall_Runbook.pdf::sec4"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "trace": [
+      "router -> hybrid",
+      "intent -> clarity=0.22, 10 ambiguityies",
+      "clarify r1",
+      "intent -> clarity=0.42, 5 ambiguityies",
+      "clarify r2",
+      "intent -> clarity=0.62, 4 ambiguityies",
+      "clarify r3",
+      "intent -> clarity=0.66, 3 ambiguityies",
+      "readback -> approved",
+      "planner -> 4 sub-qs",
+      "hybrid_exec -> 4 sub-answer(s)",
+      "synthesiser -> 3601 chars",
+      "critic -> retry (0.97)",
+      "cross_validator -> pass (0.84)",
+      "arbiter -> pass (0.95)",
+      "completeness -> pass (0 missing)",
+      "finalise -> pass (0.95) via arbiter"
+    ]
+  },
+  "events": [
+    {
+      "event": "trace",
+      "data": {
+        "phase": "router",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.22, 10 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "Which IPO filing date should I use to judge whether a breach 'right now' threatens the IPO timeline?",
+        "options": [],
+        "round": 1
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "router -> hybrid"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.22, 10 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.22, 10 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.42, 5 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "Which budget scope should I use to decide whether the company can absorb the breach cost before the IPO?",
+        "options": [
+          {
+            "label": "Company-wide unspent budget",
+            "value": "company_wide_unspent_budget"
+          },
+          {
+            "label": "Only incident-response-related departments",
+            "value": "incident_response_departments_unspent_budget"
+          },
+          {
+            "label": "Only the impacted service's department(s)",
+            "value": "impacted_service_departments_unspent_budget"
+          }
+        ],
+        "round": 2
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r1"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.42, 5 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.42, 5 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.62, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "clarification",
+      "data": {
+        "question": "How should I determine whether the breach would threaten the IPO timeline relative to the DRHP filing date?",
+        "options": [
+          {
+            "label": "Treat it as a threat only if total breach cost exceeds Engineering's remaining unspent Q4 budget before the DRHP date",
+            "value": "cost_exceeds_budget_headroom"
+          },
+          {
+            "label": "Treat it as a threat if total breach cost exceeds budget headroom or if remediation would still be ongoing at the DRHP date",
+            "value": "cost_or_open_remediation"
+          },
+          {
+            "label": "Treat any repeat of INC-2025-0847 on a Critical AI service as an IPO timeline threat by default",
+            "value": "always_threat_for_critical_ai_repeat"
+          }
+        ],
+        "round": 3
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r2"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "intent -> clarity=0.62, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "clarification",
+        "text": "clarify r3"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.62, 4 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "clarify r3"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "intent_classifier",
+        "text": "intent -> clarity=0.66, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "readback",
+      "data": {
+        "readback": "To confirm: you want an end-to-end breach scenario for `incident_id='INC-2025-0847'`, using last November’s incident as the baseline (`severity`, `customers_affected_count`, `remediation_cost_inr_lakhs`), re-scoped to one affected `products_services` record with `criticality_tier='Critical'` and (`domain IN ('AI Services','Analytics Engine')` OR AI/ML/analytics-like `service_name`), then computing total cost as baseline remediation with an `8.5` crores floor plus `0.3 * SUM(total_ctc_inr_lakhs)` for Engineering incident reporters/on-call staff, plus `0.15 * SUM(arr_inr_lakhs)` for exposed `customers` in `tier IN ('Tier 1','Tier 2')`, plus estimated fallout from `vendors` owned by Engineering with `risk_status IN ('Conditional','Suspended')`, and comparing that total against Engineering’s remaining unspent Q4 budget from `q4_financial_report`/`quarterly_budget_inr_crores` before the `drhp_filing_date` from `board_minutes` to infer whether a breach now threatens the IPO timeline; shall I run this?"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "clarify r3"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "intent -> clarity=0.66, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "readback",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "intent -> clarity=0.66, 3 ambiguityies"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "planner",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "readback -> approved"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "hybrid_executor",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "planner -> 4 sub-qs"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "synthesiser",
+        "text": "synthesiser -> 3601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "hybrid_exec -> 4 sub-answer(s)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "synthesiser -> 3601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "critic",
+        "text": "critic -> retry (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "synthesiser -> 3601 chars"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "critic -> retry (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "cross_validator",
+        "text": "cross_validator -> pass (0.84)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "arbiter",
+        "text": "critic -> retry (0.97)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "arbiter",
+        "text": "cross_validator -> pass (0.84)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "arbiter",
+        "text": "arbiter -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "cross_validator -> pass (0.84)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "arbiter -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "completeness_checker",
+        "text": "completeness -> pass (0 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "arbiter -> pass (0.95)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "completeness -> pass (0 missing)"
+      }
+    },
+    {
+      "event": "trace",
+      "data": {
+        "phase": "finaliser",
+        "text": "finalise -> pass (0.95) via arbiter"
+      }
+    },
+    {
+      "event": "final",
+      "data": {
+        "answer": "Yes — a breach tomorrow on the closest comparable critical AI/analytics service looks like a real IPO-timeline risk, but mainly because it could disrupt compliance/certification and enterprise retention, not because TechNova would run out of company cash.\n\nUsing the November breach as the baseline analogue, the most defensible end-to-end modeled cost for **one critical Engineering AI/analytics service** is:\n\n- **Direct remediation baseline:** **₹0.00L** from incident `INC-2025-0847` in the incidents table.\n- **People lock-in / retention proxy:** **₹39.24L** = 30% of the combined CTC of the incident reporter plus the identified Engineering on-call/DevOps pool.\n- **Customer-loss proxy:** **₹3,841.95L (₹38.42 Cr)** = 15% of active Tier 1 + Tier 2 ARR used as the enterprise churn-risk proxy.\n- **Security / regulatory program floor:** **₹850.00L (₹8.50 Cr)** from the board-approved Zero Trust acceleration budget after the November incident [TechNova_Board_Minutes_Q4.pdf::sec5].\n- **Vendor fallout:** **2 risky Engineering-owned vendors flagged** (VendorConnect Solutions = Suspended; NVIDIA (DGX) = Conditional), but **no grounded INR breakage amount is available in the schema**, so they should be treated as qualitative downside risk, not added as a fabricated rupee figure [TechNova_Vendor_Contracts.pdf::sec4].\n\n**Total modeled scenario cost: ₹4,731.18L (₹47.31 Cr)**\n\n**Arithmetic summary**\n- People lock-in: **₹39.24L**\n- Customer-loss proxy: **₹3,841.95L**\n- Direct remediation: **₹0.00L**\n- Zero Trust / security floor: **₹850.00L**\n- **Combined total: ₹4,731.18L (₹47.31 Cr)**\n\nAgainst budget:\n- **Engineering Q4 budget:** **₹210 Cr**\n- **Engineering unspent Q4 headroom:** **₹11.13 Cr** [TechNova_Q4_Financial_Report.pdf::sec4]\n- **Budget gap vs modeled breach cost:** **₹47.31 Cr − ₹11.13 Cr = ₹36.18 Cr**\n\nSo **no, Engineering’s remaining Q4 headroom would not absorb this scenario**. On a departmental-budget basis, the breach is too large to contain inside current Engineering headroom before the IPO filing window.\n\nThat said, **it is not an existential liquidity problem** at the company level:\n- Cash on balance sheet is **₹892.4 Cr** with **zero long-term debt** [TechNova_Q4_Financial_Report.pdf::sec2].\n- Q4 free cash flow was **₹156.8 Cr** [TechNova_Board_Minutes_Q4.pdf::sec2].\n- Cyber insurance provides **₹50 Cr** coverage for **breach notification costs, regulatory fines, and business interruption** [TechNova_Vendor_Contracts.pdf::sec4].\n\nSo the sharper question is not “can the company pay?” but “would a breach now damage IPO readiness?”\n\nOn that, the answer is **yes, plausibly**:\n- The board is targeting **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- IPO readiness requires **SOC 2 Type II** and **ISO 27001** for all product modules by **December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- IPO readiness also requires **3,500 paying enterprise customers**; current count is **2,847**, leaving a **653-customer gap** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- IPO readiness also requires **120%+ NRR for 4 consecutive quarters**; current NRR is **118.3%**, so the clock has not started yet [TechNova_Product_Roadmap_2026.pdf::sec5].\n\nA fresh breach on a critical AI service would therefore threaten the IPO timeline in three ways:\n1. **Certification slippage:** another incident could delay SOC 2 / ISO workstreams, which are explicit IPO milestones [TechNova_Product_Roadmap_2026.pdf::sec5].\n2. **Enterprise customer confidence:** the November incident already required Tier 1 notifications and affected 847 accounts in the analytics cluster [TechNova_Security_Incident_Report.pdf::sec2]; repeating that on a critical AI service would likely worsen churn risk exactly when TechNova still needs 653 more enterprise logos.\n3. **Narrative damage:** with NRR already below the 120% threshold, any breach-driven contraction or delayed expansion would weaken the IPO story [TechNova_Product_Roadmap_2026.pdf::sec5].\n\nImportant caveats:\n- The November incident’s legal assessment found **mandatory DPDP Board notification was not triggered** because the exfiltrated data was anonymized, though CERT-In reporting was required [TechNova_Security_Incident_Report.pdf::sec5]. If a new AI-service breach involved personal data instead, the legal/regulatory bill could be worse than this model.\n- The AI stack has concentrated infrastructure: the platform architecture shows a dedicated AI EKS cluster with **16 NVIDIA A100 nodes / 128 GPUs**, and the architecture evidence does not show regional redundancy for AI workloads, which increases operational sensitivity if a critical AI service is hit [TechNova_Platform_Architecture.pdf::sec4].\n\n**Bottom line:**\n- **Modeled end-to-end breach cost now:** **₹47.31 Cr**\n- **Engineering unspent Q4 headroom:** **₹11.13 Cr**\n- **Gap:** **₹36.18 Cr**\n- **IPO implication:** **Yes, a breach right now is a credible threat to the IPO timeline** — less because TechNova cannot fund it, and more because it could derail certification milestones, hurt enterprise retention, and weaken already-tight IPO readiness metrics before the planned **September 2026 DRHP filing** [TechNova_Board_Minutes_Q4.pdf::sec3] [TechNova_Product_Roadmap_2026.pdf::sec5].",
+        "confidence": 0.95,
+        "evidence": {
+          "sql": null,
+          "citations": [
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+            },
+            {
+              "chunk_id": "TechNova_Platform_Architecture.pdf::sec4"
+            },
+            {
+              "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+            },
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+            },
+            {
+              "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+            },
+            {
+              "chunk_id": "TechNova_Security_Incident_Report.pdf::sec5"
+            },
+            {
+              "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+            },
+            {
+              "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+            },
+            {
+              "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec2"
+            },
+            {
+              "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+            }
+          ],
+          "chunks_seen": null,
+          "hybrid_sub_results": [
+            {
+              "type": "sql",
+              "question": "Using incident INC-2025-0847 as the baseline, identify all candidate affected services from products_services where criticality_tier='Critical' AND (domain IN ('AI Services','Analytics Engine') OR service_name ILIKE '%ai%' OR service_name ILIKE '%ml%' OR service_name ILIKE '%analytics%'); for each candidate service, return its owning department, map the incident baseline severity/customers_affected_count/remediation_cost_inr_lakhs onto that service, and compute scenario components available from SQL: retention cost for the incident reporters plus the on-call engineers responsible for that service as 30% of their total_ctc_inr_lakhs, and customer-loss proxy as 15% of ARR for Tier-1 and Tier-2 customers exposed to that service.",
+              "answer": "Using `incidents`, `products_services`, `departments`, `employees`, `salary_records`, and `customers`, I found 7 candidate critical AI/analytics services for baseline incident `INC-2025-0847`: 4 owned by Engineering and 3 by Data & AI Research. Baseline mapped to each service is `SEV-2`, `847` customers affected, and `₹0.00L` remediation cost; retention-cost proxy is `₹39.24L` per Engineering service vs `₹37.07L` per Data & AI Research service, and the Tier-1/Tier-2 customer-loss proxy is `₹3841.95L` per service, giving scenario totals of `₹3881.19L` for each Engineering analytics service and `₹3879.02L` for each Data & AI Research AI service. **Combined scenario total across all 7 candidate rows = ₹27161.82L (≈₹271.62 Cr).**\n\n```sql\nWITH baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        i.reporter_employee_id\n    FROM incidents i\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        ps.service_id,\n        ps.service_name,\n        ps.domain,\n        ps.owner_department_id,\n        d.department_name\n    FROM products_services ps\n    JOIN departments d\n      ON ps.owner_department_id = d.department_id\n    WHERE ps.criticality_tier = 'Critical'\n      AND (\n        ps.domain IN ('AI Services','Analytics Engine')\n        OR ps.service_name ILIKE '%ai%'\n        OR ps.service_name ILIKE '%ml%'\n        OR ps.service_name ILIKE '%analytics%'\n      )\n),\nincident_reporters AS (\n    SELECT DISTINCT b.reporter_employee_id AS employee_id\n    FROM baseline b\n),\noncall_engineers AS (\n    SELECT DISTINCT e.employee_id, cs.service_id\n    FROM candidate_services cs\n    JOIN employees e\n      ON e.department_id = cs.owner_department_id\n    WHERE e.employment_status = 'Active'\n      AND (\n        LOWER(e.job_title) LIKE '%site reliability%'\n        OR LOWER(e.job_title) LIKE '%sre%'\n        OR LOWER(e.job_title) LIKE '%platform engineer%'\n        OR LOWER(e.job_title) LIKE '%devops%'\n        OR LOWER(e.job_title) LIKE '%infrastructure%'\n      )\n),\nservice_people AS (\n    SELECT cs.service_id, ir.employee_id\n    FROM candidate_services cs\n    CROSS JOIN incident_reporters ir\n    UNION\n    SELECT oe.service_id, oe.employee_id\n    FROM oncall_engineers oe\n),\nretention_by_service AS (\n    SELECT \n        sp.service_id,\n        ROUND(SUM(0.30 * sr.total_ctc_inr_lakhs), 2) AS retention_cost_inr_lakhs\n    FROM service_people sp\n    JOIN salary_records sr\n      ON sr.employee_id = sp.employee_id\n    GROUP BY sp.service_id\n),\nexposed_customers AS (\n    SELECT \n        cs.service_id,\n        c.customer_id,\n        c.customer_name,\n        c.tier,\n        c.arr_inr_lakhs,\n        ROW_NUMBER() OVER (PARTITION BY cs.service_id ORDER BY c.arr_inr_lakhs DESC, c.customer_id) AS rn\n    FROM candidate_services cs\n    JOIN customers c\n      ON c.account_status = 'Active'\n     AND c.tier IN ('Tier 1','Tier 2')\n),\ncustomer_loss_by_service AS (\n    SELECT \n        ec.service_id,\n        ROUND(SUM(0.15 * ec.arr_inr_lakhs), 2) AS customer_loss_proxy_inr_lakhs\n    FROM exposed_customers ec\n    JOIN baseline b\n      ON ec.rn <= b.customers_affected_count\n    GROUP BY ec.service_id\n)\nSELECT \n    cs.service_id,\n    cs.service_name,\n    cs.domain,\n    cs.department_name AS owning_department,\n    b.severity AS baseline_severity,\n    b.customers_affected_count AS baseline_customers_affected_count,\n    b.remediation_cost_inr_lakhs AS baseline_remediation_cost_inr_lakhs,\n    COALESCE(rbs.retention_cost_inr_lakhs, 0) AS retention_cost_inr_lakhs,\n    COALESCE(cls.customer_loss_proxy_inr_lakhs, 0) AS customer_loss_proxy_inr_lakhs,\n    ROUND(b.remediation_cost_inr_lakhs + COALESCE(rbs.retention_cost_inr_lakhs, 0) + COALESCE(cls.customer_loss_proxy_inr_lakhs, 0), 2) AS scenario_total_inr_lakhs\nFROM candidate_services cs\nCROSS JOIN baseline b\nLEFT JOIN retention_by_service rbs\n  ON cs.service_id = rbs.service_id\nLEFT JOIN customer_loss_by_service cls\n  ON cs.service_id = cls.service_id\nORDER BY scenario_total_inr_lakhs DESC, cs.service_id;\n```",
+              "sql_result": {
+                "sql": "WITH baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        i.reporter_employee_id\n    FROM incidents i\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        ps.service_id,\n        ps.service_name,\n        ps.domain,\n        ps.owner_department_id,\n        d.department_name\n    FROM products_services ps\n    JOIN departments d\n      ON ps.owner_department_id = d.department_id\n    WHERE ps.criticality_tier = 'Critical'\n      AND (\n        ps.domain IN ('AI Services','Analytics Engine')\n        OR ps.service_name ILIKE '%ai%'\n        OR ps.service_name ILIKE '%ml%'\n        OR ps.service_name ILIKE '%analytics%'\n      )\n),\nincident_reporters AS (\n    SELECT DISTINCT b.reporter_employee_id AS employee_id\n    FROM baseline b\n),\noncall_engineers AS (\n    SELECT DISTINCT e.employee_id, cs.service_id\n    FROM candidate_services cs\n    JOIN employees e\n      ON e.department_id = cs.owner_department_id\n    WHERE e.employment_status = 'Active'\n      AND (\n        LOWER(e.job_title) LIKE '%site reliability%'\n        OR LOWER(e.job_title) LIKE '%sre%'\n        OR LOWER(e.job_title) LIKE '%platform engineer%'\n        OR LOWER(e.job_title) LIKE '%devops%'\n        OR LOWER(e.job_title) LIKE '%infrastructure%'\n      )\n),\nservice_people AS (\n    SELECT cs.service_id, ir.employee_id\n    FROM candidate_services cs\n    CROSS JOIN incident_reporters ir\n    UNION\n    SELECT oe.service_id, oe.employee_id\n    FROM oncall_engineers oe\n),\nretention_by_service AS (\n    SELECT \n        sp.service_id,\n        ROUND(SUM(0.30 * sr.total_ctc_inr_lakhs), 2) AS retention_cost_inr_lakhs\n    FROM service_people sp\n    JOIN salary_records sr\n      ON sr.employee_id = sp.employee_id\n    GROUP BY sp.service_id\n),\nexposed_customers AS (\n    SELECT \n        cs.service_id,\n        c.customer_id,\n        c.customer_name,\n        c.tier,\n        c.arr_inr_lakhs,\n        ROW_NUMBER() OVER (PARTITION BY cs.service_id ORDER BY c.arr_inr_lakhs DESC, c.customer_id) AS rn\n    FROM candidate_services cs\n    JOIN customers c\n      ON c.account_status = 'Active'\n     AND c.tier IN ('Tier 1','Tier 2')\n),\ncustomer_loss_by_service AS (\n    SELECT \n        ec.service_id,\n        ROUND(SUM(0.15 * ec.arr_inr_lakhs), 2) AS customer_loss_proxy_inr_lakhs\n    FROM exposed_customers ec\n    JOIN baseline b\n      ON ec.rn <= b.customers_affected_count\n    GROUP BY ec.service_id\n)\nSELECT \n    cs.service_id,\n    cs.service_name,\n    cs.domain,\n    cs.department_name AS owning_department,\n    b.severity AS baseline_severity,\n    b.customers_affected_count AS baseline_customers_affected_count,\n    b.remediation_cost_inr_lakhs AS baseline_remediation_cost_inr_lakhs,\n    COALESCE(rbs.retention_cost_inr_lakhs, 0) AS retention_cost_inr_lakhs,\n    COALESCE(cls.customer_loss_proxy_inr_lakhs, 0) AS customer_loss_proxy_inr_lakhs,\n    ROUND(b.remediation_cost_inr_lakhs + COALESCE(rbs.retention_cost_inr_lakhs, 0) + COALESCE(cls.customer_loss_proxy_inr_lakhs, 0), 2) AS scenario_total_inr_lakhs\nFROM candidate_services cs\nCROSS JOIN baseline b\nLEFT JOIN retention_by_service rbs\n  ON cs.service_id = rbs.service_id\nLEFT JOIN customer_loss_by_service cls\n  ON cs.service_id = cls.service_id\nORDER BY scenario_total_inr_lakhs DESC, cs.service_id;",
+                "rows_markdown": "|   service_id | service_name     | domain           | owning_department   | baseline_severity   |   baseline_customers_affected_count |   baseline_remediation_cost_inr_lakhs |   retention_cost_inr_lakhs |   customer_loss_proxy_inr_lakhs |   scenario_total_inr_lakhs |\n|-------------:|:-----------------|:-----------------|:--------------------|:--------------------|------------------------------------:|--------------------------------------:|---------------------------:|--------------------------------:|---------------------------:|\n|         9041 | analytics-svc-01 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9063 | analytics-svc-23 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9066 | analytics-svc-26 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9072 | analytics-svc-32 | Analytics Engine | Engineering         | SEV-2               |                                 847 |                                     0 |                      39.24 |                         3841.95 |                    3881.19 |\n|         9117 | ai-svc-02        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |\n|         9118 | ai-svc-03        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |\n|         9123 | ai-svc-08        | AI Services      | Data & AI Research  | SEV-2               |                                 847 |                                     0 |                      37.07 |                         3841.95 |                    3879.02 |",
+                "row_count": 8,
+                "error": null,
+                "iterations": 4
+              }
+            },
+            {
+              "type": "sql",
+              "question": "For the same candidate critical AI services and owning department(s) identified in the previous step, estimate vendor-contract fallout from vendors owned by the affected department with risk_status IN ('Conditional','Suspended'), using available contract-value or spend fields if present; also return the direct regulatory/legal baseline by carrying forward INC-2025-0847 remediation_cost_inr_lakhs so it can be combined with the 8.5 Cr Zero Trust floor already provided in fact [F-DATA-02].",
+              "answer": "Using `incidents`, `products_services`, `departments`, and `vendors`, INC-2025-0847 maps to the critical AI-adjacent service `analytics-svc-01` owned by **Engineering**; that department has **2 risky owned vendors** (`VendorConnect Solutions` suspended, `NVIDIA (DGX)` conditional) with **combined annual committed spend of USD 1.38M** as the available vendor-contract fallout proxy. The direct regulatory/legal baseline carried forward is **0 lakhs remediation cost + 8.5 Cr Zero Trust floor = 8.5 Cr**; combined vendor fallout cannot be converted into INR crores from the available fields because both risky vendor contract values are stored in **USD**.\n\n```sql\nWITH incident_baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        ps.service_name AS incident_service,\n        d.department_id,\n        d.department_name\n    FROM incidents i\n    JOIN products_services ps ON i.affected_service_id = ps.service_id\n    JOIN departments d ON ps.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\nrisky_vendors AS (\n    SELECT \n        v.vendor_id,\n        v.vendor_name,\n        v.category,\n        v.contract_currency,\n        v.annual_committed_spend,\n        v.risk_status,\n        d.department_name AS owner_department_name\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE v.owner_department_id IN (SELECT department_id FROM incident_baseline)\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nsummary AS (\n    SELECT \n        COUNT(*) AS risky_vendor_count,\n        SUM(CASE WHEN contract_currency = 'USD' THEN annual_committed_spend ELSE 0 END) AS total_usd_annual_committed_spend,\n        SUM(CASE WHEN contract_currency = 'INR' THEN annual_committed_spend ELSE 0 END) AS total_inr_annual_committed_spend\n    FROM risky_vendors\n)\nSELECT \n    ib.incident_ref,\n    ib.severity,\n    ib.customers_affected_count,\n    ib.remediation_cost_inr_lakhs,\n    ib.incident_service,\n    ib.department_name AS affected_department,\n    rv.vendor_name,\n    rv.category,\n    rv.risk_status,\n    rv.contract_currency,\n    rv.annual_committed_spend,\n    s.risky_vendor_count,\n    s.total_usd_annual_committed_spend,\n    s.total_inr_annual_committed_spend,\n    8.5 AS zero_trust_floor_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 AS remediation_cost_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 + 8.5 AS direct_regulatory_legal_baseline_inr_crores\nFROM incident_baseline ib\nCROSS JOIN summary s\nLEFT JOIN risky_vendors rv ON rv.owner_department_name = ib.department_name\nORDER BY rv.risk_status DESC, rv.vendor_name;\n```",
+              "sql_result": {
+                "sql": "WITH incident_baseline AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        ps.service_name AS incident_service,\n        d.department_id,\n        d.department_name\n    FROM incidents i\n    JOIN products_services ps ON i.affected_service_id = ps.service_id\n    JOIN departments d ON ps.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\nrisky_vendors AS (\n    SELECT \n        v.vendor_id,\n        v.vendor_name,\n        v.category,\n        v.contract_currency,\n        v.annual_committed_spend,\n        v.risk_status,\n        d.department_name AS owner_department_name\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE v.owner_department_id IN (SELECT department_id FROM incident_baseline)\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nsummary AS (\n    SELECT \n        COUNT(*) AS risky_vendor_count,\n        SUM(CASE WHEN contract_currency = 'USD' THEN annual_committed_spend ELSE 0 END) AS total_usd_annual_committed_spend,\n        SUM(CASE WHEN contract_currency = 'INR' THEN annual_committed_spend ELSE 0 END) AS total_inr_annual_committed_spend\n    FROM risky_vendors\n)\nSELECT \n    ib.incident_ref,\n    ib.severity,\n    ib.customers_affected_count,\n    ib.remediation_cost_inr_lakhs,\n    ib.incident_service,\n    ib.department_name AS affected_department,\n    rv.vendor_name,\n    rv.category,\n    rv.risk_status,\n    rv.contract_currency,\n    rv.annual_committed_spend,\n    s.risky_vendor_count,\n    s.total_usd_annual_committed_spend,\n    s.total_inr_annual_committed_spend,\n    8.5 AS zero_trust_floor_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 AS remediation_cost_inr_crores,\n    ib.remediation_cost_inr_lakhs / 100.0 + 8.5 AS direct_regulatory_legal_baseline_inr_crores\nFROM incident_baseline ib\nCROSS JOIN summary s\nLEFT JOIN risky_vendors rv ON rv.owner_department_name = ib.department_name\nORDER BY rv.risk_status DESC, rv.vendor_name;",
+                "rows_markdown": "| incident_ref   | severity   |   customers_affected_count |   remediation_cost_inr_lakhs | incident_service   | affected_department   | vendor_name             | category            | risk_status   | contract_currency   |   annual_committed_spend |   risky_vendor_count |   total_usd_annual_committed_spend |   total_inr_annual_committed_spend |   zero_trust_floor_inr_crores |   remediation_cost_inr_crores |   direct_regulatory_legal_baseline_inr_crores |\n|:---------------|:-----------|---------------------------:|-----------------------------:|:-------------------|:----------------------|:------------------------|:--------------------|:--------------|:--------------------|-------------------------:|---------------------:|-----------------------------------:|-----------------------------------:|------------------------------:|------------------------------:|----------------------------------------------:|\n| INC-2025-0847  | SEV-2      |                        847 |                            0 | analytics-svc-01   | Engineering           | VendorConnect Solutions | Integration Partner | Suspended     | USD                 |                   180000 |                    2 |                           1.38e+06 |                                  0 |                           8.5 |                             0 |                                           8.5 |\n| INC-2025-0847  | SEV-2      |                        847 |                            0 | analytics-svc-01   | Engineering           | NVIDIA (DGX)            | Hardware            | Conditional   | USD                 |                  1200000 |                    2 |                           1.38e+06 |                                  0 |                           8.5 |                             0 |                                           8.5 |",
+                "row_count": 3,
+                "error": null,
+                "iterations": 4
+              }
+            },
+            {
+              "type": "sql",
+              "question": "Combine the prior SQL outputs into an end-to-end breach-cost scenario per candidate critical AI service: retention cost + 15% churn-risk ARR + vendor-contract fallout + INC-2025-0847 remediation_cost_inr_lakhs + 8.5 Cr Zero Trust floor from fact [F-DATA-02]; then compare each total against Engineering's remaining unspent Q4 budget headroom from fact [F-FIN-06] (INR 11.13 Cr) and report whether the total exceeds that headroom.",
+              "answer": "Using `incidents`, `products_services`, `salary_records`, `customers`, `vendors`, and `departments`, all four candidate critical Engineering AI/analytics services in the result set land at the same modeled breach-cost total: **₹2,017.85 lakhs (₹20.18 Cr)** each, versus **Engineering’s remaining unspent Q4 headroom of ₹11.13 Cr**, so **each scenario exceeds headroom by ₹9.05 Cr**. Combined across the 4 candidate services listed, the modeled total is **₹8,071.40 lakhs (₹80.71 Cr)**, though note the SQL could only proxy customer exposure from the incident reporter’s book and vendor fallout from Engineering-owned flagged vendors, so the per-service totals are scenario estimates rather than service-specific contract valuations.\n\n```sql\nWITH incident_base AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        s.service_id AS incident_service_id,\n        s.service_name AS incident_service_name,\n        s.domain AS incident_service_domain,\n        d.department_name,\n        i.reporter_employee_id\n    FROM incidents i\n    JOIN products_services s ON i.affected_service_id = s.service_id\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        s.service_id,\n        s.service_name,\n        s.domain,\n        d.department_name\n    FROM products_services s\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE s.criticality_tier = 'Critical'\n      AND d.department_name = 'Engineering'\n      AND (\n        s.domain IN ('AI Services', 'Analytics Engine')\n        OR LOWER(s.service_name) LIKE '%ai%'\n        OR LOWER(s.service_name) LIKE '%ml%'\n        OR LOWER(s.service_name) LIKE '%analytics%'\n      )\n),\nreporter_ctc AS (\n    SELECT COALESCE(SUM(0.3 * sr.total_ctc_inr_lakhs), 0) AS retention_cost_inr_lakhs\n    FROM incident_base ib\n    JOIN salary_records sr ON ib.reporter_employee_id = sr.employee_id\n    WHERE sr.review_cycle = 'FY2025-26'\n),\ncustomer_exposure AS (\n    SELECT \n        cs.service_id,\n        cs.service_name,\n        COUNT(c.customer_id) AS exposed_customers,\n        COALESCE(SUM(0.15 * c.arr_inr_lakhs), 0) AS churn_risk_arr_inr_lakhs\n    FROM candidate_services cs\n    LEFT JOIN customers c ON c.account_manager_employee_id = (\n        SELECT reporter_employee_id FROM incident_base LIMIT 1\n    )\n       AND c.tier IN ('Tier 1', 'Tier 2')\n       AND c.account_status IN ('Active', 'At Risk')\n    GROUP BY cs.service_id, cs.service_name\n),\nvendor_fallout AS (\n    SELECT \n        COUNT(v.vendor_id) AS flagged_vendors,\n        COALESCE(SUM(CASE \n            WHEN v.contract_currency = 'USD' THEN v.annual_committed_spend * 83.0 / 10000000.0\n            WHEN v.contract_currency = 'INR' THEN v.annual_committed_spend / 10000000.0\n            WHEN v.contract_currency = 'EUR' THEN v.annual_committed_spend * 90.0 / 10000000.0\n            ELSE 0 END), 0) AS vendor_contract_fallout_inr_crores\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE d.department_name = 'Engineering'\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nengineering_budget AS (\n    SELECT 11.13 AS remaining_unspent_q4_budget_inr_crores\n)\nSELECT \n    cs.service_name,\n    cs.domain,\n    cs.department_name,\n    ROUND(rc.retention_cost_inr_lakhs, 2) AS retention_cost_inr_lakhs,\n    ROUND(ce.churn_risk_arr_inr_lakhs, 2) AS churn_risk_arr_inr_lakhs,\n    ROUND(vf.vendor_contract_fallout_inr_crores * 100.0, 2) AS vendor_contract_fallout_inr_lakhs,\n    ib.remediation_cost_inr_lakhs,\n    850.0 AS zero_trust_floor_inr_lakhs,\n    ROUND(\n        (rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0),\n        2\n    ) AS total_scenario_cost_inr_lakhs,\n    11.13 AS engineering_remaining_headroom_inr_crores,\n    ROUND(11.13 * 100.0, 2) AS engineering_remaining_headroom_inr_lakhs,\n    ROUND(\n        ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0),\n        2\n    ) AS total_scenario_cost_inr_crores,\n    CASE \n        WHEN ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0) > 11.13\n        THEN 'Exceeds headroom'\n        ELSE 'Within headroom'\n    END AS headroom_comparison\nFROM candidate_services cs\nCROSS JOIN reporter_ctc rc\nJOIN customer_exposure ce ON cs.service_id = ce.service_id\nCROSS JOIN vendor_fallout vf\nCROSS JOIN incident_base ib\nORDER BY total_scenario_cost_inr_lakhs DESC, cs.service_name;\n```",
+              "sql_result": {
+                "sql": "WITH incident_base AS (\n    SELECT \n        i.incident_ref,\n        i.severity,\n        i.customers_affected_count,\n        i.remediation_cost_inr_lakhs,\n        s.service_id AS incident_service_id,\n        s.service_name AS incident_service_name,\n        s.domain AS incident_service_domain,\n        d.department_name,\n        i.reporter_employee_id\n    FROM incidents i\n    JOIN products_services s ON i.affected_service_id = s.service_id\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE i.incident_ref = 'INC-2025-0847'\n),\ncandidate_services AS (\n    SELECT \n        s.service_id,\n        s.service_name,\n        s.domain,\n        d.department_name\n    FROM products_services s\n    JOIN departments d ON s.owner_department_id = d.department_id\n    WHERE s.criticality_tier = 'Critical'\n      AND d.department_name = 'Engineering'\n      AND (\n        s.domain IN ('AI Services', 'Analytics Engine')\n        OR LOWER(s.service_name) LIKE '%ai%'\n        OR LOWER(s.service_name) LIKE '%ml%'\n        OR LOWER(s.service_name) LIKE '%analytics%'\n      )\n),\nreporter_ctc AS (\n    SELECT COALESCE(SUM(0.3 * sr.total_ctc_inr_lakhs), 0) AS retention_cost_inr_lakhs\n    FROM incident_base ib\n    JOIN salary_records sr ON ib.reporter_employee_id = sr.employee_id\n    WHERE sr.review_cycle = 'FY2025-26'\n),\ncustomer_exposure AS (\n    SELECT \n        cs.service_id,\n        cs.service_name,\n        COUNT(c.customer_id) AS exposed_customers,\n        COALESCE(SUM(0.15 * c.arr_inr_lakhs), 0) AS churn_risk_arr_inr_lakhs\n    FROM candidate_services cs\n    LEFT JOIN customers c ON c.account_manager_employee_id = (\n        SELECT reporter_employee_id FROM incident_base LIMIT 1\n    )\n       AND c.tier IN ('Tier 1', 'Tier 2')\n       AND c.account_status IN ('Active', 'At Risk')\n    GROUP BY cs.service_id, cs.service_name\n),\nvendor_fallout AS (\n    SELECT \n        COUNT(v.vendor_id) AS flagged_vendors,\n        COALESCE(SUM(CASE \n            WHEN v.contract_currency = 'USD' THEN v.annual_committed_spend * 83.0 / 10000000.0\n            WHEN v.contract_currency = 'INR' THEN v.annual_committed_spend / 10000000.0\n            WHEN v.contract_currency = 'EUR' THEN v.annual_committed_spend * 90.0 / 10000000.0\n            ELSE 0 END), 0) AS vendor_contract_fallout_inr_crores\n    FROM vendors v\n    JOIN departments d ON v.owner_department_id = d.department_id\n    WHERE d.department_name = 'Engineering'\n      AND v.risk_status IN ('Conditional', 'Suspended')\n),\nengineering_budget AS (\n    SELECT 11.13 AS remaining_unspent_q4_budget_inr_crores\n)\nSELECT \n    cs.service_name,\n    cs.domain,\n    cs.department_name,\n    ROUND(rc.retention_cost_inr_lakhs, 2) AS retention_cost_inr_lakhs,\n    ROUND(ce.churn_risk_arr_inr_lakhs, 2) AS churn_risk_arr_inr_lakhs,\n    ROUND(vf.vendor_contract_fallout_inr_crores * 100.0, 2) AS vendor_contract_fallout_inr_lakhs,\n    ib.remediation_cost_inr_lakhs,\n    850.0 AS zero_trust_floor_inr_lakhs,\n    ROUND(\n        (rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0),\n        2\n    ) AS total_scenario_cost_inr_lakhs,\n    11.13 AS engineering_remaining_headroom_inr_crores,\n    ROUND(11.13 * 100.0, 2) AS engineering_remaining_headroom_inr_lakhs,\n    ROUND(\n        ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0),\n        2\n    ) AS total_scenario_cost_inr_crores,\n    CASE \n        WHEN ((rc.retention_cost_inr_lakhs + ce.churn_risk_arr_inr_lakhs + (vf.vendor_contract_fallout_inr_crores * 100.0) + ib.remediation_cost_inr_lakhs + 850.0) / 100.0) > 11.13\n        THEN 'Exceeds headroom'\n        ELSE 'Within headroom'\n    END AS headroom_comparison\nFROM candidate_services cs\nCROSS JOIN reporter_ctc rc\nJOIN customer_exposure ce ON cs.service_id = ce.service_id\nCROSS JOIN vendor_fallout vf\nCROSS JOIN incident_base ib\nORDER BY total_scenario_cost_inr_lakhs DESC, cs.service_name;",
+                "rows_markdown": "| service_name     | domain           | department_name   |   retention_cost_inr_lakhs |   churn_risk_arr_inr_lakhs |   vendor_contract_fallout_inr_lakhs |   remediation_cost_inr_lakhs |   zero_trust_floor_inr_lakhs |   total_scenario_cost_inr_lakhs |   engineering_remaining_headroom_inr_crores |   engineering_remaining_headroom_inr_lakhs |   total_scenario_cost_inr_crores | headroom_comparison   |\n|:-----------------|:-----------------|:------------------|---------------------------:|---------------------------:|------------------------------------:|-----------------------------:|-----------------------------:|--------------------------------:|--------------------------------------------:|-------------------------------------------:|---------------------------------:|:----------------------|\n| analytics-svc-01 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-23 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-26 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |\n| analytics-svc-32 | Analytics Engine | Engineering       |                      22.45 |                          0 |                              1145.4 |                            0 |                          850 |                         2017.85 |                                       11.13 |                                       1113 |                            20.18 | Exceeds headroom      |",
+                "row_count": 5,
+                "error": null,
+                "iterations": 4
+              }
+            },
+            {
+              "type": "rag",
+              "question": "Using pre-extracted facts only, assess whether a breach right now threatens the IPO timeline by grounding the comparison against fact [F-FIN-06] (Engineering unspent Q4 headroom INR 11.13 Cr), fact [F-IPO-08] / [F-AUTO-00CE00CD8E] / [F-AUTO-76068AB05E] (IPO security-certification milestones), fact [F-IPO-07] / [F-AUTO-228B9C28E7] (NRR milestone currently below threshold), fact [F-AUTO-CB42E8DB51] (enterprise-customer milestone), and relevant incident/insurance context from facts [F-SEC-03], [F-AUTO-1A5C93CD9D], [F-AUTO-93F35BD5F7], and [F-ARCH-01] to determine whether exceeding budget headroom would plausibly threaten the DRHP/IPO timeline.",
+              "answer": "Using the retrieved facts only, a breach **would not automatically threaten the DRHP/IPO timeline just because it exceeds Engineering’s current Q4 unspent headroom**, but it **could plausibly become a timeline risk if it materially delays the IPO-linked security certification program or worsens already-below-target IPO readiness metrics**.\n\nWhy:\n\n- Engineering’s Q4 budget was INR 210 crores and utilization was 94.7%, implying about **INR 11.13 crores unspent headroom** (210 × 5.3%) [TechNova_Q4_Financial_Report.pdf::sec4].\n- After incident INC-2025-0847, the Board already **approved an additional INR 8.5 crores** and **accelerated Zero Trust implementation from March 2026 to February 2026**, which shows management treated the incident as something to absorb and remediate rather than as an immediate IPO blocker [TechNova_Board_Minutes_Q4.pdf::sec5].\n- The IPO timeline targets **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- The explicit product-side IPO readiness gates are: **3,500 paying enterprise customers by Q2 FY2027 (currently 2,847)**, **120%+ NRR for 4 consecutive quarters (currently 118.3%)**, and **SOC 2 Type II + ISO 27001 for all product modules by December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- That means the company is **already below threshold on NRR** and **still short on enterprise-customer count**, so IPO readiness already depends on executing multiple milestones, not just staying within one quarter’s Engineering budget [TechNova_Product_Roadmap_2026.pdf::sec5].\n- Incident context is serious but not worst-case: the breach involved the **Analytics Engine cluster** via a compromised third-party API key [TechNova_Security_Incident_Report.pdf::sec1], affected **847 customer accounts** including **23 Tier 1** and **312 Tier 2** accounts, but the exfiltrated data was **anonymized analytics metadata** and **no PII, credentials, financial data, or source code** were compromised [TechNova_Security_Incident_Report.pdf::sec2]. Architecturally, Analytics Engine and AI Services are core domains in the platform [TechNova_Platform_Architecture.pdf::sec2].\n- There is also **INR 50 crores of cyber liability insurance** covering breach notification, regulatory fines, and business interruption, and the implicated vendor has been suspended pending remediation [TechNova_Vendor_Contracts.pdf::sec4].\n\nAssessment:\n- **Budget overrun alone**: exceeding the INR 11.13 crores Q4 headroom does **not by itself** show the DRHP timeline is threatened, because the Board has already shown willingness to fund remediation separately with an extra INR 8.5 crores and to accelerate security work [TechNova_Board_Minutes_Q4.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec4].\n- **What would make it a plausible IPO threat**: if the breach causes slippage in the **security-certification milestone** for all modules, or if enterprise-customer / NRR performance deteriorates further because affected enterprise customers lose confidence, then the IPO narrative and readiness package could weaken materially [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Security_Incident_Report.pdf::sec2].\n- **Net conclusion**: based on the available facts, the more credible risk to the IPO timeline is **milestone slippage** (especially certifications and commercial metrics), not merely that remediation costs exceed current Engineering Q4 headroom. So, **exceeding headroom is a warning sign, but not enough on its own to conclude the DRHP/IPO timeline is threatened right now** [TechNova_Q4_Financial_Report.pdf::sec4] [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Board_Minutes_Q4.pdf::sec3].\n\n- TechNova_Q4_Financial_Report.pdf::sec4\n- TechNova_Board_Minutes_Q4.pdf::sec5\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Security_Incident_Report.pdf::sec1\n- TechNova_Security_Incident_Report.pdf::sec2\n- TechNova_Platform_Architecture.pdf::sec2\n- TechNova_Vendor_Contracts.pdf::sec4",
+              "rag_result": {
+                "answer": "Using the retrieved facts only, a breach **would not automatically threaten the DRHP/IPO timeline just because it exceeds Engineering’s current Q4 unspent headroom**, but it **could plausibly become a timeline risk if it materially delays the IPO-linked security certification program or worsens already-below-target IPO readiness metrics**.\n\nWhy:\n\n- Engineering’s Q4 budget was INR 210 crores and utilization was 94.7%, implying about **INR 11.13 crores unspent headroom** (210 × 5.3%) [TechNova_Q4_Financial_Report.pdf::sec4].\n- After incident INC-2025-0847, the Board already **approved an additional INR 8.5 crores** and **accelerated Zero Trust implementation from March 2026 to February 2026**, which shows management treated the incident as something to absorb and remediate rather than as an immediate IPO blocker [TechNova_Board_Minutes_Q4.pdf::sec5].\n- The IPO timeline targets **DRHP filing by September 2026** [TechNova_Board_Minutes_Q4.pdf::sec3].\n- The explicit product-side IPO readiness gates are: **3,500 paying enterprise customers by Q2 FY2027 (currently 2,847)**, **120%+ NRR for 4 consecutive quarters (currently 118.3%)**, and **SOC 2 Type II + ISO 27001 for all product modules by December 2026** [TechNova_Product_Roadmap_2026.pdf::sec5].\n- That means the company is **already below threshold on NRR** and **still short on enterprise-customer count**, so IPO readiness already depends on executing multiple milestones, not just staying within one quarter’s Engineering budget [TechNova_Product_Roadmap_2026.pdf::sec5].\n- Incident context is serious but not worst-case: the breach involved the **Analytics Engine cluster** via a compromised third-party API key [TechNova_Security_Incident_Report.pdf::sec1], affected **847 customer accounts** including **23 Tier 1** and **312 Tier 2** accounts, but the exfiltrated data was **anonymized analytics metadata** and **no PII, credentials, financial data, or source code** were compromised [TechNova_Security_Incident_Report.pdf::sec2]. Architecturally, Analytics Engine and AI Services are core domains in the platform [TechNova_Platform_Architecture.pdf::sec2].\n- There is also **INR 50 crores of cyber liability insurance** covering breach notification, regulatory fines, and business interruption, and the implicated vendor has been suspended pending remediation [TechNova_Vendor_Contracts.pdf::sec4].\n\nAssessment:\n- **Budget overrun alone**: exceeding the INR 11.13 crores Q4 headroom does **not by itself** show the DRHP timeline is threatened, because the Board has already shown willingness to fund remediation separately with an extra INR 8.5 crores and to accelerate security work [TechNova_Board_Minutes_Q4.pdf::sec5] [TechNova_Q4_Financial_Report.pdf::sec4].\n- **What would make it a plausible IPO threat**: if the breach causes slippage in the **security-certification milestone** for all modules, or if enterprise-customer / NRR performance deteriorates further because affected enterprise customers lose confidence, then the IPO narrative and readiness package could weaken materially [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Security_Incident_Report.pdf::sec2].\n- **Net conclusion**: based on the available facts, the more credible risk to the IPO timeline is **milestone slippage** (especially certifications and commercial metrics), not merely that remediation costs exceed current Engineering Q4 headroom. So, **exceeding headroom is a warning sign, but not enough on its own to conclude the DRHP/IPO timeline is threatened right now** [TechNova_Q4_Financial_Report.pdf::sec4] [TechNova_Product_Roadmap_2026.pdf::sec5] [TechNova_Board_Minutes_Q4.pdf::sec3].\n\n- TechNova_Q4_Financial_Report.pdf::sec4\n- TechNova_Board_Minutes_Q4.pdf::sec5\n- TechNova_Board_Minutes_Q4.pdf::sec3\n- TechNova_Product_Roadmap_2026.pdf::sec5\n- TechNova_Security_Incident_Report.pdf::sec1\n- TechNova_Security_Incident_Report.pdf::sec2\n- TechNova_Platform_Architecture.pdf::sec2\n- TechNova_Vendor_Contracts.pdf::sec4",
+                "citations": [
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Security_Incident_Report.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Platform_Architecture.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+                  }
+                ],
+                "chunks_seen": [
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Salary_Structure.pdf::sec3"
+                  },
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Q4_Financial_Report.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Product_Roadmap_2026.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Vendor_Contracts.pdf::sec4"
+                  },
+                  {
+                    "chunk_id": "TechNova_Board_Minutes_Q4.pdf::sec5"
+                  },
+                  {
+                    "chunk_id": "TechNova_Security_Incident_Report.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Platform_Architecture.pdf::sec2"
+                  },
+                  {
+                    "chunk_id": "TechNova_Security_Incident_Report.pdf::sec1"
+                  },
+                  {
+                    "chunk_id": "TechNova_OnCall_Runbook.pdf::sec4"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "trace": [
+          "router -> hybrid",
+          "intent -> clarity=0.22, 10 ambiguityies",
+          "clarify r1",
+          "intent -> clarity=0.42, 5 ambiguityies",
+          "clarify r2",
+          "intent -> clarity=0.62, 4 ambiguityies",
+          "clarify r3",
+          "intent -> clarity=0.66, 3 ambiguityies",
+          "readback -> approved",
+          "planner -> 4 sub-qs",
+          "hybrid_exec -> 4 sub-answer(s)",
+          "synthesiser -> 3601 chars",
+          "critic -> retry (0.97)",
+          "cross_validator -> pass (0.84)",
+          "arbiter -> pass (0.95)",
+          "completeness -> pass (0 missing)",
+          "finalise -> pass (0.95) via arbiter"
+        ]
+      }
+    }
+  ]
+}
