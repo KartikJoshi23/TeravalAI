@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-07-30 — Kartik's laptop (master). Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.
@@ -35,23 +35,44 @@ _Last updated: 2026-07-30 — Kartik's laptop (master). Repo: https://github.com
 - **Repo + handoff ready:** GitHub repo `TeravalAI` created; `handoff.md` written
   (collaborator + master continuation prompts). First commit staged (secrets/.env and
   node_modules excluded and verified).
+- **Stage 2 — DONE:** dark-theme dashboard shell + first two visual components,
+  wired live to the finance engine.
+  - Deps added: `tailwindcss` v4 (+ `@tailwindcss/vite`), `zustand`, `framer-motion`,
+    `gsap`, `recharts`. Tailwind v4 CSS-first tokens in `web/src/index.css`
+    (dark, multi-accent blue/violet/amber, glassmorphism `.glass` utility).
+  - `web/src/store/` — Zustand `useModelStore` holds the live `Assumptions`
+    (seeded from `BASE_ASSUMPTIONS`) with `setDriver`/`setAssumptions`/`reset`;
+    `useEvaluation`/`useModel`/`useBreakeven` memoised selectors feed the UI.
+  - `web/src/components/` — `Header` + live `DecisionBadge` (base = **ACCEPT**),
+    `KpiGrid`/`KpiCard` (6 KPIs: NPV, IRR, MIRR, PI, Payback, Break-even; GSAP
+    count-ups, accept/reject colour coding, Framer-Motion entrance/hover),
+    `CashFlowChart` (Recharts `ComposedChart`: per-year FCF bars sign-coloured —
+    Y0 & Y4 refresh dip negative/red — + cumulative discounted-CF line).
+  - `web/src/hooks/useCountUp.ts` (GSAP, honours `prefers-reduced-motion`),
+    `web/src/lib/format.ts` (AED/%/ratio/years/USD formatters).
+  - **Verified end-to-end:** `npx tsc -b` clean · `npm test` **13/13** · `npm run build`
+    OK · ran in-browser, no console errors, all 6 KPIs render the verified numbers
+    (NPV +AED 1,854M, IRR 16.5%, MIRR 12.6%, PI 1.31, payback 5.0y, breakeven $3.34)
+    and the chart draws 9 FCF bars + the cumulative line.
+    (Note: the dev browser pane was hidden so `requestAnimationFrame`/count-up was
+    paused — verified final values via live-DOM inspection instead of a screenshot.)
 
 ## 🔧 In progress
 
-- Handing off to a collaborator's laptop to run Stage 2. Nothing mid-flight in code;
-  Stage 1 is complete and green.
+- Nothing mid-flight in code. Stage 2 is complete and green; ready for Stage 3.
 
-## ▶️ NEXT TASK — Stage 2: Dashboard shell + first two visual components
+## ▶️ NEXT TASK — Stage 3: Scenario comparison + interactive sensitivity + risk panel
 
-Build the dark-theme dashboard skeleton and wire it to the finance engine:
-1. In `web/`: add Tailwind, Zustand, Framer Motion, GSAP, Recharts.
-2. App layout + dark multi-accent glassmorphism theme (not mono-color).
-3. **KPI cards** (≥4): NPV, IRR, MIRR, PI, Payback, Break-even — animated counters,
-   accept/reject colour coding, fed by `evaluate(BASE_ASSUMPTIONS)`.
-4. **Cash-flow / trend chart:** 8-year FCF waterfall + cumulative discounted
-   cash-flow curve, from `buildModel(...).fcf`.
-5. Zustand store holding the live `Assumptions` so later slider stages recompute.
-Stop after Stage 2 for review. (Stages 3–7 per `implementation-plan.md` §13.)
+Add the next three visual components (plan §6.3–6.5, §13 stage 3), all reading the
+Zustand store so they stay in sync:
+1. **Scenario comparison** — optimistic / base / pessimistic: table + grouped bar
+   chart with per-scenario decision badges, from `evaluateScenarios()`.
+2. **Interactive sensitivity** — a **tornado chart** + live sliders on the 6 drivers
+   (GPU price, utilization, tariff, PUE, WACC, capex) via `setDriver`; NPV and every
+   KPI/chart recompute in real time (uses `oneWaySensitivity`).
+3. **Risk & alert panel** — negative-NPV, IRR < WACC, rental-rate-below-breakeven,
+   PUE-too-high, cost-overrun, unrealistic-assumption flags.
+Stop after Stage 3 for review. (Stages 4–7 per `implementation-plan.md` §13.)
 
 ## Notes / decisions
 
