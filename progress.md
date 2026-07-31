@@ -56,23 +56,41 @@ _Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/Kart
     and the chart draws 9 FCF bars + the cumulative line.
     (Note: the dev browser pane was hidden so `requestAnimationFrame`/count-up was
     paused — verified final values via live-DOM inspection instead of a screenshot.)
+- **Stage 3 — DONE:** scenario comparison + interactive sensitivity + risk panel
+  (plan §6.3–6.5), all reading the Zustand store so the Stage-2 KPIs and cash-flow
+  chart recompute live.
+  - `components/ScenarioComparison.tsx` — `evaluateScenarios()` table (optimistic
+    +AED 10,216M/44.5%/2.73, base +1,854M/16.5%/1.31, pessimistic −4,138M/−9.5%/0.30)
+    + comparison bar chart (Opt/Base/**Current live**/Pess, coloured by decision) +
+    per-row `DecisionPill` and **Apply** buttons that load a scenario into the store.
+  - `components/SensitivityPanel.tsx` — 6 live `DriverSlider`s (GPU price, util,
+    WACC, tariff, PUE, rack capex) writing via `setDriver`, a **Reset to base**
+    button, and `TornadoChart.tsx` (`oneWaySensitivity`, floating ΔNPV bars ranked
+    by impact — verified order: GPU price #1, utilization #2, per plan §8.2).
+  - `components/RiskPanel.tsx` + `lib/risk.ts` — rule-based alerts (negative NPV,
+    IRR<WACC, rate-below-break-even, PUE high, capex overrun, unrealistic util/PUE/
+    tariff); base = "no blocking risks", flips to 3 dangers when price < break-even.
+  - `lib/decision.ts` (shared badge styles) + `DecisionPill.tsx`; `lib/drivers.ts`.
+  - **Verified end-to-end:** `npx tsc -b` clean · `npm test` **15/15** (13 finance +
+    2 new `risk.test.ts`) · `npm run build` OK · ran in-browser, no console errors;
+    scenario/tornado/risk all render the verified numbers, and driving the GPU-price
+    slider to $2.50 live-flipped the verdict ACCEPT→REJECT and raised the 3 expected
+    risk alerts (engine + Python reference untouched — numbers unchanged).
 
 ## 🔧 In progress
 
-- Nothing mid-flight in code. Stage 2 is complete and green; ready for Stage 3.
+- Nothing mid-flight in code. Stage 3 is complete and green; ready for Stage 4.
 
-## ▶️ NEXT TASK — Stage 3: Scenario comparison + interactive sensitivity + risk panel
+## ▶️ NEXT TASK — Stage 4: WebGL 3D data-center scene + GSAP/Framer polish
 
-Add the next three visual components (plan §6.3–6.5, §13 stage 3), all reading the
-Zustand store so they stay in sync:
-1. **Scenario comparison** — optimistic / base / pessimistic: table + grouped bar
-   chart with per-scenario decision badges, from `evaluateScenarios()`.
-2. **Interactive sensitivity** — a **tornado chart** + live sliders on the 6 drivers
-   (GPU price, utilization, tariff, PUE, WACC, capex) via `setDriver`; NPV and every
-   KPI/chart recompute in real time (uses `oneWaySensitivity`).
-3. **Risk & alert panel** — negative-NPV, IRR < WACC, rental-rate-below-breakeven,
-   PUE-too-high, cost-overrun, unrealistic-assumption flags.
-Stop after Stage 3 for review. (Stages 4–7 per `implementation-plan.md` §13.)
+Per plan §6 (visual identity) + §13 stage 4:
+1. **Three.js / react-three-fiber** 3D scene of glowing GB200 GPU racks in the
+   data-center hall, with animated energy/heat-flow lines.
+2. The scene **reacts to the live store** — utilization drives rack glow/activity,
+   PUE drives heat/cooling intensity (reads the same Zustand assumptions).
+3. GSAP/Framer-Motion polish pass across the dashboard (transitions, reveals).
+Keep it performant (drei, instancing) and behind the existing dark theme.
+Stop after Stage 4 for review. (Stages 5–7 per `implementation-plan.md` §13.)
 
 ## Notes / decisions
 
