@@ -4,6 +4,7 @@ import CashFlowChart from './components/CashFlowChart';
 import ScenarioComparison from './components/ScenarioComparison';
 import SensitivityPanel from './components/SensitivityPanel';
 import RiskPanel from './components/RiskPanel';
+import DataCenterScene from './components/three/DataCenterScene';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Header />
       <main className="mt-8 flex flex-1 flex-col gap-6">
         <KpiGrid />
+        <DataCenterScene />
         <CashFlowChart />
         <ScenarioComparison />
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -24,7 +26,7 @@ export default function App() {
       </main>
       <footer className="mt-10 border-t border-glass-border pt-4 text-xs text-txt-faint">
         Teraval · Barq AI capital-budgeting appraisal · figures in AED millions, verified
-        against the reference model · dashboard Stage 3
+        against the reference model · dashboard Stage 4
       </footer>
     </div>
   );

@@ -77,20 +77,41 @@ _Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/Kart
     slider to $2.50 live-flipped the verdict ACCEPT→REJECT and raised the 3 expected
     risk alerts (engine + Python reference untouched — numbers unchanged).
 
+- **Stage 4 — DONE:** WebGL 3D data-center hall (plan §6 visual identity) as the
+  dashboard hero, reacting live to the store.
+  - Deps: `three` 0.185, `@react-three/fiber` 9, `@react-three/drei` 10 (+`@types/three`).
+  - `components/three/DataCenterScene.tsx` — react-three-fiber `<Canvas>`: a grid of
+    40 glowing GB200 racks whose emissive **activity scales with live `utilization`**,
+    a rising **heat-particle plume whose colour/opacity track live `pue`** (cool cyan
+    ~1.05 → blue → amber → red ~1.4), a floor `Grid`, accent point-lights, fog, and
+    auto-rotating `OrbitControls` (drag to orbit). Overlay caption + live Util/PUE
+    readouts. Placed after the KPI row in `App.tsx`.
+  - Robust: `hasWebGL()` guard + `components/ErrorBoundary.tsx` fall back to a static
+    notice if WebGL is unavailable; `prefers-reduced-motion` disables the animation.
+  - **Verified end-to-end (headless Chromium + SwiftShader):** `npx tsc -b` clean ·
+    `npm test` **15/15** · `npm run build` OK · no console errors; hall renders, and
+    driving utilization→55% / PUE→1.50 live dimmed the racks and turned the plume
+    from cool-blue to warm-red (readouts updated to 55% / 1.50). Engine + Python
+    reference untouched.
+  - Follow-up (non-blocking): three.js pushes the JS bundle to ~485 kB gzip — worth
+    lazy-loading the `<Canvas>` (React.lazy) in a later polish pass.
+
 ## 🔧 In progress
 
-- Nothing mid-flight in code. Stage 3 is complete and green; ready for Stage 4.
+- Nothing mid-flight in code. Stage 4 is complete and green; ready for Stage 5.
 
-## ▶️ NEXT TASK — Stage 4: WebGL 3D data-center scene + GSAP/Framer polish
+## ▶️ NEXT TASK — Stage 5: AI features + AI recommendation panel
 
-Per plan §6 (visual identity) + §13 stage 4:
-1. **Three.js / react-three-fiber** 3D scene of glowing GB200 GPU racks in the
-   data-center hall, with animated energy/heat-flow lines.
-2. The scene **reacts to the live store** — utilization drives rack glow/activity,
-   PUE drives heat/cooling intensity (reads the same Zustand assumptions).
-3. GSAP/Framer-Motion polish pass across the dashboard (transitions, reveals).
-Keep it performant (drei, instancing) and behind the existing dark theme.
-Stop after Stage 4 for review. (Stages 5–7 per `implementation-plan.md` §13.)
+Per plan §5 (F1–F3, F6) + §13 stage 5. The deterministic engine already exposes
+`monteCarloNpv` (seedable) — surface it and the other AI features in the UI:
+1. **Monte-Carlo risk simulator (F3)** — run `monteCarloNpv` over driver
+   distributions; show the NPV distribution, P(NPV<0) and P10/P90, with a re-run.
+2. **GPU rate/utilization forecaster (F1)** + **AI scenario generator (F2)** — forward
+   revenue curve with bands; auto-built optimistic/base/pessimistic sets.
+3. **AI recommendation panel (F6)** — synthesises metrics + scenarios + sensitivity
+   into the Brief §5.6 accept/reject recommendation (rule-based now; the NIM LLM
+   narrative is Stage 6). Keep every number grounded in the deterministic engine.
+Stop after Stage 5 for review. (Stages 6–7 per `implementation-plan.md` §13.)
 
 ## Notes / decisions
 
