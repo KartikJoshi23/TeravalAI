@@ -68,7 +68,8 @@ export default function KpiGrid() {
     {
       label: 'Break-even GPU rate',
       target: breakeven,
-      format: (n) => `${fmtUsdHr(n)}/GPU-hr`,
+      format: (n) => fmtUsdHr(n),
+      unit: '/GPU-hr',
       tone: 'warning',
       accent: AMBER,
       signal: 'market ≈ $2.85–3.50/hr → knife-edge',

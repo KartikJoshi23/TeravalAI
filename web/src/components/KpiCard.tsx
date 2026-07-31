@@ -31,6 +31,8 @@ export interface KpiCardProps {
   tone: Tone;
   /** Hex accent for this card's glow/border tint. */
   accent: string;
+  /** Optional small unit suffix rendered after the value (e.g. "/GPU-hr"). */
+  unit?: string;
   /** Small decision-signal line under the value. */
   signal: string;
   index: number;
@@ -42,6 +44,7 @@ export default function KpiCard({
   format,
   tone,
   accent,
+  unit,
   signal,
   index,
 }: KpiCardProps) {
@@ -73,8 +76,11 @@ export default function KpiCard({
         <span className={`h-2 w-2 rounded-full ${TONE_DOT[tone]}`} />
       </div>
 
-      <div className={`relative mt-3 font-mono text-3xl font-semibold tabular-nums ${TONE_TEXT[tone]}`}>
+      <div
+        className={`relative mt-3 whitespace-nowrap font-mono text-2xl font-semibold leading-tight tabular-nums ${TONE_TEXT[tone]}`}
+      >
         {format(animated)}
+        {unit && <span className="ml-1 align-baseline text-sm font-medium text-txt-dim">{unit}</span>}
       </div>
 
       <div className="relative mt-2 text-xs text-txt-dim">{signal}</div>
