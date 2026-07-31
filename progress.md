@@ -96,22 +96,42 @@ _Last updated: 2026-07-31 — collaborator laptop. Repo: https://github.com/Kart
   - Follow-up (non-blocking): three.js pushes the JS bundle to ~485 kB gzip — worth
     lazy-loading the `<Canvas>` (React.lazy) in a later polish pass.
 
+- **Stage 5 — DONE:** AI features (F1–F3, F6) as an "AI analysis" section, all
+  grounded in the deterministic engine.
+  - `lib/simulate.ts` (F3 ranges + `runSimulation` wrapping the engine's seedable
+    `monteCarloNpv` + `histogram`), `lib/forecast.ts` (F1 mean-reverting rate path
+    with P10–P90 bands), `lib/scenarioGen.ts` (F2 upside/base/downside from the live
+    anchor), `lib/recommendation.ts` (F6 grounded accept/reject synthesis + dominant
+    driver + MC loss probability). `lib/ai.test.ts` adds 5 tests.
+  - `components/ai/`: `MonteCarloPanel` (NPV histogram, P(NPV<0)/mean/P10/P90 tiles,
+    Re-run reseeds), `RateForecastPanel` (band area + mid line vs break-even line),
+    `ScenarioGenerator` (Apply generated sets), `RecommendationPanel` (verdict badge,
+    Brief §5.6 paragraph, key-risk box, metric bullets, "decision rests with the CFO").
+  - **Verified end-to-end (headless Chromium):** `npx tsc -b` clean · `npm test`
+    **20/20** (13 finance + 2 risk + 5 AI) · `npm run build` OK · no console errors;
+    panels render the grounded numbers (base P(NPV<0) ≈ 21%, mean +AED 1,456M) and
+    are live — dropping GPU price to $2.50 flipped the recommendation ACCEPT→REJECT
+    and pushed P(NPV<0) 21%→99%. Engine + Python reference untouched.
+  - Note: MC narrative is rule-based for now; the LLM narrative (F4) arrives with the
+    NIM assistant in Stage 6.
+
 ## 🔧 In progress
 
-- Nothing mid-flight in code. Stage 4 is complete and green; ready for Stage 5.
+- Nothing mid-flight in code. Stage 5 is complete and green; ready for Stage 6.
 
-## ▶️ NEXT TASK — Stage 5: AI features + AI recommendation panel
+## ▶️ NEXT TASK — Stage 6: AI Finance Assistant (NVIDIA NIM) integration
 
-Per plan §5 (F1–F3, F6) + §13 stage 5. The deterministic engine already exposes
-`monteCarloNpv` (seedable) — surface it and the other AI features in the UI:
-1. **Monte-Carlo risk simulator (F3)** — run `monteCarloNpv` over driver
-   distributions; show the NPV distribution, P(NPV<0) and P10/P90, with a re-run.
-2. **GPU rate/utilization forecaster (F1)** + **AI scenario generator (F2)** — forward
-   revenue curve with bands; auto-built optimistic/base/pessimistic sets.
-3. **AI recommendation panel (F6)** — synthesises metrics + scenarios + sensitivity
-   into the Brief §5.6 accept/reject recommendation (rule-based now; the NIM LLM
-   narrative is Stage 6). Keep every number grounded in the deterministic engine.
-Stop after Stage 5 for review. (Stages 6–7 per `implementation-plan.md` §13.)
+Per plan §7 + §13 stage 6. Adapt the provided **Gen-AI Chatbot** into an `assistant/`
+FastAPI service that talks to **NVIDIA NIM** (OpenAI-compatible), and a chat UI:
+1. `assistant/` — keep the OpenAI-client pattern + chat API contract; **strip** the
+   TechNova SQL/RAG/Qdrant/Redis stack; repoint `base_url`/`api_key`/model to NIM.
+2. **NIM key lives only in `assistant/.env` (git-ignored) — supplied by Kartik; never
+   commit it.** Add `assistant/.env.example` with a `NVIDIA_NIM_API_KEY` placeholder.
+3. Chat UI in `web/`: every numeric answer **grounded in the live engine state**
+   (pass current metrics/assumptions as context); the LLM explains/narrates only.
+4. Wire the ≥5 sample Q&A (plan §7) and F3's LLM risk narrative.
+⚠️ Needs the NIM key to test end-to-end — coordinate with Kartik before/while building.
+Stop after Stage 6 for review. (Stage 7 = LaTeX report + figures + NotebookLM.)
 
 ## Notes / decisions
 
