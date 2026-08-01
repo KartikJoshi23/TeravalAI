@@ -85,29 +85,44 @@
   .bg-blob {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(90px);
-    opacity: 0.14;
-    will-change: transform;
+    filter: blur(78px);
+    will-change: transform, opacity;
+  }
+  /* Slow-rising light mote for a subtle "live" particle field. */
+  .bg-mote {
+    position: absolute;
+    border-radius: 9999px;
+    background: #7dd3fc;
+    filter: blur(1px);
+    opacity: 0;
+    will-change: transform, opacity;
   }
 }
 
-/* Gentle, slow-drifting background motion (subtle by design). */
+/* Living background: drifting, breathing colour fields + a few rising motes. */
 @keyframes blob-a {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(6vw, 4vh) scale(1.12); }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
+  50% { transform: translate(8vw, 5vh) scale(1.18); opacity: 0.26; }
 }
 @keyframes blob-b {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-5vw, 5vh) scale(1.08); }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.12; }
+  50% { transform: translate(-7vw, 6vh) scale(1.14); opacity: 0.22; }
 }
 @keyframes blob-c {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(4vw, -4vh) scale(1.15); }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.10; }
+  50% { transform: translate(6vw, -5vh) scale(1.2); opacity: 0.19; }
 }
-.anim-blob-a { animation: blob-a 30s ease-in-out infinite; }
-.anim-blob-b { animation: blob-b 38s ease-in-out infinite; }
-.anim-blob-c { animation: blob-c 34s ease-in-out infinite; }
+@keyframes mote-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: 0.7; }
+  85% { opacity: 0.4; }
+  100% { transform: translate(3vw, -46vh); opacity: 0; }
+}
+.anim-blob-a { animation: blob-a 22s ease-in-out infinite; }
+.anim-blob-b { animation: blob-b 27s ease-in-out infinite; }
+.anim-blob-c { animation: blob-c 24s ease-in-out infinite; }
+.anim-mote { animation: mote-rise linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-blob-a, .anim-blob-b, .anim-blob-c { animation: none; }
+  .anim-blob-a, .anim-blob-b, .anim-blob-c, .anim-mote { animation: none; }
 }

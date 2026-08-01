@@ -4,7 +4,9 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-01 — master laptop (Kartik): added Build-vs-Rent/EAC, Ethics & Audit, decision-thresholds + model self-test (inspired by teammate Aditya's app); NIM live; 3D hall rebuilt; deep audit + lazy-load. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-01 — master laptop (Kartik): visual polish (silver-shine rack edges + living animated background); plus Build-vs-Rent/EAC, Ethics & Audit, thresholds, model self-test; NIM live. Repo: https://github.com/KartikJoshi23/TeravalAI_
+
+> Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables). `docs/` data-provenance note pending (see below).
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.

@@ -150,12 +150,12 @@ function Racks({
       <Instances limit={slots.length} range={slots.length}>
         <boxGeometry args={[0.62, 2.0, 0.92]} />
         <meshStandardMaterial
-          color="#2a3345"
-          metalness={0.92}
-          roughness={0.32}
+          color="#39445c"
+          metalness={0.96}
+          roughness={0.24}
           emissive="#0e1a2e"
-          emissiveIntensity={0.22}
-          envMapIntensity={1.25}
+          emissiveIntensity={0.2}
+          envMapIntensity={1.9}
         />
         {slots.map((s, i) => (
           <Instance
@@ -194,6 +194,23 @@ function Racks({
         <meshStandardMaterial ref={topMat} color="#0b1120" emissive="#38bdf8" emissiveIntensity={1.2} toneMapped={false} />
         {slots.map((s, i) => (
           <Instance key={i} position={s.topPos} rotation={[0, s.rotY, 0]} />
+        ))}
+      </Instances>
+
+      {/* silver top-edge rim — a shiny metallic cap that outlines each rack's top edge */}
+      <Instances limit={slots.length} range={slots.length}>
+        <boxGeometry args={[0.66, 0.035, 0.96]} />
+        <meshStandardMaterial
+          color="#3c4a63"
+          metalness={1}
+          roughness={0.14}
+          emissive="#aecbe8"
+          emissiveIntensity={0.3}
+          envMapIntensity={2.3}
+          toneMapped={false}
+        />
+        {slots.map((s, i) => (
+          <Instance key={i} position={[s.bodyPos[0], 2.0, s.bodyPos[2]]} rotation={[0, s.rotY, 0]} />
         ))}
       </Instances>
 
@@ -279,11 +296,15 @@ function Hall({
       <fog attach="fog" args={['#04060d', 18, 52]} />
 
       {/* reflective studio environment — gives the metal racks silver edge highlights */}
-      <Environment resolution={128} frames={1}>
-        <Lightformer form="rect" intensity={1.6} position={[0, 7, 0]} rotation-x={Math.PI / 2} scale={[16, 6, 1]} color="#dbe7ff" />
-        <Lightformer form="rect" intensity={1.1} position={[0, 3, -11]} scale={[18, 7, 1]} color="#93a6c9" />
-        <Lightformer form="rect" intensity={0.9} position={[-11, 3, 0]} rotation-y={Math.PI / 2} scale={[18, 7, 1]} color="#8493b6" />
-        <Lightformer form="rect" intensity={0.9} position={[11, 3, 0]} rotation-y={-Math.PI / 2} scale={[18, 7, 1]} color="#8493b6" />
+      <Environment resolution={256} frames={1}>
+        {/* broad soft fill */}
+        <Lightformer form="rect" intensity={1.8} position={[0, 7, 0]} rotation-x={Math.PI / 2} scale={[16, 6, 1]} color="#dbe7ff" />
+        {/* narrow bright bars → crisp silver specular streaks along the metal edges */}
+        <Lightformer form="rect" intensity={4} position={[0, 8, 2]} rotation-x={Math.PI / 2} scale={[22, 0.5, 1]} color="#ffffff" />
+        <Lightformer form="rect" intensity={3} position={[0, 8, -3]} rotation-x={Math.PI / 2} scale={[22, 0.4, 1]} color="#eaf2ff" />
+        <Lightformer form="rect" intensity={1.2} position={[0, 3, -11]} scale={[18, 7, 1]} color="#93a6c9" />
+        <Lightformer form="rect" intensity={1.0} position={[-11, 3, 0]} rotation-y={Math.PI / 2} scale={[18, 7, 1]} color="#8493b6" />
+        <Lightformer form="rect" intensity={1.0} position={[11, 3, 0]} rotation-y={-Math.PI / 2} scale={[18, 7, 1]} color="#8493b6" />
       </Environment>
 
       <ambientLight intensity={0.5} />
