@@ -15,9 +15,17 @@ export interface ScenarioSnapshot {
   decision: Evaluation['decision'];
 }
 
+export interface AssistantFocus {
+  tab: string;
+  label: string;
+  description: string;
+}
+
 export interface AssistantContext {
   summary: string;
   currency: 'AED millions';
+  /** When set, the user is asking specifically about this dashboard tab. */
+  focus?: AssistantFocus;
   assumptions: {
     gpuPriceUsd: number;
     utilization: number;
@@ -60,6 +68,7 @@ export function buildAssistantContext(
   e: Evaluation,
   breakeven: number,
   probNegative: number,
+  focus?: AssistantFocus,
 ): AssistantContext {
   const s = evaluateScenarios();
   const driver = topDriver(a);
@@ -70,11 +79,13 @@ export function buildAssistantContext(
     `→ decision ${e.decision}. Break-even GPU rate ${fmtUsdHr(breakeven)}/GPU-hr. ` +
     `Most sensitive driver: ${driver}. Monte-Carlo P(NPV<0) ≈ ${fmtPct(probNegative, 0)}. ` +
     `Scenarios — optimistic ${fmtAedM(s.optimistic.npv)}, base ${fmtAedM(s.base.npv)}, ` +
-    `pessimistic ${fmtAedM(s.pessimistic.npv)}.`;
+    `pessimistic ${fmtAedM(s.pessimistic.npv)}.` +
+    (focus ? ` The user is currently viewing: ${focus.description}` : '');
 
   return {
     summary,
     currency: 'AED millions',
+    focus,
     assumptions: {
       gpuPriceUsd: a.gpuPriceUsd,
       utilization: a.utilization,

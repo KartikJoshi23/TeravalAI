@@ -1,20 +1,16 @@
 /**
- * DataCenterScene — the topical hero: a WebGL (react-three-fiber) view of Barq
- * AI's GPU data-center hall. Racks glow with server activity that scales with
- * the live `utilization`; a rising heat plume shifts colour/intensity with the
- * live `pue`. Both read the same Zustand store the sliders drive, so orbiting
- * the hall while dragging a slider shows the physical story behind the numbers.
- *
- * Degrades gracefully: a WebGL check + an error boundary keep any GPU failure
- * from taking down the dashboard, and reduced-motion stops the animation.
+ * DataCenterScene — the topical hero wrapper. It lazy-loads the heavy three.js
+ * HallCanvas (so three/postprocessing stay out of the main bundle), overlays the
+ * caption + live readouts, and renders the grounded per-rack inspection card when
+ * a rack is clicked. A WebGL check + error boundary keep any GPU failure from
+ * taking down the dashboard; reduced-motion stops the animation.
  */
-import { useMemo, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Grid } from '@react-three/drei';
-import * as THREE from 'three';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useAssumptions } from '../../store/useEvaluation';
+import { useAssumptions, useModel } from '../../store/useEvaluation';
 import ErrorBoundary from '../ErrorBoundary';
+
+const HallCanvas = lazy(() => import('./HallCanvas'));
 
 function hasWebGL(): boolean {
   try {
@@ -32,166 +28,71 @@ const reducedMotion = () =>
   typeof window !== 'undefined' &&
   !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-/** Two blocks of racks split by a central aisle. */
-function rackPositions(): [number, number, number][] {
-  const positions: [number, number, number][] = [];
-  const cols = 10;
-  const rows = 4;
-  const spacingX = 0.9;
-  const spacingZ = 1.5;
-  const aisle = 1.6;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = (c - (cols - 1) / 2) * spacingX;
-      const zBase = (r - (rows - 1) / 2) * spacingZ;
-      const z = zBase + (r < rows / 2 ? -aisle / 2 : aisle / 2);
-      positions.push([x, 0.9, z]);
-    }
-  }
-  return positions;
-}
-
-const RACK_EMISSIVE = ['#38bdf8', '#a78bfa', '#38bdf8', '#60a5fa'];
-
-function Racks({ animate }: { animate: boolean }) {
-  const positions = useMemo(() => rackPositions(), []);
-  const phases = useMemo(() => positions.map(() => Math.random() * Math.PI * 2), [positions]);
-  const mats = useRef<(THREE.MeshStandardMaterial | null)[]>([]);
+/** Grounded per-rack inspection card (numbers come from the finance engine). */
+function RackInfoCard({ index, onClose }: { index: number; onClose: () => void }) {
   const a = useAssumptions();
+  const model = useModel();
+  const powerKw = (a.itMW * 1000) / a.racks;
+  const revPerRack = model.revenueAed / a.racks;
+  const energyPerRack = model.energyAed / a.racks;
+  const exhaustC = 24 + (a.pue - 1.05) * 60;
+  const status = a.utilization >= 0.75 ? 'High load' : a.utilization >= 0.4 ? 'Nominal' : 'Low load';
+  const statusColor =
+    a.utilization >= 0.75 ? 'text-positive' : a.utilization >= 0.4 ? 'text-blue' : 'text-amber';
 
-  useFrame((state) => {
-    const util = a.utilization;
-    const t = state.clock.elapsedTime;
-    for (let i = 0; i < mats.current.length; i++) {
-      const m = mats.current[i];
-      if (!m) continue;
-      const pulse = animate ? 0.5 + 0.5 * Math.sin(t * 2.2 + phases[i]) : 0.7;
-      m.emissiveIntensity = 0.12 + util * (0.5 + 0.9 * pulse);
-    }
-  });
+  const rows: [string, string][] = [
+    ['GPUs', `${a.gpusPerRack} × GB200`],
+    ['Power draw', `~${powerKw.toFixed(0)} kW`],
+    ['Utilization', `${(a.utilization * 100).toFixed(0)}%`],
+    ['Revenue', `AED ${revPerRack.toFixed(2)}M/yr`],
+    ['Energy cost', `AED ${energyPerRack.toFixed(2)}M/yr`],
+    ['Est. exhaust', `${exhaustC.toFixed(0)}°C`],
+  ];
 
   return (
-    <group>
-      {positions.map((p, i) => (
-        <mesh key={i} position={p}>
-          <boxGeometry args={[0.55, 1.8, 0.9]} />
-          <meshStandardMaterial
-            ref={(el) => {
-              mats.current[i] = el;
-            }}
-            color="#0b1120"
-            emissive={RACK_EMISSIVE[i % RACK_EMISSIVE.length]}
-            emissiveIntensity={0.3}
-            metalness={0.55}
-            roughness={0.35}
-          />
-        </mesh>
-      ))}
-    </group>
+    <motion.div
+      initial={{ opacity: 0, x: 16 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="pointer-events-auto absolute right-4 top-4 w-60 rounded-xl border border-glass-border bg-black/60 p-4 backdrop-blur-md"
+    >
+      <div className="mb-2 flex items-start justify-between">
+        <div>
+          <div className="text-sm font-semibold text-txt">Rack {index + 1}</div>
+          <div className="text-[11px] text-txt-faint">GB200 NVL72 · 1 of {a.racks}</div>
+        </div>
+        <button type="button" onClick={onClose} aria-label="Close" className="rounded-md border border-glass-border px-1.5 text-txt-dim hover:text-txt">
+          ✕
+        </button>
+      </div>
+      <span className={`mb-2 inline-block rounded-full border border-current/30 px-2 py-0.5 text-[10px] font-medium ${statusColor}`}>
+        {status}
+      </span>
+      <dl className="mt-1 flex flex-col gap-1.5">
+        {rows.map(([k, v]) => (
+          <div key={k} className="flex items-center justify-between text-xs">
+            <dt className="text-txt-faint">{k}</dt>
+            <dd className="font-mono font-medium text-txt">{v}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-3 text-[10px] leading-snug text-txt-faint">
+        Per-rack figures are the hall total shared across {a.racks} racks — live from the model.
+      </p>
+    </motion.div>
   );
 }
 
-/** Cool cyan (efficient) → blue → amber → red (inefficient) as PUE rises. */
-function heatColor(pue: number, out: THREE.Color): THREE.Color {
-  const cool = new THREE.Color('#22d3ee');
-  const mid = new THREE.Color('#60a5fa');
-  const warm = new THREE.Color('#fbbf24');
-  const hot = new THREE.Color('#fb7185');
-  const t = THREE.MathUtils.clamp((pue - 1.05) / (1.4 - 1.05), 0, 1);
-  if (t < 0.5) out.copy(cool).lerp(mid, t / 0.5);
-  else out.copy(warm).lerp(hot, (t - 0.5) / 0.5);
-  return out;
-}
-
-const HEAT_COUNT = 260;
-const HEAT_CEIL = 4.4;
-
-function Heat({ animate }: { animate: boolean }) {
-  const a = useAssumptions();
-  const matRef = useRef<THREE.PointsMaterial>(null);
-  const tmp = useMemo(() => new THREE.Color(), []);
-
-  const geom = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    const pos = new Float32Array(HEAT_COUNT * 3);
-    const spd = new Float32Array(HEAT_COUNT);
-    for (let i = 0; i < HEAT_COUNT; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 10;
-      pos[i * 3 + 1] = Math.random() * HEAT_CEIL;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 7;
-      spd[i] = 0.3 + Math.random() * 0.7;
-    }
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    g.userData.spd = spd;
-    return g;
-  }, []);
-
-  useFrame((_, delta) => {
-    const pue = a.pue;
-    if (matRef.current) {
-      matRef.current.color.copy(heatColor(pue, tmp));
-      matRef.current.opacity = THREE.MathUtils.clamp(0.2 + (pue - 1.05) * 1.1, 0.15, 0.85);
-    }
-    if (!animate) return;
-    const posAttr = geom.getAttribute('position') as THREE.BufferAttribute;
-    const spd = geom.userData.spd as Float32Array;
-    const rise = 0.4 + a.utilization * 1.2;
-    const d = Math.min(delta, 0.05);
-    for (let i = 0; i < HEAT_COUNT; i++) {
-      let y = posAttr.getY(i) + d * spd[i] * rise;
-      if (y > HEAT_CEIL) y = 0;
-      posAttr.setY(i, y);
-    }
-    posAttr.needsUpdate = true;
-  });
-
-  return (
-    <points geometry={geom}>
-      <pointsMaterial
-        ref={matRef}
-        size={0.07}
-        sizeAttenuation
-        transparent
-        opacity={0.4}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        color="#60a5fa"
-      />
-    </points>
-  );
-}
-
-function Hall({ animate }: { animate: boolean }) {
-  return (
-    <>
-      <color attach="background" args={['#05060c']} />
-      <fog attach="fog" args={['#05060c', 9, 24]} />
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[6, 10, 6]} intensity={1.1} color="#bcd4ff" />
-      <pointLight position={[0, 3.5, 0]} intensity={30} distance={18} decay={2} color="#38bdf8" />
-      <pointLight position={[-6, 2.5, 5]} intensity={18} distance={16} decay={2} color="#a78bfa" />
-      <Racks animate={animate} />
-      <Heat animate={animate} />
-      <Grid
-        args={[40, 40]}
-        cellSize={0.9}
-        cellThickness={0.6}
-        cellColor="#1e293b"
-        sectionSize={4.5}
-        sectionThickness={1}
-        sectionColor="#3b4a63"
-        fadeDistance={28}
-        fadeStrength={1.4}
-        infiniteGrid
-      />
-    </>
-  );
-}
+const Loading = (
+  <div className="flex h-full w-full items-center justify-center text-sm text-txt-faint">
+    <span className="animate-pulse">Rendering the hall…</span>
+  </div>
+);
 
 export default function DataCenterScene() {
   const a = useAssumptions();
   const animate = !reducedMotion();
   const webgl = useMemo(() => hasWebGL(), []);
+  const [selected, setSelected] = useState<number | null>(null);
 
   const fallback = (
     <div className="flex h-full w-full items-center justify-center px-6 text-center text-sm text-txt-dim">
@@ -206,40 +107,24 @@ export default function DataCenterScene() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="glass relative overflow-hidden"
-      aria-label="3D data-center hall"
+      aria-label="Interactive 3D data-center hall"
     >
-      <div className="relative h-[340px] w-full md:h-[400px]">
+      <div className="relative h-[420px] w-full md:h-[520px]">
         {webgl ? (
           <ErrorBoundary fallback={fallback}>
-            <Canvas
-              dpr={[1, 2]}
-              camera={{ position: [7.5, 4.5, 9], fov: 42 }}
-              gl={{ antialias: true, powerPreference: 'high-performance' }}
-            >
-              <Hall animate={animate} />
-              <OrbitControls
-                makeDefault
-                target={[0, 0.7, 0]}
-                enablePan={false}
-                enableZoom={false}
-                autoRotate={animate}
-                autoRotateSpeed={0.5}
-                minPolarAngle={Math.PI / 3.4}
-                maxPolarAngle={Math.PI / 2.15}
-              />
-            </Canvas>
+            <Suspense fallback={Loading}>
+              <HallCanvas animate={animate} selected={selected} onSelect={setSelected} />
+            </Suspense>
           </ErrorBoundary>
         ) : (
           fallback
         )}
 
-        {/* overlay caption + live readouts */}
         <div className="pointer-events-none absolute left-5 top-5">
-          <h2 className="text-lg font-semibold text-txt">Live data-center hall</h2>
-          <p className="text-xs text-txt-dim">
-            Rack glow tracks utilization · heat plume tracks PUE — drag to orbit
-          </p>
+          <h2 className="text-lg font-semibold text-txt">Barq AI · Abu Dhabi hall</h2>
+          <p className="text-xs text-txt-dim">Click a rack to inspect · drag to orbit · scroll to zoom</p>
         </div>
+
         <div className="pointer-events-none absolute bottom-5 left-5 flex gap-3 text-xs">
           <span className="rounded-md border border-glass-border bg-white/5 px-2.5 py-1 backdrop-blur">
             <span className="text-txt-faint">Utilization </span>
@@ -250,6 +135,8 @@ export default function DataCenterScene() {
             <span className="font-mono font-medium text-amber">{a.pue.toFixed(2)}</span>
           </span>
         </div>
+
+        {selected !== null && <RackInfoCard index={selected} onClose={() => setSelected(null)} />}
       </div>
     </motion.section>
   );

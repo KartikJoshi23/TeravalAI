@@ -39,10 +39,11 @@
     color: var(--color-txt);
     font-family: var(--font-sans);
     letter-spacing: 0.1px;
+    /* Toned-down, balanced base wash (the animated BackgroundFX adds the rest). */
     background:
-      radial-gradient(1200px 620px at 12% -12%, rgba(56, 189, 248, 0.13), transparent 60%),
-      radial-gradient(1050px 720px at 102% -4%, rgba(167, 139, 250, 0.15), transparent 55%),
-      radial-gradient(820px 640px at 50% 118%, rgba(251, 191, 36, 0.07), transparent 60%),
+      radial-gradient(1100px 600px at 8% -12%, rgba(56, 189, 248, 0.06), transparent 60%),
+      radial-gradient(1000px 700px at 102% 0%, rgba(167, 139, 250, 0.08), transparent 55%),
+      radial-gradient(900px 640px at 50% 118%, rgba(251, 191, 36, 0.05), transparent 60%),
       var(--color-bg);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -79,4 +80,34 @@
       var(--color-amber)
     );
   }
+
+  /* Soft, blurred colour blob used by the animated BackgroundFX. */
+  .bg-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: 0.14;
+    will-change: transform;
+  }
+}
+
+/* Gentle, slow-drifting background motion (subtle by design). */
+@keyframes blob-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6vw, 4vh) scale(1.12); }
+}
+@keyframes blob-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5vw, 5vh) scale(1.08); }
+}
+@keyframes blob-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4vw, -4vh) scale(1.15); }
+}
+.anim-blob-a { animation: blob-a 30s ease-in-out infinite; }
+.anim-blob-b { animation: blob-b 38s ease-in-out infinite; }
+.anim-blob-c { animation: blob-c 34s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-blob-a, .anim-blob-b, .anim-blob-c { animation: none; }
 }

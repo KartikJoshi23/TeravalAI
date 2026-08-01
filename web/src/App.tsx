@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
+import BackgroundFX from './components/BackgroundFX';
+import TabNav from './components/TabNav';
+import type { TabDef } from './components/TabNav';
 import KpiGrid from './components/KpiGrid';
 import CashFlowChart from './components/CashFlowChart';
 import ScenarioComparison from './components/ScenarioComparison';
@@ -9,54 +14,84 @@ import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
 import RateForecastPanel from './components/ai/RateForecastPanel';
 import ScenarioGenerator from './components/ai/ScenarioGenerator';
-import FinanceAssistant from './components/ai/FinanceAssistant';
+import AssistantWidget from './components/ai/AssistantWidget';
+
+const TABS: TabDef[] = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'cashflow', label: 'Cash Flow' },
+  { id: 'scenarios', label: 'Scenarios' },
+  { id: 'sensitivity', label: 'Sensitivity & Risk' },
+  { id: 'ai', label: 'AI Analysis' },
+];
 
 export default function App() {
-  return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-6 md:px-10 md:py-10">
-      <Header />
-      <main className="mt-8 flex flex-1 flex-col gap-6">
-        <KpiGrid />
-        <DataCenterScene />
-        <CashFlowChart />
-        <ScenarioComparison />
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-2">
-            <SensitivityPanel />
-          </div>
-          <div className="xl:col-span-1">
-            <RiskPanel />
-          </div>
-        </div>
+  const [tab, setTab] = useState('overview');
 
-        <div className="mt-2 flex items-center gap-3">
-          <span className="text-sm font-semibold uppercase tracking-wider text-txt-faint">
-            AI analysis
-          </span>
-          <span className="h-px flex-1 bg-glass-border" />
-        </div>
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-2">
-            <MonteCarloPanel />
-          </div>
-          <div className="xl:col-span-1">
-            <RecommendationPanel />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-2">
-            <RateForecastPanel />
-          </div>
-          <div className="xl:col-span-1">
-            <ScenarioGenerator />
-          </div>
-        </div>
-        <FinanceAssistant />
-      </main>
-      <footer className="mt-10 border-t border-glass-border pt-4 text-xs text-txt-faint">
-        Teraval · Barq AI capital-budgeting appraisal · figures in AED millions, verified
-        against the reference model · dashboard Stage 6
-      </footer>
-    </div>
+  return (
+    <>
+      <BackgroundFX />
+      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-5 py-6 md:px-10 md:py-10">
+        <Header />
+        <TabNav tabs={TABS} active={tab} onChange={setTab} />
+
+        <main className="mt-6 flex flex-1 flex-col">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={tab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.28, ease: 'easeOut' }}
+              className="flex flex-col gap-6"
+            >
+              {tab === 'overview' && (
+                <>
+                  <DataCenterScene />
+                  <KpiGrid />
+                  <RecommendationPanel />
+                </>
+              )}
+
+              {tab === 'cashflow' && <CashFlowChart />}
+
+              {tab === 'scenarios' && <ScenarioComparison />}
+
+              {tab === 'sensitivity' && (
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                  <div className="xl:col-span-2">
+                    <SensitivityPanel />
+                  </div>
+                  <div className="xl:col-span-1">
+                    <RiskPanel />
+                  </div>
+                </div>
+              )}
+
+              {tab === 'ai' && (
+                <>
+                  <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="xl:col-span-2">
+                      <MonteCarloPanel />
+                    </div>
+                    <div className="xl:col-span-1">
+                      <ScenarioGenerator />
+                    </div>
+                  </div>
+                  <RateForecastPanel />
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+
+        <footer className="mt-10 border-t border-glass-border pt-4 text-xs text-txt-faint">
+          Teraval · Barq AI capital-budgeting appraisal · figures in AED millions, verified
+          against the reference model
+        </footer>
+      </div>
+
+      {/* Floating AI assistant — available on every tab, aware of the current one. */}
+      <AssistantWidget currentTab={tab} />
+    </>
   );
 }

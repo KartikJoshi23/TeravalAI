@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-07-31 — master laptop (Kartik): pulled collaborator's Stages 2–6, installed, verified. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-01 — master laptop (Kartik): NIM live-verified; UX overhaul (tabs + floating assistant + background FX); 3D hall rebuilt (metallic racks, reflections, bloom); deep audit + lazy-load. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.
@@ -127,26 +127,54 @@ _Last updated: 2026-07-31 — master laptop (Kartik): pulled collaborator's Stag
   - Master-laptop verification: `.venv` created, `pip install -r requirements.txt` OK,
     `from app.main import app` imports, `/health` → `{nim_configured:false}`, and
     `POST /api/chat/message` streams a clean SSE `error` event without a key (→ frontend
-    falls back offline). **Live LLM path unverified — needs the NIM key.**
-  - `assistant/.env` created locally (git-ignored) ready for the key; `.env.example` present.
+    falls back offline). **Live LLM path VERIFIED (2026-08-01)** — key added; `/health`
+    `nim_configured:true`; a real `/api/chat/message` call streams a grounded answer from
+    NIM (model `meta/llama-3.1-70b-instruct`).
+  - `assistant/.env` holds the key locally (git-ignored); `.env.example` present.
+
+- **Stage 6.5 — DONE: UX overhaul + deep audit + realism/perf upgrades.**
+  - Tabbed layout (`TabNav`): 5 tabs (Overview · Cash Flow · Scenarios · Sensitivity & Risk
+    · AI Analysis), animated sliding indicator, cross-fade; shared store keeps tabs in sync.
+  - **Floating AI assistant** (`components/ai/AssistantWidget.tsx`) on every tab — creative
+    pulsing launcher (bottom-right), NIM/offline status dot, **This tab / Whole model** scope
+    toggle (tab-aware via `lib/tabContext.ts`), tab-specific sample chips, and a **Clear**
+    button. Replaces the old Assistant tab; `FinanceAssistant.tsx` removed.
+    `lib/assistantContext.ts` gained an optional `focus`; `lib/assistantFallback.ts` answers
+    "explain this view" from the tab focus.
+  - **Animated background** (`components/BackgroundFX.tsx`) — subtle drifting multi-accent
+    blobs, reduced-motion aware; `index.css` base wash de-blued.
+  - **3D hall rebuilt** into a real, stunning data centre: open/wall-less, ~112 racks in
+    cold/hot aisles, **mirror-polished floor** (MeshReflectorMaterial), glowing aisle
+    floor-strips + emissive rack tops + detailed server-front texture, **Bloom**
+    (`@react-three/postprocessing`), and a reflective **Environment** of inline light-formers
+    so the **metallic slate-grey rack bodies catch a greyish-silver edge highlight from all
+    sides** (fixes "dark from the back"). Click-to-inspect + human figures retained.
+  - **Perf:** three.js scene code-split into `components/three/HallCanvas.tsx` via
+    `React.lazy`/Suspense — loads as a separate on-demand chunk, out of the main bundle.
+  - **Polish:** `useCountUp` tweens from the previous value (not 0) on live changes.
+  - Vite fix: `resolve.dedupe` + `optimizeDeps.include` prevent a duplicate react-three-fiber
+    instance that had crashed Bloom.
+  - **Deep audit (2026-08-01):** read every component/lib/store/finance file — clean, no
+    bugs; all 6 dashboard components + 6 AI features + grounded assistant + 20 tests present.
+  - **Verified:** `npx tsc -b` clean · `npm test` **20/20** · `npm run build` OK (three.js now
+    a separate `HallCanvas-*.js` chunk) · in-browser: no console errors, lazy chunk loads 200,
+    hall mounts, NIM live.
 
 ## 🔧 In progress
 
-- **Stage 6 live test — BLOCKED on the NIM key.** Everything else is built, installed,
-  and green (web: `npm test` 20/20, `tsc -b` clean, `npm run build` OK).
+- Nothing mid-flight. App is feature-complete and green; visual pass done.
 
-## ▶️ NEXT TASK — add NIM key → live assistant test → then Stage 7 (report)
+## ▶️ NEXT TASK — Stage 7 (final deliverable): LaTeX report + slides
 
-1. **Kartik:** paste the NIM key into `assistant/.env` (`NVIDIA_NIM_API_KEY=nvapi-…`),
-   then run the backend `cd assistant && ./.venv/Scripts/python -m uvicorn app.main:app --port 8000`
-   and the frontend `cd web && npm run dev`. Confirm the assistant badge flips to
-   **"NIM connected"** and replies stream while still matching the engine numbers.
-2. **Stage 7 (final):** LaTeX report (1,300–1,650 words, all 10 sections + 5 project
-   questions), capture dashboard screenshots into `docs/figures/` with filenames
-   matching `\includegraphics`, and provide the NotebookLM prompt.
-- Non-blocking polish: lazy-load the three.js `<Canvas>` (React.lazy) to cut the
-  ~495 kB gzip bundle warning.
-Stop after each for review.
+The dashboard/app is complete. Remaining:
+1. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black
+   border on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five
+   team members · project title · "Submitted for the partial fulfilment of…"), all 10 report
+   sections, answering the 5 project questions (Brief §11).
+2. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
+   `\includegraphics` references.
+3. **NotebookLM prompt** to generate the 7–10 min / 8–15 slide deck from the final report.
+Stop after Stage 7 for review.
 
 ## Notes / decisions
 

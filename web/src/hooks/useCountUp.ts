@@ -4,15 +4,18 @@
  * formats each frame. Non-finite targets are passed straight through so callers
  * can render "n/a" without animating.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 export function useCountUp(target: number, duration = 1.4): number {
   const [value, setValue] = useState(0);
+  // The last displayed value, so live changes tween from where we are (not 0).
+  const current = useRef(0);
 
   useEffect(() => {
     if (!Number.isFinite(target)) {
       setValue(target);
+      current.current = 0;
       return;
     }
     // Respect reduced-motion: land on the value immediately, no animation.
@@ -21,14 +24,18 @@ export function useCountUp(target: number, duration = 1.4): number {
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if (reduced) {
       setValue(target);
+      current.current = target;
       return;
     }
-    const obj = { v: 0 };
+    const obj = { v: current.current };
     const tween = gsap.to(obj, {
       v: target,
       duration,
       ease: 'power2.out',
-      onUpdate: () => setValue(obj.v),
+      onUpdate: () => {
+        current.current = obj.v;
+        setValue(obj.v);
+      },
     });
     return () => {
       tween.kill();

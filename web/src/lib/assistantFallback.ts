@@ -17,6 +17,11 @@ export function answerLocally(question: string, c: AssistantContext): string {
   const m = c.metrics;
   const be = `${fmtUsdHr(c.breakevenGpuPriceUsd)}/GPU-hr`;
 
+  // "What does this show / mean / explain this chart" → describe the focused tab.
+  if (c.focus && has(q, 'this ', 'this chart', 'this graph', 'this tab', 'this view', 'what am i', 'explain', 'what does', 'mean', 'show')) {
+    return `${c.focus.description} Ask me anything specific about it — I answer from the live model numbers.`;
+  }
+
   // Break-even
   if (has(q, 'break', 'even', 'breakeven')) {
     return (
