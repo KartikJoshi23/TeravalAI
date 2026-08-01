@@ -6,7 +6,9 @@
 
 _Last updated: 2026-08-01 — master laptop (Kartik): visual polish (silver-shine rack edges + living animated background); plus Build-vs-Rent/EAC, Ethics & Audit, thresholds, model self-test; NIM live. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
-> Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables). `docs/` data-provenance note pending (see below).
+> Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
+>
+> **HANDOFF 2026-08-01: real-data sourcing is now assigned to a COLLABORATOR** — see NEXT TASK + `datasets/README.md`. Collaborator downloads official tariff/interest-rate/energy datasets into `datasets/` and pushes; master laptop then applies them + does the LaTeX report.
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.
@@ -186,19 +188,58 @@ _Last updated: 2026-08-01 — master laptop (Kartik): visual polish (silver-shin
 
 ## 🔧 In progress
 
-- Nothing mid-flight. App is feature-complete and green.
+- **Real-data sourcing — handed to a COLLABORATOR** (see NEXT TASK). The app is otherwise
+  feature-complete and green. Nothing mid-flight in code.
 
-## ▶️ NEXT TASK — Stage 7 (final deliverable): LaTeX report + slides
+## ▶️ NEXT TASK — Real official data (COLLABORATOR, on your laptop)
 
-The dashboard/app is complete. Remaining:
-1. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black
-   border on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five
-   team members · project title · "Submitted for the partial fulfilment of…"), all 10 report
-   sections, answering the 5 project questions (Brief §11).
-2. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
+Kartik is handing this to a collaborator. On your laptop: `git clone`/`git pull`, then paste
+**handoff.md → Prompt 1** into Claude Code. This task is downloading real published datasets
+that back three model assumptions with official figures. **You DO NOT touch the code** — you
+just download files, drop them in `datasets/`, note the key numbers, and push.
+
+**Read `datasets/README.md` — it has the full detail. In short, do these three:**
+
+1. **Electricity tariff** → save to `datasets/electricity-tariff/`
+   - Official rate: **ADDC** https://www.addc.ae/ → find the **non-residential / industrial**
+     tariff table → **save page as PDF** → `addc-industrial-tariff-2026.pdf`.
+   - Dataset: **Abu Dhabi Open Data** https://data.abudhabi/ → search **"electricity tariff"**
+     → download **CSV** if present → `addc-tariff-dataset.csv`.
+   - ⭐ The one figure we need: the **Abu Dhabi industrial AED/kWh** rate (confirm/replace 0.15).
+
+2. **Interest rates (for WACC)** → save to `datasets/interest-rates/`
+   - **CBUAE EIBOR:** https://www.centralbank.ae/en/forex-eibor/eibor-rates/ → download the
+     **EIBOR rates** (or save page PDF) → `cbuae-eibor-2026.csv`/`.pdf`. We want the **3-month** tenor.
+   - **CBUAE Base Rate:** https://www.centralbank.ae/ (Monetary Policy → Base Rate) → save PDF →
+     `cbuae-base-rate-2026.pdf`.
+   - ⭐ The figures we need: **base rate %** and **3-month EIBOR %**.
+
+3. **Energy context (report realism)** → save to `datasets/energy-context/`
+   - **Bayanat energy:** http://data.bayanat.ae/en_GB/group/energy → download CSVs for
+     **"Total amount of electricity consumption"** and **"Total electricity generated…"**.
+   - **FCSC:** https://opendata.fcsc.gov.ae/ → search **"Electricity Consumption According to the
+     Area and Sector"** → CSV → `fcsc-electricity-by-sector.csv`.
+
+> Portals may ask for a **free sign-in** before download — that's expected; sign in and download.
+> Prefer CSV; else XLSX; else save the official page as **PDF**.
+
+**When done (collaborator):** (a) files saved in the three subfolders; (b) update THIS
+progress.md — list exactly which files you saved and the **three key figures** (industrial
+tariff AED/kWh, base rate %, 3-month EIBOR %); (c) `git add datasets/ progress.md`, commit,
+push. Then it returns to the master laptop.
+
+## ▶️ THEN — master laptop: apply the data, then Stage 7 (final)
+
+1. **Apply real data:** update the model's tariff + WACC inputs to the official figures and add
+   a **"Data Provenance"** block to the Ethics & Audit tab + report, citing each source + date.
+2. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black border
+   on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five team
+   members · project title · "Submitted for the partial fulfilment of…"), all 10 report sections,
+   answering the 5 project questions (Brief §11).
+3. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
    `\includegraphics` references.
-3. **NotebookLM prompt** to generate the 7–10 min / 8–15 slide deck from the final report.
-Stop after Stage 7 for review.
+4. **NotebookLM prompt** for the 7–10 min / 8–15 slide deck from the final report.
+Stop after each for review.
 
 ## Notes / decisions
 
