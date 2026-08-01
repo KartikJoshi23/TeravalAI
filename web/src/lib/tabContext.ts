@@ -22,6 +22,12 @@ export const TAB_INFO: Record<string, TabInfo> = {
       'The Cash Flow tab: an 8-year free-cash-flow chart. Bars are each year\'s FCF — Year 0 is the negative up-front outlay (~AED 5.9B) and Year 4 dips for the GPU refresh capex. The line is the cumulative DISCOUNTED cash flow, which crosses zero at the discounted payback (~6.3 years).',
     samples: ['What does this cash-flow chart mean?', 'Why is Year 4 lower?', 'When does it pay back?'],
   },
+  buildrent: {
+    label: 'Build vs Rent',
+    description:
+      'The Build vs Rent tab: should Barq build & own the hall or rent equivalent GPU capacity from a hyperscaler? The routes have different lives so they are compared on Equivalent Annual Cost (EAC). Building is a fixed cost; renting scales with utilization — so building only wins above ~78% sustained utilization. The base case: building beats renting by a thin incremental NPV of ~+AED 211M.',
+    samples: ['Should we build or rent?', 'What is Equivalent Annual Cost?', 'When does renting win?'],
+  },
   scenarios: {
     label: 'Scenarios',
     description:
@@ -39,6 +45,12 @@ export const TAB_INFO: Record<string, TabInfo> = {
     description:
       'The AI Analysis tab: a Monte-Carlo NPV distribution with the probability of a negative NPV, an AI GPU-rate forecast with P10–P90 bands, and an AI scenario generator. All figures are grounded in the deterministic engine.',
     samples: ['What is the probability of a loss?', 'What does the forecast band show?', 'Explain the Monte-Carlo result.'],
+  },
+  ethics: {
+    label: 'Ethics & Audit',
+    description:
+      'The Ethics & Audit tab: the ethical use of AI (accuracy, hallucination, incorrect-data, bias, confidentiality, human review) each paired with Teraval\'s mitigation, plus an assumptions-and-audit table tagging every input historical/current/forecast/user-entered/AI-generated and a live model-integrity self-test. The AI advises; the CFO decides.',
+    samples: ['How is hallucination prevented?', 'Who is responsible for the decision?', 'What does the self-test check?'],
   },
 };
 

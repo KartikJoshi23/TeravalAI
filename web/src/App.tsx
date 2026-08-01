@@ -6,9 +6,13 @@ import TabNav from './components/TabNav';
 import type { TabDef } from './components/TabNav';
 import KpiGrid from './components/KpiGrid';
 import CashFlowChart from './components/CashFlowChart';
+import AlternativesPanel from './components/AlternativesPanel';
 import ScenarioComparison from './components/ScenarioComparison';
 import SensitivityPanel from './components/SensitivityPanel';
 import RiskPanel from './components/RiskPanel';
+import DecisionThresholds from './components/DecisionThresholds';
+import EthicsPanel from './components/EthicsPanel';
+import AssumptionsAudit from './components/AssumptionsAudit';
 import DataCenterScene from './components/three/DataCenterScene';
 import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
@@ -19,9 +23,11 @@ import AssistantWidget from './components/ai/AssistantWidget';
 const TABS: TabDef[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'cashflow', label: 'Cash Flow' },
+  { id: 'buildrent', label: 'Build vs Rent' },
   { id: 'scenarios', label: 'Scenarios' },
   { id: 'sensitivity', label: 'Sensitivity & Risk' },
   { id: 'ai', label: 'AI Analysis' },
+  { id: 'ethics', label: 'Ethics & Audit' },
 ];
 
 export default function App() {
@@ -54,17 +60,29 @@ export default function App() {
 
               {tab === 'cashflow' && <CashFlowChart />}
 
+              {tab === 'buildrent' && <AlternativesPanel />}
+
               {tab === 'scenarios' && <ScenarioComparison />}
 
               {tab === 'sensitivity' && (
-                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-                  <div className="xl:col-span-2">
-                    <SensitivityPanel />
+                <>
+                  <DecisionThresholds />
+                  <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="xl:col-span-2">
+                      <SensitivityPanel />
+                    </div>
+                    <div className="xl:col-span-1">
+                      <RiskPanel />
+                    </div>
                   </div>
-                  <div className="xl:col-span-1">
-                    <RiskPanel />
-                  </div>
-                </div>
+                </>
+              )}
+
+              {tab === 'ethics' && (
+                <>
+                  <EthicsPanel />
+                  <AssumptionsAudit />
+                </>
               )}
 
               {tab === 'ai' && (

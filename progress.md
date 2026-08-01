@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-01 — master laptop (Kartik): NIM live-verified; UX overhaul (tabs + floating assistant + background FX); 3D hall rebuilt (metallic racks, reflections, bloom); deep audit + lazy-load. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-01 — master laptop (Kartik): added Build-vs-Rent/EAC, Ethics & Audit, decision-thresholds + model self-test (inspired by teammate Aditya's app); NIM live; 3D hall rebuilt; deep audit + lazy-load. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > **Resuming on another laptop?** Read `handoff.md` and paste Prompt 1 (collaborator)
 > or Prompt 2 (master). Then continue from "NEXT TASK" below.
@@ -160,9 +160,31 @@ _Last updated: 2026-08-01 — master laptop (Kartik): NIM live-verified; UX over
     a separate `HallCanvas-*.js` chunk) · in-browser: no console errors, lazy chunk loads 200,
     hall mounts, NIM live.
 
+- **Stage 6.6 — DONE: finance-depth additions** (ideas adapted from teammate Aditya's
+  "Project Atlas" Streamlit app — different scenario/stack, so ideas not code):
+  - **Build vs Rent + Equivalent Annual Cost** (`finance/alternatives.ts`, `AlternativesPanel`,
+    new "Build vs Rent" tab): appraise BUILD & own the hall vs RENT hyperscaler GPU capacity.
+    Different lives → compared on EAC; incremental NPV is the relevant-cash-flow test. Build is
+    fixed cost, rent scales with utilization → **build wins only above ~78% utilization**; base
+    incremental NPV **+AED 211M** (thin), flips to rent at low util. Ties to our dominant driver.
+  - **Decision thresholds** (`finance/thresholds.ts`, `DecisionThresholds` on Sensitivity tab):
+    breakeven price, breakeven utilization, capex-overrun tolerance, hurdle ceiling (=IRR),
+    P(loss), build-beats-rent crossover — the margin of safety quantified live.
+  - **Ethics & Audit tab** (`EthicsPanel` + `AssumptionsAudit`): brief §8 ethics each paired
+    with Teraval's mitigation (fills a required gap — was only a footer line); plus an
+    assumptions table tagged H/C/F/U/AI (§3) and a live model self-test.
+  - **Model self-test** (`finance/selfTest.ts`, `SelfTestBadge` in header): runs finance
+    identities live (NPV(IRR)=0; PI>1⇔NPV>0; WACC<MIRR<IRR; incremental NPV ⇔ EAC advantage) —
+    turns red if an edit breaks the model's logic.
+  - Tabs now 7 (added Build vs Rent, Ethics & Audit); assistant tab-context updated for both.
+  - **Verified:** `tsc -b` clean · `npm test` **26/26** (added `alternatives.test.ts`) ·
+    `npm run build` OK · in-browser: no console errors, header self-test badge runs the new
+    engine live (checks pass), all 7 tabs present. (New tab *contents* render in a visible
+    browser; headless pane stalls tab-switch animations as before.)
+
 ## 🔧 In progress
 
-- Nothing mid-flight. App is feature-complete and green; visual pass done.
+- Nothing mid-flight. App is feature-complete and green.
 
 ## ▶️ NEXT TASK — Stage 7 (final deliverable): LaTeX report + slides
 

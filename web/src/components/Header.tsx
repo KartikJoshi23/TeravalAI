@@ -1,6 +1,7 @@
 /** Header — Teraval wordmark, the Barq AI scenario line, and the live verdict. */
 import { motion } from 'framer-motion';
 import DecisionBadge from './DecisionBadge';
+import SelfTestBadge from './SelfTestBadge';
 
 export default function Header() {
   return (
@@ -24,6 +25,9 @@ export default function Header() {
             Appraising <span className="text-txt">Barq AI</span>&apos;s ~40&nbsp;MW AI/GPU
             data-center hall — Abu Dhabi · 8-year horizon · base WACC&nbsp;9% · AED
           </p>
+          <div className="mt-3">
+            <SelfTestBadge />
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs uppercase tracking-wider text-txt-faint">Base-case verdict</span>
