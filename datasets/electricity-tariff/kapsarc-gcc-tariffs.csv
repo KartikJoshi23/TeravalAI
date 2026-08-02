@@ -1,0 +1,133 @@
+﻿Country/City;Category;Slabs;Price (US sents/KWh)
+Dubai;Nationals;1001-2000;0.02
+Dubai;Nationals;5001-6000;0.029
+Dubai;Nationals;6001-7000;0.034
+Dubai;Nationals;>10000;0.034
+Sharjah;Nationals;1001-2000;0.02
+Sharjah;Nationals;5001-6000;0.02
+Sharjah;Nationals;6001-7000;0.02
+Sharjah;Nationals;9001-10000;0.02
+Sharjah;Expats;1-1000;0.076
+Other UAE;Expats;4001-5000;0.1
+Other UAE;Expats;5001-6000;0.1
+Other UAE;Expats;7001-8000;0.12
+Saudi Arabia;Nationals and Expats;1-1000;0.048
+Saudi Arabia;Nationals and Expats;2001-3000;0.048
+Saudi Arabia;Nationals and Expats;5001-6000;0.048
+Saudi Arabia;Nationals and Expats;6001-7000;0.08
+Saudi Arabia;Nationals and Expats;9001-10000;0.08
+Oman;Nationals and Expats;2001-3000;0.026
+Oman;Nationals and Expats;3001-4000;0.039
+Kuwait;Private houses*;1-1000;0.0066
+Kuwait;Private houses*;6001-7000;0.0066
+Kuwait;Private houses*;8001-9000;0.0066
+Kuwait;Private houses*;9001-10000;0.0066
+Kuwait;Investment Residential Properties**;7001-8000;0.05
+Kuwait;Investment Residential Properties**;8001-9000;0.05
+Kuwait;Investment Residential Properties**;>10000;0.05
+Bahrain;Nationals with one account;5001-6000;0.042
+Bahrain;Nationals with one account;7001-8000;0.042
+Bahrain;Nationals with one account;8001-9000;0.042
+Bahrain;Expats and Nationals with more than one account;5001-6000;0.077
+Bahrain;Expats and Nationals with more than one account;7001-8000;0.077
+Dubai;Nationals;3001-4000;0.025
+Dubai;Expats;2001-3000;0.076
+Dubai;Expats;3001-4000;0.076
+Dubai;Expats;8001-9000;0.1
+Dubai;Expats;9001-10000;0.1
+Sharjah;Nationals;3001-4000;0.02
+Other UAE;Nationals;>10000;0.02
+Other UAE;Expats;8001-9000;0.12
+Oman;Nationals and Expats;5001-6000;0.052
+Oman;Nationals and Expats;6001-7000;0.052
+Kuwait;Private houses*;4001-5000;0.0066
+Kuwait;Private houses*;>10000;0.0066
+Kuwait;Investment Residential Properties**;1-1000;0.016
+Kuwait;Investment Residential Properties**;2001-3000;0.05
+Kuwait;Investment Residential Properties**;6001-7000;0.05
+Bahrain;Nationals with one account;1001-2000;0.008
+Sharjah;Nationals;>10000;0.02
+Sharjah;Expats;1001-2000;0.076
+Sharjah;Expats;5001-6000;0.1
+Sharjah;Expats;7001-8000;0.12
+Other UAE;Expats;1-1000;0.076
+Saudi Arabia;Nationals and Expats;>10000;0.08
+Oman;Nationals and Expats;1-1000;0.026
+Bahrain;Expats and Nationals with more than one account;6001-7000;0.077
+Dubai;Nationals;1-1000;0.02
+Dubai;Nationals;2001-3000;0.025
+Dubai;Expats;6001-7000;0.1
+Dubai;Expats;7001-8000;0.1
+Sharjah;Nationals;1-1000;0.02
+Sharjah;Nationals;4001-5000;0.02
+Sharjah;Nationals;7001-8000;0.02
+Sharjah;Expats;2001-3000;0.09
+Sharjah;Expats;4001-5000;0.1
+Sharjah;Expats;6001-7000;0.12
+Sharjah;Expats;>10000;0.12
+Other UAE;Expats;>10000;0.12
+Saudi Arabia;Nationals and Expats;3001-4000;0.048
+Saudi Arabia;Nationals and Expats;4001-5000;0.048
+Saudi Arabia;Nationals and Expats;7001-8000;0.08
+Oman;Nationals and Expats;7001-8000;0.065
+Oman;Nationals and Expats;>10000;0.078
+Kuwait;Private houses*;3001-4000;0.0066
+Kuwait;Private houses*;5001-6000;0.0066
+Kuwait;Private houses*;7001-8000;0.0066
+Kuwait;Investment Residential Properties**;4001-5000;0.05
+Kuwait;Investment Residential Properties**;5001-6000;0.05
+Bahrain;Nationals with one account;3001-4000;0.024
+Bahrain;Nationals with one account;>10000;0.042
+Bahrain;Expats and Nationals with more than one account;2001-3000;0.077
+Bahrain;Expats and Nationals with more than one account;3001-4000;0.077
+Bahrain;Expats and Nationals with more than one account;4001-5000;0.077
+Dubai;Nationals;4001-5000;0.029
+Dubai;Nationals;8001-9000;0.034
+Dubai;Expats;1001-2000;0.063
+Sharjah;Nationals;8001-9000;0.02
+Other UAE;Nationals;1001-2000;0.02
+Other UAE;Nationals;2001-3000;0.02
+Other UAE;Nationals;4001-5000;0.02
+Other UAE;Nationals;5001-6000;0.02
+Other UAE;Nationals;8001-9000;0.02
+Other UAE;Nationals;9001-10000;0.02
+Other UAE;Expats;3001-4000;0.09
+Oman;Nationals and Expats;1001-2000;0.026
+Oman;Nationals and Expats;4001-5000;0.039
+Kuwait;Private houses*;1001-2000;0.0066
+Kuwait;Investment Residential Properties**;9001-10000;0.05
+Bahrain;Nationals with one account;2001-3000;0.008
+Bahrain;Nationals with one account;6001-7000;0.042
+Bahrain;Expats and Nationals with more than one account;9001-10000;0.077
+Dubai;Nationals;7001-8000;0.034
+Dubai;Nationals;9001-10000;0.034
+Dubai;Expats;1-1000;0.063
+Dubai;Expats;4001-5000;0.087
+Dubai;Expats;5001-6000;0.087
+Dubai;Expats;>10000;0.1
+Sharjah;Nationals;2001-3000;0.02
+Sharjah;Expats;3001-4000;0.09
+Sharjah;Expats;8001-9000;0.12
+Sharjah;Expats;9001-10000;0.12
+Other UAE;Nationals;1-1000;0.02
+Other UAE;Nationals;3001-4000;0.02
+Other UAE;Nationals;6001-7000;0.02
+Other UAE;Nationals;7001-8000;0.02
+Other UAE;Expats;1001-2000;0.076
+Other UAE;Expats;2001-3000;0.09
+Other UAE;Expats;6001-7000;0.12
+Other UAE;Expats;9001-10000;0.12
+Saudi Arabia;Nationals and Expats;1001-2000;0.048
+Saudi Arabia;Nationals and Expats;8001-9000;0.08
+Oman;Nationals and Expats;8001-9000;0.065
+Oman;Nationals and Expats;9001-10000;0.065
+Kuwait;Private houses*;2001-3000;0.0066
+Kuwait;Investment Residential Properties**;1001-2000;0.033
+Kuwait;Investment Residential Properties**;3001-4000;0.05
+Bahrain;Nationals with one account;1-1000;0.008
+Bahrain;Nationals with one account;4001-5000;0.024
+Bahrain;Nationals with one account;9001-10000;0.042
+Bahrain;Expats and Nationals with more than one account;1-1000;0.077
+Bahrain;Expats and Nationals with more than one account;1001-2000;0.077
+Bahrain;Expats and Nationals with more than one account;8001-9000;0.077
+Bahrain;Expats and Nationals with more than one account;>10000;0.077

@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-01 — master laptop (Kartik): visual polish (silver-shine rack edges + living animated background); plus Build-vs-Rent/EAC, Ethics & Audit, thresholds, model self-test; NIM live. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-02 — collaborator laptop (Prem): real-data sourcing — CBUAE base rate 3.65% + 3-mo EIBOR 3.94% saved; Abu Dhabi tariff pending (portal outage). Prior 2026-08-01 master (Kartik): visual polish + Build-vs-Rent/EAC, Ethics & Audit, thresholds, model self-test; NIM live. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -188,50 +188,37 @@ _Last updated: 2026-08-01 — master laptop (Kartik): visual polish (silver-shin
 
 ## 🔧 In progress
 
-- **Real-data sourcing — handed to a COLLABORATOR** (see NEXT TASK). The app is otherwise
-  feature-complete and green. Nothing mid-flight in code.
+- Nothing mid-flight in code. App feature-complete and green (**26/26 tests**).
+  Real-data sourcing is done as far as the portals allowed (2 of 3 figures) and now
+  returns to the master laptop — see NEXT TASK.
 
-## ▶️ NEXT TASK — Real official data (COLLABORATOR, on your laptop)
+## ✅ Real-data sourcing — COLLABORATOR (2026-08-02, Prem): 2 of 3 key figures
 
-Kartik is handing this to a collaborator. On your laptop: `git clone`/`git pull`, then paste
-**handoff.md → Prompt 1** into Claude Code. This task is downloading real published datasets
-that back three model assumptions with official figures. **You DO NOT touch the code** — you
-just download files, drop them in `datasets/`, note the key numbers, and push.
+Official data downloaded into `datasets/`; **no code touched**. Full detail + citations
+in `datasets/DATA-PROVENANCE.md`.
 
-**Read `datasets/README.md` — it has the full detail. In short, do these three:**
+- ✅ **CBUAE Base Rate = 3.65%** — CBUAE Press Release "CBUAE Maintains The Base Rate At
+  3.65%", 29 Jul 2026 → `datasets/interest-rates/cbuae-base-rate-2026.png` (screenshot; the
+  portal's Download button was broken).
+- ✅ **3-month EIBOR = 3.94%** — CBUAE EIBOR table, 31 Jul 2026 →
+  `datasets/interest-rates/cbuae-eibor-2026.pdf`.
+- ⚠️ **Abu Dhabi industrial tariff — PENDING (portal outage):** ADDC/TAQA has no public
+  non-residential tariff page; the Abu Dhabi Open Data **ADWEA tariff dataset** serves via
+  `data.bayanat.ae`, which was **down** (ERR_CONNECTION_TIMED_OUT) on 2026-08-02 — no
+  CSV/preview/export. Retry when up, or source from **DoE Abu Dhabi**. Model still assumes
+  **0.15 AED/kWh (= 15 fils/kWh)**.
+- ℹ️ Optional saved: `datasets/electricity-tariff/kapsarc-gcc-tariffs.csv` — KAPSARC GCC
+  **residential** comparison (no AD industrial rate). `datasets/energy-context/` empty (same
+  Bayanat outage; non-blocking, "report realism" only).
 
-1. **Electricity tariff** → save to `datasets/electricity-tariff/`
-   - Official rate: **ADDC** https://www.addc.ae/ → find the **non-residential / industrial**
-     tariff table → **save page as PDF** → `addc-industrial-tariff-2026.pdf`.
-   - Dataset: **Abu Dhabi Open Data** https://data.abudhabi/ → search **"electricity tariff"**
-     → download **CSV** if present → `addc-tariff-dataset.csv`.
-   - ⭐ The one figure we need: the **Abu Dhabi industrial AED/kWh** rate (confirm/replace 0.15).
+## ▶️ NEXT TASK — master laptop: apply the data, then Stage 7 (final)
 
-2. **Interest rates (for WACC)** → save to `datasets/interest-rates/`
-   - **CBUAE EIBOR:** https://www.centralbank.ae/en/forex-eibor/eibor-rates/ → download the
-     **EIBOR rates** (or save page PDF) → `cbuae-eibor-2026.csv`/`.pdf`. We want the **3-month** tenor.
-   - **CBUAE Base Rate:** https://www.centralbank.ae/ (Monetary Policy → Base Rate) → save PDF →
-     `cbuae-base-rate-2026.pdf`.
-   - ⭐ The figures we need: **base rate %** and **3-month EIBOR %**.
-
-3. **Energy context (report realism)** → save to `datasets/energy-context/`
-   - **Bayanat energy:** http://data.bayanat.ae/en_GB/group/energy → download CSVs for
-     **"Total amount of electricity consumption"** and **"Total electricity generated…"**.
-   - **FCSC:** https://opendata.fcsc.gov.ae/ → search **"Electricity Consumption According to the
-     Area and Sector"** → CSV → `fcsc-electricity-by-sector.csv`.
-
-> Portals may ask for a **free sign-in** before download — that's expected; sign in and download.
-> Prefer CSV; else XLSX; else save the official page as **PDF**.
-
-**When done (collaborator):** (a) files saved in the three subfolders; (b) update THIS
-progress.md — list exactly which files you saved and the **three key figures** (industrial
-tariff AED/kWh, base rate %, 3-month EIBOR %); (c) `git add datasets/ progress.md`, commit,
-push. Then it returns to the master laptop.
-
-## ▶️ THEN — master laptop: apply the data, then Stage 7 (final)
-
-1. **Apply real data:** update the model's tariff + WACC inputs to the official figures and add
-   a **"Data Provenance"** block to the Ethics & Audit tab + report, citing each source + date.
+1. **Apply real data (see `datasets/DATA-PROVENANCE.md`):** feed the official **base rate
+   3.65%** / **3-mo EIBOR 3.94%** into the WACC build-up, and add a **"Data Provenance"**
+   block to the Ethics & Audit tab + report, citing each source + date. **Tariff still
+   pending** — wait for the Abu Dhabi Open Data / Bayanat portal and pull the ADWEA industrial
+   rate (or source from DoE Abu Dhabi); until then keep 0.15 AED/kWh and note it. Keep the TS
+   engine and `docs/finance-model-reference.py` in sync and all tests green for any change.
 2. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black border
    on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five team
    members · project title · "Submitted for the partial fulfilment of…"), all 10 report sections,
