@@ -81,25 +81,45 @@
     );
   }
 
-  /* Soft, blurred colour blob used by the animated BackgroundFX. */
+  /* Soft, blurred colour blob used by the animated BackgroundFX. The base
+   * opacity is what reduced-motion users see (animation: none removes the
+   * keyframe opacities, which would otherwise leave the blobs fully opaque
+   * and swamp the content); the drift keyframes override it while animating. */
   .bg-blob {
     position: absolute;
     border-radius: 9999px;
     filter: blur(78px);
+    opacity: 0.14;
     will-change: transform, opacity;
   }
-  /* Slow-rising light mote for a subtle "live" particle field. */
-  .bg-mote {
+  /* Huge, ultra-faint conic sheet that revolves once every ~90 s — a slow
+   * aurora sweep under the blobs. Sized in vmax so it always covers the
+   * viewport while rotating. */
+  .bg-aurora {
     position: absolute;
+    width: 160vmax;
+    height: 160vmax;
+    top: 50%;
+    left: 50%;
+    margin: -80vmax 0 0 -80vmax;
     border-radius: 9999px;
-    background: #7dd3fc;
-    filter: blur(1px);
-    opacity: 0;
-    will-change: transform, opacity;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(56, 189, 248, 0.05) 70deg,
+      transparent 140deg,
+      rgba(167, 139, 250, 0.06) 210deg,
+      transparent 275deg,
+      rgba(45, 212, 191, 0.04) 320deg,
+      transparent 360deg
+    );
+    filter: blur(52px);
+    will-change: transform;
   }
 }
 
-/* Living background: drifting, breathing colour fields + a few rising motes. */
+/* Living background: drifting, breathing colour fields + a slow aurora sweep
+ * (the particle "data field" itself is canvas-drawn in BackgroundFX.tsx). */
 @keyframes blob-a {
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
   50% { transform: translate(8vw, 5vh) scale(1.18); opacity: 0.26; }
@@ -112,17 +132,15 @@
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.10; }
   50% { transform: translate(6vw, -5vh) scale(1.2); opacity: 0.19; }
 }
-@keyframes mote-rise {
-  0% { transform: translate(0, 0); opacity: 0; }
-  12% { opacity: 0.7; }
-  85% { opacity: 0.4; }
-  100% { transform: translate(3vw, -46vh); opacity: 0; }
+@keyframes aurora-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 .anim-blob-a { animation: blob-a 22s ease-in-out infinite; }
 .anim-blob-b { animation: blob-b 27s ease-in-out infinite; }
 .anim-blob-c { animation: blob-c 24s ease-in-out infinite; }
-.anim-mote { animation: mote-rise linear infinite; }
+.anim-aurora { animation: aurora-spin 90s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-blob-a, .anim-blob-b, .anim-blob-c, .anim-mote { animation: none; }
+  .anim-blob-a, .anim-blob-b, .anim-blob-c, .anim-aurora { animation: none; }
 }

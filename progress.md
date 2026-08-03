@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-03 — collaborator laptop (Fable 5): DEEP AUDIT of the whole project done + genuine improvements applied (incl. one real finance bug fixed — Build-vs-Rent incremental NPV is now +AED 320M, crossover ~77%; see the audit entry). 29/29 tests · tsc clean · build OK · report recompiled 8 pages. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-03 (evening) — collaborator laptop (Fable 5): living-background upgrade (user-requested) — canvas "data field" (particles + constellation lines + data streaks + pointer parallax) + aurora sweep, and a real reduced-motion a11y bug fixed (blobs rendered fully opaque when `animation: none`). 29/29 tests · tsc clean · build OK. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -310,10 +310,44 @@ laptop; unchanged since verified 2026-08-01, and the no-key SSE error path was r
 - `Gen-AI Chatbot/` starter is tracked under a triple-nested path with ~1.2 MB of its old
   query_results — harmless provenance; flatten/prune only if you want.
 
+## ✅ Living-background upgrade — COLLABORATOR (2026-08-03 evening, Fable 5, user-requested)
+
+Requested directly by the team on this laptop: the dashboard background read as "plain" —
+make it clearly alive everywhere WITHOUT touching the 3D data-center hall. One reviewable
+change, engine untouched (no numbers changed):
+
+- **`components/BackgroundFX.tsx` rebuilt** as a three-layer living backdrop:
+  1. the existing drifting/breathing colour fields (CSS, kept);
+  2. a new ultra-faint **aurora sweep** — a huge conic-gradient sheet revolving once per
+     ~90 s (CSS-only, GPU-composited);
+  3. a new canvas **"data field"** replacing the 20 DOM motes: ~45–90 density-scaled
+     drifting, twinkling multi-accent particles (blue/violet/teal, rare amber) joined by
+     faint constellation lines, with occasional rising **data-streak** pulses and a soft
+     **pointer-parallax** (depth-weighted, eased) so the field responds as you move.
+- Engineering: zero new dependencies; one rAF loop, delta-timed (frame-rate independent),
+  paused while the tab is hidden (visibilitychange) and fully cleaned up on unmount;
+  DPR-aware (capped ×2); wrap-around margins so lines never pop at viewport edges;
+  particle field (re)seeds when real dimensions first arrive (a hidden/prerendered page
+  can mount at 0×0 — found first-hand via the preview pane).
+- **Real a11y bug found & fixed while verifying:** `.bg-blob` carried NO base opacity —
+  under `prefers-reduced-motion` (`animation: none`) the keyframe opacities vanished and
+  the blobs rendered **fully opaque**, swamping the whole dashboard (screenshot-confirmed).
+  `.bg-blob` now has base `opacity: 0.14` (keyframes override it while animating);
+  reduced-motion canvas path draws one calm static field, and redraws it after resizes.
+- Removed now-dead mote CSS (`.bg-mote`, `mote-rise`, `.anim-mote`); `index.css` comments
+  updated. 3D hall (`components/three/`) untouched, per the request.
+- **Verified end-to-end:** `npx tsc -b` clean · `npm test` **29/29** · `npm run build` OK
+  (lazy HallCanvas chunk intact) · dev server: **zero console errors** · headless-Chrome
+  screenshots at t=4 s/9 s/12 s all differ (field drifts/twinkles; streaks appear) with
+  content fully legible · `--force-prefers-reduced-motion` screenshot: calm static field,
+  final KPI values render instantly. (Pane still hidden on this laptop → pixel proof via
+  headless compositing Chrome, as in prior stages.)
+
 ## 🔧 In progress
 
 - Nothing mid-flight. Awaiting Kartik's review of the audit pass (especially the
-  **+AED 320M / ~77% Build-vs-Rent canon change**).
+  **+AED 320M / ~77% Build-vs-Rent canon change**) — and now also of the
+  living-background upgrade above.
 
 ## ▶️ NEXT TASK — MASTER (Kartik): review the audit, then assemble the report package
 
