@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-02 — master laptop (Kartik): Stage 7 LaTeX report done + NotebookLM prompt; NEXT TASK set to a DEEP AUDIT + genuine-improvement pass for a collaborator laptop (Fable 5). Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-03 — collaborator laptop (Fable 5): DEEP AUDIT of the whole project done + genuine improvements applied (incl. one real finance bug fixed — Build-vs-Rent incremental NPV is now +AED 320M, crossover ~77%; see the audit entry). 29/29 tests · tsc clean · build OK · report recompiled 8 pages. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -198,10 +198,6 @@ _Last updated: 2026-08-02 — master laptop (Kartik): Stage 7 LaTeX report done 
 - Verified: `tsc -b` 0 · tests **26/26** · build OK · in-browser no console errors, 7 tabs,
   canvas + 20 background motes + NIM live.
 
-## 🔧 In progress
-
-- Nothing mid-flight. App feature-complete; real-data provenance applied.
-
 ## ✅ Real-data sourcing — COLLABORATOR (2026-08-02, Prem): 2 of 3 key figures
 
 Official data downloaded into `datasets/`; **no code touched**. Full detail + citations
@@ -232,59 +228,107 @@ in `datasets/DATA-PROVENANCE.md`.
 - `report/notebooklm-prompt.md` — the prompt to generate the 10–12 slide / 7–10 min deck.
 - LaTeX build artifacts git-ignored; only `report/main.tex` (+ the prompt) tracked.
 
+## ✅ DEEP AUDIT + improvement pass — DONE (2026-08-03, collaborator laptop, Fable 5)
+
+Audited the ENTIRE project (engine vs Python reference formula-by-formula; every displayed
+number vs the canon; brief compliance item-by-item; all frontend/backend code; report, datasets,
+docs, repo hygiene/secrets) with a 12-agent parallel audit + adversarial verification of every
+finding, plus first-hand E2E runs (headless compositing Chrome over CDP: all 7 tabs, slider
+decision-flip, assistant open/chip/typed-question/scope/Clear, console/network watch; backend
+`/health` + SSE error contract exercised with curl; Python reference executed; `main.tex`
+compiled with MiKTeX).
+
+**Confirmed CLEAN:** TS engine ≡ Python reference on every shared formula and every canonical
+number (NPV +1,854 · IRR 16.5% · MIRR 12.6% · PI 1.31 · payback 5.0/6.3 · breakeven $3.34 ·
+scenarios +10,216/+1,854/−4,138 · MC ~21%/+1,456); brief fully covered (6 components, 6 AI
+features, 6 sample Q&A, ≥3 calcs, scenarios+sensitivity narrative, all 7 ethics points, report
+10 sections + 5 questions, prose ~1,470–1,500 words in band); no secrets tracked; SSE contract
+backend↔frontend exact; WebGL fallback + lazy three.js chunk intact; zero console errors.
+
+**REAL BUG FOUND & FIXED — Build-vs-Rent scope mismatch (`finance/alternatives.ts`):** the
+incremental NPV never charged the rolled rent route its 3-yearly integration capex while the
+rent EAC did, so the two instruments disagreed in sign over a slider-reachable band
+(util ~77.4–78.3%) — the panel could show "Building creates value" beside a NEGATIVE incremental
+NPV and self-test check 4 failed 3/4 there. Fixed by rolling the rental at its equivalent annual
+cost (integration annuitized per cycle), which makes incrNPV = a(r,8y) × ΔEAC an exact identity.
+**⚠️ CANON CHANGE (Kartik please review): base incremental NPV +AED 211M → +AED 320M; crossover
+~78% → ~77%.** EACs/unit costs unchanged. Updated together: engine, alternatives.test.ts (new
+pins + a whole-range sign-identity test), report/main.tex, tabContext, notebooklm-prompt.
+(Build-vs-Rent exists only in TS — the Python reference never modelled it, so no sync needed.)
+
+**Other genuine fixes (all CONFIRMED findings, all verified E2E):**
+- **P(loss) consistency:** panels used different MC seeds/counts (thresholds tile showed 23% @
+  2,000 runs beside 21% elsewhere; recommendation bullet said "5,000 runs" while computing
+  2,000). All surfaces now share seed 42 / 5,000 runs (`MC_SEED`/`MC_RUNS` in lib/simulate.ts)
+  → 21% everywhere, labels derived from the constant; assistant computes its MC per message
+  (removes a wasted 2,000-run sim on every slider tick on every tab).
+- **Engine hardening (both engines, kept equal):** `irr([])`/all-zero flows and `mirr()` with no
+  positive flows now return NaN (were −95%/−100%) in core.ts AND finance-model-reference.py.
+- **Tests:** canonical MC numbers now pinned (P(loss)≈0.209, mean≈1,456); scenario-generator
+  upside clamped to never worsen a driver at slider edges (+ test). Suite is now **29 tests**.
+- **Offline assistant:** generic tab-blurb branch no longer shadows specific answers ("What does
+  break-even mean here?" now gets the break-even answer); added grounded branches for
+  build-vs-rent (new `buildVsRent` context: incr NPV + crossover), Monte-Carlo, Year-4 refresh,
+  forecast band, risk alerts, self-test, ethics — every sample chip now gets a real answer.
+- **A11y:** `<MotionConfig reducedMotion="user">` (framer animations now honour the OS setting,
+  incl. the infinite launcher halo; badge pulse gets motion-reduce), full ARIA tabs pattern
+  (ids/aria-controls/role=tabpanel + arrow-key/Home/End roving focus), assistant a11y
+  (role=log aria-live, input label, aria-pressed scope, Escape closes, autofocus), sr-only text
+  alternatives for the cash-flow + tornado charts.
+- **Small fixes:** 3D heat-plume colour now blends smoothly across PUE (was snapping blue→amber
+  at 1.225); payback KPI card tone/caption can no longer contradict each other; WebGL probe
+  cached + released (no context leak); SSE client joins multi-line data per spec + cancels the
+  reader on error; NIM client gets a 60 s timeout (offline fallback in ~1 min, not 10); stale
+  "Stage 5/6 will add F5/F4" comments corrected; dead assets removed (hero.png, react.svg,
+  vite.svg, icons.svg); redundant direct `postprocessing` dep removed; `.claude/` git-ignored.
+- **Docs:** plan terminal value corrected (was the depreciated share ≈1,168; actual residual
+  ≈ **AED 1,041M** — NPV math always used the correct one); plan §8.2 column renamed "Resulting
+  NPV" (values are levels, not deltas); report §8 "under about 70%" → **67%** (engine breakeven
+  utilization 66.8%, matches the dashboard tile); report figures now compile without the pending
+  screenshots (`\dashfig` placeholder → identical on Overleaf with PNGs); README/handoff test
+  counts + stale "(later stage)" labels refreshed.
+
+**Verified end-to-end:** `npm test` **29/29** · `npx tsc -b` clean · `npm run build` OK (lazy
+HallCanvas chunk intact) · Python reference reprints every canonical number unchanged ·
+`pdflatex` × 2 exit 0, **8 pages**, prose ~1,472 words · headless-Chrome E2E: 7 tabs render the
+new numbers, GPU-price $2.50 flips ACCEPT→REJECT with 3 alerts and Reset restores, thresholds
+tile = recommendation bullet = MC panel = **21% @ 5,000 runs**, assistant offline fallback
+answers every probed chip correctly, self-test 4/4 throughout, **zero console errors**.
+(Screenshot-grade visual pass still needs a visible browser — pane was hidden; DOM/console/
+network verified instead, as in earlier stages. Live NIM path not re-testable keyless on this
+laptop; unchanged since verified 2026-08-01, and the no-key SSE error path was re-verified.)
+
+**Flagged for Kartik (no action taken):**
+- Brief §10.A says "Individual Report" — main.tex is one team-authored document listing all five
+  members. If the instructor grades per-student reports, each member needs their own version.
+- Word count: ~1,472 prose words (in band); ~1,850 if tables/captions count — confirm the
+  marker's convention.
+- ADWEA industrial tariff: portal retried 2026-08-03 — `data.bayanat.ae` still down
+  (ECONNRESET) and DoE has no public tariff page; 0.15 AED/kWh benchmark retained. (Unofficial
+  aggregators quote 27–36.6 fils TOU for large industrial — official confirmation still needed
+  before touching the model.)
+- `Gen-AI Chatbot/` starter is tracked under a triple-nested path with ~1.2 MB of its old
+  query_results — harmless provenance; flatten/prune only if you want.
+
 ## 🔧 In progress
 
-- Next assigned task is a **deep audit + genuine-improvement pass on a collaborator laptop
-  (Kartik, using the Fable 5 model)** — see NEXT TASK. Nothing mid-flight in code.
+- Nothing mid-flight. Awaiting Kartik's review of the audit pass (especially the
+  **+AED 320M / ~77% Build-vs-Rent canon change**).
 
-## ▶️ NEXT TASK — DEEP AUDIT of the whole project + genuine improvements (COLLABORATOR, Fable 5)
+## ▶️ NEXT TASK — MASTER (Kartik): review the audit, then assemble the report package
 
-Run on a collaborator laptop with the **Fable 5** model. First paste **handoff.md → Prompt 1**
-(it locks the methodology, topic and plan). Then do the following as ONE reviewable task, applying
-the 6-phase methodology (understand → investigate → design → implement → verify → report), and
-push when done. **Verify first-hand — do not assume.**
-
-**Step 1 — Deep audit of the ENTIRE project:**
-- **Finance engine** (`web/src/finance/`): re-read core/model/alternatives/thresholds/selfTest;
-  confirm the TS engine and `docs/finance-model-reference.py` still agree and all **26 Vitest
-  tests pass** (`cd web && npm install && npm test`). Hunt for edge cases, sign/`off-by-one` errors.
-- **Numbers consistency:** the SAME figures must match across engine, dashboard, data-provenance
-  panel and `report/main.tex` — NPV +AED 1,854M, IRR 16.5%, MIRR 12.6%, PI 1.31, payback 5.0y,
-  breakeven ~$3.34, scenarios (opt +10,216 / base +1,854 / pess −4,138), Build-vs-Rent
-  +AED 211M / ~78% crossover, Monte-Carlo P(loss) ~21%.
-- **Brief compliance** (`Group Project-CF.md`): six dashboard components, ≥5 AI features,
-  ≥3 major calculations, scenario + sensitivity, ethics, the AI assistant, and the report specs
-  (1,300–1,650 words, ToC, single-line page border, title page, 10 sections, 5 project questions).
-- **Code health:** dead/unused code; `npx tsc -b` clean; no browser console errors; a11y labels;
-  reduced-motion; graceful WebGL fallback; three.js lazy chunk; **no secrets committed** (`.env`
-  git-ignored). Run the app in a **visible** browser and click every tab + the assistant.
-- **Backend** (`assistant/`): grounded narrate-only NIM prompt; `/health` + SSE contract intact.
-- **Report / datasets / docs:** `report/main.tex` compiles (MiKTeX/Overleaf);
-  `datasets/DATA-PROVENANCE.md` matches the applied figures; progress/handoff/README accurate.
-Write the findings honestly (what is clean; any bug or gap found).
-
-**Step 2 — Consider GENUINE additions only** (be willing to conclude "nothing more is needed"):
-- Genuine: a real bug fix; a missing brief requirement; a finance-correctness / consistency fix;
-  a materially better UX or accessibility improvement; capturing the still-missing Abu Dhabi
-  industrial tariff if the portal is back.
-- NOT genuine (do NOT add): padding, gimmicks, gold-plating, restyling for its own sake, new
-  dependencies without clear payoff, or anything that drifts from the approved topic/plan.
-- If unsure whether an addition is worth it, **ask Kartik before building it**.
-
-**Step 3 — If (and only if) a genuine improvement is found:** implement it via the methodology;
-if the engine changes, update BOTH the TS engine and `docs/finance-model-reference.py` and keep
-all tests green; verify end-to-end (tsc, tests, build, run the app); update THIS progress.md (what
-was audited, and what was added and why — or that nothing was needed); commit and push. If nothing
-genuine is found, still record the audit verdict here and push that.
-
-**Hard rules:** don't drift from the topic/plan; keep engine ↔ Python reference in sync; never
-commit secrets or `node_modules`; update progress.md every push; then STOP and report for review.
-
-### Also still pending (manual, Kartik — separate from the audit)
-- Capture 4 screenshots (`teraval-overview/cashflow/scenarios/buildvsrent.png`), compile
-  `report/main.tex` + PNGs on Overleaf, and generate slides via NotebookLM
-  (`report/notebooklm-prompt.md`).
-- Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
+1. **Review this audit commit** (methodology Phase 5 — verify, don't trust): `git pull`,
+   `cd web && npm install && npm test` (expect **29/29**), `npx tsc -b`, `npm run dev`, click all
+   7 tabs in a visible browser. Decide whether you ACCEPT the Build-vs-Rent correction
+   (+AED 320M / ~77% — the old +211M/78% under-charged the rent route; the panel, report, slides
+   prompt and tests are already consistent with the new numbers). If you disagree, revert the
+   single audit commit and say so here.
+2. **Manual report assembly (unchanged):** capture the 4 screenshots
+   (`teraval-overview/cashflow/scenarios/buildvsrent.png` — Build vs Rent now shows +AED 320M),
+   compile `report/main.tex` + PNGs on Overleaf (it also compiles WITHOUT the PNGs now, showing
+   labelled placeholders), and generate slides via NotebookLM (`report/notebooklm-prompt.md`).
+3. Decide the two flagged questions above (individual-report convention; word-count convention).
+4. Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
 Stop after each for review.
 
 ## Notes / decisions

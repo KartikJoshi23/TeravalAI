@@ -12,16 +12,22 @@ import ErrorBoundary from '../ErrorBoundary';
 
 const HallCanvas = lazy(() => import('./HallCanvas'));
 
+// Cached module-wide: the probe context is created once (and released) instead
+// of leaking one live WebGL context per Overview visit toward the browser cap.
+let webglSupport: boolean | null = null;
 function hasWebGL(): boolean {
+  if (webglSupport !== null) return webglSupport;
   try {
     const c = document.createElement('canvas');
-    return !!(
+    const gl =
       window.WebGLRenderingContext &&
-      (c.getContext('webgl') || c.getContext('experimental-webgl'))
-    );
+      ((c.getContext('webgl') || c.getContext('experimental-webgl')) as WebGLRenderingContext | null);
+    webglSupport = !!gl;
+    if (gl) gl.getExtension('WEBGL_lose_context')?.loseContext();
   } catch {
-    return false;
+    webglSupport = false;
   }
+  return webglSupport;
 }
 
 const reducedMotion = () =>

@@ -93,6 +93,14 @@ export default function CashFlowChart() {
         </div>
       </div>
 
+      {/* text alternative for screen readers — the chart itself is SVG-only */}
+      <p className="sr-only">
+        Year 0 free cash flow is {fmtAedM(data[0].fcf)} (the up-front outlay); the Year-4 GPU
+        refresh dips to {fmtAedM(data[4]?.fcf ?? NaN)}; the cumulative discounted cash flow ends
+        the {data.length - 1}-year horizon at {fmtAedM(data[data.length - 1].cumulative)}, which
+        equals the project NPV.
+      </p>
+
       <div className="h-[340px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 8, right: 12, bottom: 4, left: 4 }}>

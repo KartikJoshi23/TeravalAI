@@ -22,8 +22,8 @@ Follow this slide order:
 4.  Data & assumptions — the key inputs and their type (H/C/F/U/AI); official CBUAE rate anchors.
 5.  Base-case results — NPV +AED 1,854 m, IRR 16.5% vs 9% WACC, PI 1.31, payback 5.0 yrs,
     break-even ≈ $3.34/GPU-hr (a knife-edge).
-6.  Build vs Rent (Equivalent Annual Cost) — build wins only above ~78% utilization;
-    incremental NPV ≈ +AED 211 m at base.
+6.  Build vs Rent (Equivalent Annual Cost) — build wins only above ~77% utilization;
+    incremental NPV ≈ +AED 320 m at base.
 7.  Three scenarios & the decision flip — optimistic +AED 10,216 m / base +AED 1,854 m /
     pessimistic −AED 4,138 m.
 8.  Sensitivity & risk — GPU rental price is the dominant driver; Monte-Carlo P(loss) ≈ 21%.

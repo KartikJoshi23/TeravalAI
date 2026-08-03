@@ -1,8 +1,8 @@
 /**
  * Rule-based risk detection for the Risk & Alert panel (plan §6.5). Pure and
  * deterministic — given the live assumptions, the evaluation, and the break-even
- * price it returns the triggered alerts. (Stage 5's AI anomaly detector, F5,
- * will layer on top of this; this is the auditable floor beneath it.)
+ * price it returns the triggered alerts. The unrealistic-assumption flags below
+ * ARE feature F5 (the anomaly detector): auditable rules, per the plan's ranges.
  */
 import type { Assumptions, Evaluation } from '../finance';
 import { BASE_ASSUMPTIONS } from '../finance';

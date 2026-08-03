@@ -25,7 +25,7 @@ export const TAB_INFO: Record<string, TabInfo> = {
   buildrent: {
     label: 'Build vs Rent',
     description:
-      'The Build vs Rent tab: should Barq build & own the hall or rent equivalent GPU capacity from a hyperscaler? The routes have different lives so they are compared on Equivalent Annual Cost (EAC). Building is a fixed cost; renting scales with utilization — so building only wins above ~78% sustained utilization. The base case: building beats renting by a thin incremental NPV of ~+AED 211M.',
+      'The Build vs Rent tab: should Barq build & own the hall or rent equivalent GPU capacity from a hyperscaler? The routes have different lives so they are compared on Equivalent Annual Cost (EAC). Building is a fixed cost; renting scales with utilization — so building only wins above ~77% sustained utilization. The base case: building beats renting by a thin incremental NPV of ~+AED 320M.',
     samples: ['Should we build or rent?', 'What is Equivalent Annual Cost?', 'When does renting win?'],
   },
   scenarios: {

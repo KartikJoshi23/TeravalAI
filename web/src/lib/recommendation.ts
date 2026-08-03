@@ -9,6 +9,7 @@ import type { Assumptions, Evaluation } from '../finance';
 import { oneWaySensitivity } from '../finance';
 import { DRIVERS } from './drivers';
 import { fmtAedM, fmtPct, fmtRatio, fmtUsdHr, fmtYears } from './format';
+import { MC_RUNS } from './simulate';
 
 export interface Recommendation {
   verdict: Evaluation['decision'];
@@ -49,7 +50,7 @@ export function buildRecommendation(
   const bullets = [
     `NPV ${fmtAedM(e.npv)} · IRR ${fmtPct(e.irr)} vs ${fmtPct(a.wacc)} WACC`,
     `PI ${fmtRatio(e.pi)} · payback ${e.payback == null ? 'never' : fmtYears(e.payback)}`,
-    `P(NPV < 0) ≈ ${fmtPct(probNegative, 0)} (Monte-Carlo, ${'5,000'} runs)`,
+    `P(NPV < 0) ≈ ${fmtPct(probNegative, 0)} (Monte-Carlo, ${MC_RUNS.toLocaleString('en-US')} runs)`,
     `Break-even GPU rate ${be} · most sensitive driver: ${driver}`,
   ];
 

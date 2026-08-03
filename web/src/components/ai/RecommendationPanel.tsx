@@ -1,8 +1,8 @@
 /**
  * RecommendationPanel (feature F6) — the live AI recommendation. Synthesises the
- * deterministic metrics + break-even + dominant driver + a light Monte-Carlo
- * loss probability into an accept/reject conclusion (Brief §5.6). Rule-based and
- * grounded now; the NIM LLM narrative (F4) plugs in at Stage 6.
+ * deterministic metrics + break-even + dominant driver + the Monte-Carlo loss
+ * probability into an accept/reject conclusion (Brief §5.6). Rule-based and
+ * grounded; the LLM narrative (F4) lives in the floating NIM assistant widget.
  */
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
@@ -15,8 +15,8 @@ export default function RecommendationPanel() {
   const a = useAssumptions();
   const e = useEvaluation();
   const breakeven = useBreakeven();
-  // a lighter run for the headline loss probability (keeps this panel cheap)
-  const mc = useMemo(() => runSimulation(a, 7, 2000), [a]);
+  // the shared default seed/run count, so this P(loss) matches every other panel
+  const mc = useMemo(() => runSimulation(a), [a]);
   const rec = useMemo(
     () => buildRecommendation(a, e, breakeven, mc.probNegative),
     [a, e, breakeven, mc.probNegative],

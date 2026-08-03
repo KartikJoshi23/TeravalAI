@@ -8,7 +8,7 @@
  * deterministic engine; the LLM (or the offline fallback) only narrates. If the
  * NIM backend is down or keyless, it falls back to a local grounded answerer.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAssumptions, useEvaluation, useBreakeven } from '../../store/useEvaluation';
 import { runSimulation } from '../../lib/simulate';
@@ -64,7 +64,6 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
   const a = useAssumptions();
   const e = useEvaluation();
   const breakeven = useBreakeven();
-  const mc = useMemo(() => runSimulation(a, 7, 2000), [a]);
 
   const [open, setOpen] = useState(false);
   const [scope, setScope] = useState<'tab' | 'model'>('tab');
@@ -73,6 +72,7 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const info = tabInfo(currentTab);
   const samples = scope === 'tab' ? info.samples : GENERIC_SAMPLES;
@@ -89,6 +89,10 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
     if (open) endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, open]);
 
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+
   async function send(text: string) {
     const q = text.trim();
     if (!q || busy) return;
@@ -101,6 +105,10 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
     setBusy(true);
 
     const focus = scope === 'tab' ? { tab: currentTab, label: info.label, description: info.description } : undefined;
+    // Computed per message (not on every store change) — the widget is mounted
+    // on every tab, so keeping this out of render avoids a Monte-Carlo run per
+    // slider tick that nobody sees. Same shared seed/runs as the panels.
+    const mc = runSimulation(a);
     const ctx = buildAssistantContext(a, e, breakeven, mc.probNegative, focus);
     try {
       let acc = '';
@@ -143,6 +151,9 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
             transition={{ duration: 0.24, ease: 'easeOut' }}
             className="glass mb-3 flex h-[520px] w-[min(370px,calc(100vw-3rem))] flex-col p-4"
             aria-label="AI finance assistant"
+            onKeyDown={(ev) => {
+              if (ev.key === 'Escape') setOpen(false);
+            }}
           >
             {/* header */}
             <div className="mb-2 flex items-center justify-between gap-2">
@@ -182,6 +193,7 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
               <button
                 type="button"
                 onClick={() => setScope('tab')}
+                aria-pressed={scope === 'tab'}
                 className={`flex-1 rounded-md px-2 py-1 font-medium transition-colors ${
                   scope === 'tab' ? 'bg-blue/20 text-txt' : 'text-txt-dim hover:text-txt'
                 }`}
@@ -191,6 +203,7 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
               <button
                 type="button"
                 onClick={() => setScope('model')}
+                aria-pressed={scope === 'model'}
                 className={`flex-1 rounded-md px-2 py-1 font-medium transition-colors ${
                   scope === 'model' ? 'bg-blue/20 text-txt' : 'text-txt-dim hover:text-txt'
                 }`}
@@ -200,7 +213,11 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
             </div>
 
             {/* messages */}
-            <div className="mb-3 flex-1 overflow-y-auto rounded-lg border border-glass-border bg-black/20 p-3">
+            <div
+              role="log"
+              aria-live="polite"
+              className="mb-3 flex-1 overflow-y-auto rounded-lg border border-glass-border bg-black/20 p-3"
+            >
               <div className="flex flex-col gap-2.5">
                 {messages.map((m) => (
                   <div key={m.id} className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
@@ -243,8 +260,10 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
               className="flex gap-2"
             >
               <input
+                ref={inputRef}
                 value={input}
                 onChange={(ev) => setInput(ev.target.value)}
+                aria-label="Ask the assistant a question"
                 placeholder={scope === 'tab' ? `Ask about ${info.label}…` : 'Ask about the appraisal…'}
                 className="flex-1 rounded-lg border border-glass-border bg-white/5 px-3 py-2 text-sm text-txt placeholder:text-txt-faint focus:border-blue/50 focus:outline-none"
               />

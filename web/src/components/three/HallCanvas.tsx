@@ -9,7 +9,7 @@
  * lifts every emissive surface. Rack glow tracks `utilization`; a heat shimmer
  * tints with `pue`. Hover to highlight, click to select a rack.
  */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   OrbitControls,
@@ -128,6 +128,14 @@ function Racks({
   const util = useModelStore((s) => s.assumptions.utilization);
   const tex = useMemo(() => makeFrontTexture(), []);
 
+  // If the scene unmounts while a rack is hovered (tab switch), restore the cursor.
+  useEffect(
+    () => () => {
+      document.body.style.cursor = 'auto';
+    },
+    [],
+  );
+
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     const pulse = animate ? 0.5 + 0.5 * Math.sin(t * 1.6) : 0.7;
@@ -226,8 +234,11 @@ function heatColor(pue: number, out: THREE.Color): THREE.Color {
   const warm = new THREE.Color('#fbbf24');
   const hot = new THREE.Color('#fb7185');
   const t = THREE.MathUtils.clamp((pue - 1.05) / (1.4 - 1.05), 0, 1);
-  if (t < 0.5) out.copy(cool).lerp(mid, t / 0.5);
-  else out.copy(warm).lerp(hot, (t - 0.5) / 0.5);
+  // Three continuous segments (cool→mid→warm→hot) so the plume colour shifts
+  // smoothly as PUE rises, with no jump mid-range.
+  if (t < 1 / 3) out.copy(cool).lerp(mid, t * 3);
+  else if (t < 2 / 3) out.copy(mid).lerp(warm, (t - 1 / 3) * 3);
+  else out.copy(warm).lerp(hot, (t - 2 / 3) * 3);
   return out;
 }
 

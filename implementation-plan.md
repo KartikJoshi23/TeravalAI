@@ -93,7 +93,7 @@ All figures verified in the reference model. Every assumption is tagged **[H]** 
 | Depreciation | IT 5-yr SL, facility 15-yr SL | Straight-line |
 | UAE corporate tax | 9% | Introduced 2023 **[C]** |
 | WACC (discount rate) | 9% | CAPM: R_f 4.3%, β 1.3, ERP 6% → Kₑ 12.1%; K_d 6%×(1−9%); 50/50 → ~8.8% **[F]** |
-| Terminal value (Y8) | facility residual + WC recovery ≈ AED 1,168M | Computed |
+| Terminal value (Y8) | facility residual + WC recovery ≈ AED 1,041M | Computed |
 
 ---
 
@@ -198,7 +198,7 @@ Base-case metrics, all computed in the reference model:
 | **Pessimistic** | $2.5/GPU-hr, 65% util, tariff 0.20, PUE 1.30, WACC 11% | **−AED 4,138M** | −9.5% | 0.30 | Reject |
 
 ### 8.2 Sensitivity variables & findings (one-way on base NPV)
-| Variable | Move | NPV impact |
+| Variable | Move | Resulting NPV |
 |---|---|---|
 | GPU rental price | −20% / +20% | **−AED 398M (flips negative!) / +AED 4,094M** |
 | Utilization | −10pp / +10pp | +AED 452M / +AED 3,254M |

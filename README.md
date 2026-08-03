@@ -37,13 +37,16 @@ price is the dominant risk; Abu Dhabi's cheap power is the moat.
 teraval/
 ├─ implementation-plan.md   # the approved plan (design source of truth)
 ├─ progress.md              # living status ledger — read this first when resuming
+├─ handoff.md               # collaborator / master-laptop continuation prompts
 ├─ Problem-Solving-Skill.md # the methodology governing all work
 ├─ Group Project-CF.md      # the assignment brief
 ├─ docs/finance-model-reference.py  # verified Python model (numbers source of truth)
-├─ web/                     # React + TypeScript + Vite dashboard
-│  └─ src/finance/          # deterministic finance engine + tests  ✅ built
-├─ report/                  # LaTeX report (later stage)
-└─ assistant/               # NVIDIA NIM AI Finance Assistant (later stage)
+├─ datasets/                # official source data (CBUAE rates) + DATA-PROVENANCE.md
+├─ web/                     # React + TypeScript + Vite dashboard  ✅ built
+│  └─ src/finance/          # deterministic finance engine + tests
+├─ report/                  # LaTeX report (main.tex, Overleaf-ready)  ✅ written
+├─ assistant/               # NVIDIA NIM AI Finance Assistant (FastAPI)  ✅ built
+└─ Gen-AI Chatbot/          # provided course starter the assistant was adapted from
 ```
 
 ## Develop
@@ -51,9 +54,14 @@ teraval/
 ```bash
 cd web
 npm install
-npm test        # run the finance-engine test suite (13 tests)
-npm run dev     # start the dashboard (from Stage 2 onward)
+npm test        # run the engine + AI-feature test suite (all must pass)
+npm run dev     # start the dashboard
 ```
+
+Assistant backend (optional — the dashboard falls back to a grounded offline
+answerer without it): `cd assistant`, create a venv, `pip install -r
+requirements.txt`, put the NIM key in `assistant/.env` (never commit it), then
+`uvicorn app.main:app --port 8000`.
 
 The finance engine (`web/src/finance/`) is pure, deterministic TypeScript,
 unit-tested against `docs/finance-model-reference.py`. Keep the two in sync — if a

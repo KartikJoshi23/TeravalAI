@@ -4,7 +4,7 @@
  * narrates these numbers, never invents them.
  */
 import type { Assumptions, Evaluation } from '../finance';
-import { evaluateScenarios } from '../finance';
+import { evaluateScenarios, evaluateAlternatives, buildRentCrossoverUtil } from '../finance';
 import { topDriver } from './recommendation';
 import { fmtAedM, fmtPct, fmtRatio, fmtUsdHr, fmtYears } from './format';
 
@@ -54,6 +54,13 @@ export interface AssistantContext {
     base: ScenarioSnapshot;
     pessimistic: ScenarioSnapshot;
   };
+  buildVsRent: {
+    /** Incremental NPV of building over renting (AED m) at the current settings. */
+    incrementalNpvAed: number;
+    /** Utilization above which building beats renting (null = no crossover). */
+    crossoverUtil: number | null;
+    cheapest: 'build' | 'rent';
+  };
 }
 
 const snap = (e: Evaluation): ScenarioSnapshot => ({
@@ -72,6 +79,8 @@ export function buildAssistantContext(
 ): AssistantContext {
   const s = evaluateScenarios();
   const driver = topDriver(a);
+  const alt = evaluateAlternatives(a);
+  const crossover = buildRentCrossoverUtil(a);
 
   const summary =
     `Current case: NPV ${fmtAedM(e.npv)}, IRR ${fmtPct(e.irr)} (vs ${fmtPct(a.wacc)} WACC), ` +
@@ -113,6 +122,11 @@ export function buildAssistantContext(
       optimistic: snap(s.optimistic),
       base: snap(s.base),
       pessimistic: snap(s.pessimistic),
+    },
+    buildVsRent: {
+      incrementalNpvAed: Math.round(alt.incrementalNpvAed),
+      crossoverUtil: crossover,
+      cheapest: alt.cheapest,
     },
   };
 }

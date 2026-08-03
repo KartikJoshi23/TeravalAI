@@ -23,6 +23,14 @@ describe('Monte-Carlo simulation (F3)', () => {
     const total = bins.reduce((s, b) => s + b.count, 0);
     expect(total).toBe(r.samples.length);
   });
+
+  it('pins the canonical base-case risk numbers (seed 42, 5,000 runs)', () => {
+    // These are the P(loss) ≈ 21% and mean ≈ +AED 1,456M quoted in the report;
+    // a silent regression in mcRanges or the triangular sampler must fail here.
+    const r = runSimulation(BASE_ASSUMPTIONS);
+    expect(Math.abs(r.probNegative - 0.209)).toBeLessThan(0.02);
+    expect(Math.abs(r.mean - 1456)).toBeLessThan(50);
+  });
 });
 
 describe('rate forecaster (F1)', () => {
@@ -43,6 +51,14 @@ describe('scenario generator (F2)', () => {
     const [up, base, down] = generateScenarios(a).map((g) => evaluate({ ...a, ...g.patch }).npv);
     expect(up).toBeGreaterThan(base);
     expect(base).toBeGreaterThan(down);
+  });
+
+  it('upside never makes a driver worse than the anchor, even at slider extremes', () => {
+    const edge = { ...BASE_ASSUMPTIONS, utilization: 0.98, pue: 1.05, wacc: 0.05 };
+    const up = generateScenarios(edge)[0].patch;
+    expect(up.utilization!).toBeGreaterThanOrEqual(edge.utilization);
+    expect(up.pue!).toBeLessThanOrEqual(edge.pue);
+    expect(up.wacc!).toBeLessThanOrEqual(edge.wacc);
   });
 });
 

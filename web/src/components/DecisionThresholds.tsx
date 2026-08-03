@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAssumptions, useEvaluation, useBreakeven } from '../store/useEvaluation';
 import { breakevenUtilization, maxCapexOverrun, buildRentCrossoverUtil } from '../finance';
-import { runSimulation } from '../lib/simulate';
+import { runSimulation, MC_RUNS } from '../lib/simulate';
 import { fmtUsdHr, fmtPct } from '../lib/format';
 
 export default function DecisionThresholds() {
@@ -17,7 +17,7 @@ export default function DecisionThresholds() {
   const beUtil = useMemo(() => breakevenUtilization(a), [a]);
   const overrun = useMemo(() => maxCapexOverrun(a), [a]);
   const crossover = useMemo(() => buildRentCrossoverUtil(a), [a]);
-  const mc = useMemo(() => runSimulation(a, 11, 2000), [a]);
+  const mc = useMemo(() => runSimulation(a), [a]);
 
   const tiles: { label: string; value: string; sub: string; tone: string }[] = [
     {
@@ -47,7 +47,7 @@ export default function DecisionThresholds() {
     {
       label: 'Probability of a loss',
       value: fmtPct(mc.probNegative, 0),
-      sub: 'NPV < 0 across 2,000 Monte-Carlo runs',
+      sub: `NPV < 0 across ${MC_RUNS.toLocaleString('en-US')} Monte-Carlo runs`,
       tone: mc.probNegative > 0.3 ? 'text-negative' : 'text-amber',
     },
     {

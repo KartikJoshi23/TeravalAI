@@ -33,13 +33,14 @@ export function npv(rate: number, flows: readonly number[]): number {
  * caller can surface as "no IRR" rather than a misleading number.
  */
 export function irr(flows: readonly number[]): number {
+  if (flows.length < 2) return NaN; // a single flow (or none) has no return
   const f = (r: number) => npv(r, flows);
   let lo = -0.95;
   let hi = 10;
   const flo = f(lo);
   const fhi = f(hi);
-  if (Number.isNaN(flo) || Number.isNaN(fhi) || flo * fhi > 0) {
-    return NaN; // no sign change bracketed → IRR undefined
+  if (Number.isNaN(flo) || Number.isNaN(fhi) || flo * fhi > 0 || (flo === 0 && fhi === 0)) {
+    return NaN; // no sign change bracketed (or degenerate all-zero) → IRR undefined
   }
   for (let i = 0; i < 300; i++) {
     const mid = (lo + hi) / 2;
@@ -73,7 +74,7 @@ export function mirr(
       fvPos += flows[t] * Math.pow(1 + reinvestRate, n - t);
     }
   }
-  if (pvNeg === 0) return NaN;
+  if (pvNeg === 0 || fvPos === 0) return NaN; // needs both an outflow and an inflow
   return Math.pow(fvPos / -pvNeg, 1 / n) - 1;
 }
 

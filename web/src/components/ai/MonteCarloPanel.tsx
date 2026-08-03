@@ -18,7 +18,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useAssumptions } from '../../store/useEvaluation';
-import { runSimulation, histogram } from '../../lib/simulate';
+import { runSimulation, histogram, MC_SEED, MC_RUNS } from '../../lib/simulate';
 import { fmtAedM, fmtPct } from '../../lib/format';
 
 const nf0 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
@@ -43,7 +43,7 @@ function HistTooltip(props: { active?: boolean; payload?: { payload?: Bin }[] })
 export default function MonteCarloPanel() {
   const a = useAssumptions();
   const [run, setRun] = useState(0);
-  const seed = 42 + run;
+  const seed = MC_SEED + run;
   const result = useMemo(() => runSimulation(a, seed), [a, seed]);
   const bins = useMemo(() => histogram(result.samples), [result]);
   const zeroX = useMemo(
@@ -84,7 +84,7 @@ export default function MonteCarloPanel() {
             </span>
           </div>
           <p className="text-xs text-txt-dim">
-            5,000 NPV draws over triangular driver distributions · run #{run + 1}
+            {MC_RUNS.toLocaleString('en-US')} NPV draws over triangular driver distributions · run #{run + 1}
           </p>
         </div>
         <button
@@ -141,7 +141,7 @@ export default function MonteCarloPanel() {
       </div>
 
       <p className="mt-3 text-xs text-txt-dim">
-        Across 5,000 simulations the middle 80% of NPV outcomes spans{' '}
+        Across {MC_RUNS.toLocaleString('en-US')} simulations the middle 80% of NPV outcomes spans{' '}
         <span className="font-mono text-txt">{fmtAedM(result.p10)}</span> to{' '}
         <span className="font-mono text-txt">{fmtAedM(result.p90)}</span> (mean{' '}
         <span className="font-mono text-txt">{fmtAedM(result.mean)}</span>); NPV is negative in{' '}

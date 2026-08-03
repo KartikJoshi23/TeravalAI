@@ -20,11 +20,14 @@ export function generateScenarios(a: Assumptions): GenScenario[] {
       name: 'Upside',
       tone: 'up',
       patch: {
+        // Clamped to the slider ranges but never WORSE than the current anchor —
+        // otherwise an edge anchor (e.g. PUE already at 1.05) would make the
+        // "Upside" degrade a driver.
         gpuPriceUsd: a.gpuPriceUsd * 1.4,
-        utilization: Math.min(0.95, a.utilization + 0.1),
+        utilization: Math.max(a.utilization, Math.min(0.98, a.utilization + 0.1)),
         tariffAed: a.tariffAed * 0.9,
-        pue: Math.max(1.1, a.pue - 0.05),
-        wacc: Math.max(0.06, a.wacc - 0.01),
+        pue: Math.min(a.pue, Math.max(1.05, a.pue - 0.05)),
+        wacc: Math.min(a.wacc, Math.max(0.05, a.wacc - 0.01)),
       },
     },
     { name: 'Base (current)', tone: 'base', patch: {} },

@@ -17,10 +17,8 @@ export function answerLocally(question: string, c: AssistantContext): string {
   const m = c.metrics;
   const be = `${fmtUsdHr(c.breakevenGpuPriceUsd)}/GPU-hr`;
 
-  // "What does this show / mean / explain this chart" → describe the focused tab.
-  if (c.focus && has(q, 'this ', 'this chart', 'this graph', 'this tab', 'this view', 'what am i', 'explain', 'what does', 'mean', 'show')) {
-    return `${c.focus.description} Ask me anything specific about it — I answer from the live model numbers.`;
-  }
+  // Specific intents FIRST — the generic tab description is the LAST resort, so
+  // chips like "What does break-even mean here?" get their dedicated answer.
 
   // Break-even
   if (has(q, 'break', 'even', 'breakeven')) {
@@ -31,8 +29,8 @@ export function answerLocally(question: string, c: AssistantContext): string {
     );
   }
 
-  // Most sensitive driver
-  if (has(q, 'matters most', 'sensitive', 'biggest', 'greatest', 'dominant', 'which assumption', 'which driver')) {
+  // Most sensitive driver (the tornado chart ranks exactly this)
+  if (has(q, 'matters most', 'sensitive', 'biggest', 'greatest', 'dominant', 'which assumption', 'which driver', 'tornado')) {
     return (
       `${c.dominantDriver} has the greatest impact on NPV. A roughly ±20% move in it swings NPV more than ` +
       `any other driver; utilization is second. That is why de-risking the GPU rental rate (via contracted ` +
@@ -40,15 +38,43 @@ export function answerLocally(question: string, c: AssistantContext): string {
     );
   }
 
+  // Monte-Carlo / probability of loss
+  if (has(q, 'probab', 'chance', 'monte', 'carlo', 'simulat', 'lose money', 'how likely')) {
+    return (
+      `Monte-Carlo simulation over the driver distributions puts the probability of a negative NPV at ` +
+      `about ${fmtPct(c.probNegative, 0)} at the current assumptions.`
+    );
+  }
+
+  // Build vs Rent / EAC (' rent' with a space so "current" can't trigger it;
+  // \beac\b so "each" can't).
+  if (has(q, ' rent', 'build or', 'build vs', 'or build', 'equivalent annual', 'hyperscaler') || /\beac\b/.test(q)) {
+    const bvr = c.buildVsRent;
+    const cross =
+      bvr.crossoverUtil == null
+        ? 'there is no crossover in the modelled range'
+        : `building wins only above ~${(bvr.crossoverUtil * 100).toFixed(0)}% sustained utilization`;
+    return (
+      `Build vs rent is compared on Equivalent Annual Cost because the routes have different lives ` +
+      `(own hall ${c.assumptions.lifeYears}y vs a 3y cloud commitment). At the current settings the cheaper ` +
+      `route is ${bvr.cheapest === 'build' ? 'building' : 'renting'}: the incremental NPV of building over ` +
+      `renting is ${fmtAedM(bvr.incrementalNpvAed)}, and ${cross}. The build is a fixed cost while renting ` +
+      `scales with utilization — which is why utilization decides this call.`
+    );
+  }
+
+  // Year-4 refresh dip
+  if (has(q, 'year 4', 'refresh', 'dip', 'lower in year')) {
+    return (
+      `The Year-4 dip is the GPU refresh capex: the model reinvests half of the IT-hardware capex mid-life ` +
+      `to keep the fleet competitive (fast GPU obsolescence), so that year's free cash flow drops before ` +
+      `recovering. It is a relevant incremental cash flow, so it is in the NPV.`
+    );
+  }
+
   // Pessimistic / why negative
-  if (has(q, 'pessimistic', 'negative', 'why', 'reject', 'lose money', 'loss')) {
+  if (has(q, 'pessimistic', 'negative', 'reject', 'loss')) {
     const p = c.scenarios.pessimistic;
-    if (has(q, 'probab', 'chance', 'monte', 'risk', 'lose money')) {
-      return (
-        `Monte-Carlo simulation over the driver distributions puts the probability of a negative NPV at ` +
-        `about ${fmtPct(c.probNegative, 0)} at the current assumptions.`
-      );
-    }
     return (
       `In the pessimistic scenario NPV is ${fmtAedM(p.npv)} (a reject): the GPU rate falls to ~$2.5/hr, ` +
       `utilization to ~65%, and tariff/PUE/WACC all worsen. Revenue drops below the level needed to recover ` +
@@ -73,8 +99,45 @@ export function answerLocally(question: string, c: AssistantContext): string {
     );
   }
 
+  // Risk alerts
+  if (has(q, 'risk alert', 'alert', 'warning')) {
+    return (
+      `The risk panel runs rule-based checks on the live assumptions: negative NPV, IRR below the WACC, ` +
+      `rental rate below the ${be} break-even, PUE too high, capex overrun, and unrealistic-assumption ` +
+      `flags. An alert appears the moment a check trips — try dragging the GPU-price slider below break-even.`
+    );
+  }
+
+  // Forecast band
+  if (has(q, 'forecast', 'band', 'p10', 'p90')) {
+    return (
+      `The forecast shows a mean-reverting GPU-rate path with a P10–P90 uncertainty band — a range, not a ` +
+      `point estimate, because GPU pricing is volatile and non-stationary. The core revenue risk is the ` +
+      `downside (P10) path dipping below the ${be} break-even.`
+    );
+  }
+
+  // Self-test / model integrity
+  if (has(q, 'self-test', 'self test', 'integrity')) {
+    return (
+      `The self-test runs four finance identities live: NPV discounted at the IRR must be ≈ 0; PI > 1 exactly ` +
+      `when NPV > 0; MIRR sits between the WACC and the IRR; and the build-vs-rent incremental NPV agrees in ` +
+      `sign with the EAC advantage. If an edit ever breaks the model's internal logic, the header badge turns red.`
+    );
+  }
+
+  // Ethics / responsibility
+  if (has(q, 'hallucinat', 'responsib', 'who decides', 'ethic', 'confidential', 'bias')) {
+    return (
+      `The assistant is grounded: it is handed the live computed model state and narrates it — it never ` +
+      `generates numbers itself, which is the hallucination mitigation. Forecasts are shown as ranges, the ` +
+      `pessimistic scenario and Monte-Carlo stress the downside, and the model state stays client-side. ` +
+      `The final invest/reject decision rests with the CFO and investment committee, not the AI.`
+    );
+  }
+
   // Payback
-  if (has(q, 'payback')) {
+  if (has(q, 'payback', 'pay back', 'pays back')) {
     return (
       `Payback is ${m.payback == null ? 'never within the horizon' : fmtYears(m.payback)} undiscounted` +
       `${m.discountedPayback == null ? '' : `, ${fmtYears(m.discountedPayback)} discounted`} — within the ` +
@@ -104,6 +167,12 @@ export function answerLocally(question: string, c: AssistantContext): string {
       `puts the probability of a loss at ~${fmtPct(c.probNegative, 0)}. Proceed only with contracted offtake ` +
       `that holds the rate above break-even.`
     );
+  }
+
+  // "What does this show / explain this view" → describe the focused tab (last
+  // resort among the recognised intents, so it can't shadow the branches above).
+  if (c.focus && has(q, 'this ', 'what am i', 'looking at', 'explain the view', 'describe')) {
+    return `${c.focus.description} Ask me anything specific about it — I answer from the live model numbers.`;
   }
 
   // Fallback: the grounded summary.

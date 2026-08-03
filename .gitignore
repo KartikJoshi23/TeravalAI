@@ -47,6 +47,8 @@ assistant/.env
 Thumbs.db
 .vscode/
 .idea/
+# Local agent tooling (per-machine launch config etc.)
+.claude/
 
 # Logs
 *.log

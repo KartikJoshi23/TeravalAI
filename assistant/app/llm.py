@@ -25,7 +25,10 @@ def _make_client() -> Any:
     from openai import OpenAI
 
     logger.info("Creating NIM (OpenAI-compatible) client at %s", settings.nim_base_url)
-    return OpenAI(api_key=settings.nvidia_nim_api_key, base_url=settings.nim_base_url)
+    # timeout: a hung NIM connection should surface as a clean SSE `error` (and
+    # the frontend's offline fallback) in about a minute, not the SDK's default
+    # 600 s of a stuck "…thinking" state.
+    return OpenAI(api_key=settings.nvidia_nim_api_key, base_url=settings.nim_base_url, timeout=60)
 
 
 @lru_cache(maxsize=1)

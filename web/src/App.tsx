@@ -45,6 +45,9 @@ export default function App() {
           <AnimatePresence mode="wait">
             <motion.div
               key={tab}
+              role="tabpanel"
+              id={`panel-${tab}`}
+              aria-labelledby={`tab-${tab}`}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}

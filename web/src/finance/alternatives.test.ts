@@ -17,10 +17,10 @@ function near(actual: number, expected: number, tol: number, label = '') {
 }
 
 describe('Build vs Rent (EAC + incremental)', () => {
-  it('base case: build is cheaper than rent, by a thin +AED ~211m NPV', () => {
+  it('base case: build is cheaper than rent, by a thin +AED ~320m NPV', () => {
     const r = evaluateAlternatives(BASE_ASSUMPTIONS);
     expect(r.cheapest).toBe('build');
-    near(r.incrementalNpvAed, 211, 40, 'incr NPV');
+    near(r.incrementalNpvAed, 320, 40, 'incr NPV');
     expect(r.build.eacAed).toBeLessThan(r.rent.eacAed);
     expect(r.consistencyOk).toBe(true);
     near(r.build.costPerGpuHrUsd, 3.28, 0.08, 'build $/GPU-hr');
@@ -39,10 +39,19 @@ describe('Build vs Rent (EAC + incremental)', () => {
     expect(r.incrementalNpvAed).toBeGreaterThan(500);
   });
 
-  it('build-vs-rent crossover utilization is ~78%', () => {
+  it('build-vs-rent crossover utilization is ~77%', () => {
     const u = buildRentCrossoverUtil(BASE_ASSUMPTIONS);
     expect(u).not.toBeNull();
-    near(u as number, 0.783, 0.03, 'crossover util');
+    near(u as number, 0.774, 0.03, 'crossover util');
+  });
+
+  it('incremental NPV and EAC advantage agree in sign across the whole slider range', () => {
+    // The two instruments measure the same scope, so this must be an identity —
+    // including inside the old ~77–78% band where they used to disagree.
+    for (let u = 0.5; u <= 0.98; u += 0.01) {
+      const r = evaluateAlternatives({ ...BASE_ASSUMPTIONS, utilization: u });
+      expect(r.consistencyOk, `utilization ${u.toFixed(2)}`).toBe(true);
+    }
   });
 });
 

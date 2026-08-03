@@ -19,8 +19,16 @@ export function mcRanges(
   };
 }
 
+/**
+ * The one seed + run count every panel shares, so "P(NPV < 0)" is the SAME
+ * number on the Overview recommendation, the Sensitivity thresholds tile, the
+ * assistant context and the Monte-Carlo panel's first run (~21% at base).
+ */
+export const MC_SEED = 42;
+export const MC_RUNS = 5000;
+
 /** Deterministic given (a, seed): same inputs → identical samples. */
-export function runSimulation(a: Assumptions, seed = 42, iterations = 5000): MonteCarloResult {
+export function runSimulation(a: Assumptions, seed = MC_SEED, iterations = MC_RUNS): MonteCarloResult {
   return monteCarloNpv(a, mcRanges(a), iterations, seed);
 }
 

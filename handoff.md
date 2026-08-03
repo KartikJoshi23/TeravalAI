@@ -42,16 +42,18 @@ FIXED FACTS (do not change):
   Dhabi, 8-year horizon, AED, base WACC 9%. Team: Kartik Joshi, Prem Kukreja,
   Gagandeep Singh, Samuel Alex, Aditya Chitale. Instructor: Dr. Nathaniel Christopher.
 - The finance engine (web/src/finance/) is verified against docs/finance-model-
-  reference.py by a 13-test suite. It is the numeric source of truth. If you change
-  any assumption or formula, you MUST update BOTH the TypeScript engine and the
-  Python reference, keep them equal, and keep all tests green.
+  reference.py by the Vitest suite (29 tests as of 2026-08-03). It is the numeric
+  source of truth. If you change any assumption or formula, you MUST update BOTH
+  the TypeScript engine and the Python reference, keep them equal, and keep all
+  tests green.
 
 HARD RULES:
 - Work in the reviewable stages listed in implementation-plan.md §13 and in
   progress.md's "NEXT TASK". Do ONE stage, then STOP and report for review. Do not
   run ahead multiple stages.
-- Before starting: `cd web && npm install && npm test` — confirm 13/13 pass. If they
-  do not, fix that first (Phase 2 of the methodology) before new work.
+- Before starting: `cd web && npm install && npm test` — confirm ALL tests pass
+  (29/29 as of 2026-08-03). If they do not, fix that first (Phase 2 of the
+  methodology) before new work.
 - After finishing your stage: run the tests and a type-check (`npx tsc -b`), then
   UPDATE progress.md (Completed / In progress / exact NEXT TASK), commit to main, and push.
 - Dashboard tech + look (from the plan): React + TypeScript + Vite; Three.js /
@@ -63,9 +65,10 @@ HARD RULES:
 - If the requested next task and the real goal diverge, or something is ambiguous,
   ask Kartik BEFORE building — do not guess and drift.
 
-Deliverables the project is driving toward (per the brief): the dashboard/app; a
-LaTeX report (1,300–1,650 words, compiled on Overleaf); and NotebookLM slides from
-the final report. handoff.md and the LaTeX report are later stages.
+Deliverables the project is driving toward (per the brief): the dashboard/app
+(feature-complete); the LaTeX report (report/main.tex — written, compiled on
+Overleaf with the four dashboard screenshots); and NotebookLM slides from the
+final report (report/notebooklm-prompt.md).
 
 Begin by reading the six files above, then state back: (a) the exact NEXT TASK from
 progress.md, (b) your plan for it in methodology terms, and (c) confirm the tests
@@ -92,7 +95,7 @@ FIRST ACTIONS — MANDATORY, IN THIS ORDER:
    suspected — the topic, plan, and methodology are unchanged and binding.
 
 VERIFY BEFORE CONTINUING (methodology Phase 5 — do not trust, confirm):
-- `cd web && npm install && npm test` → all finance tests must pass (13+).
+- `cd web && npm install && npm test` → all tests must pass (29 as of 2026-08-03).
 - `npx tsc -b` → clean. `npm run dev` → the dashboard runs and the collaborator's
   stage actually works as progress.md claims. If reality and progress.md disagree,
   fix or flag it before adding new work.

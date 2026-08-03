@@ -83,6 +83,12 @@ export default function TornadoChart() {
         Tornado — ΔNPV (AED m) from each driver&apos;s {''}
         <span className="text-txt-faint">down/up move</span>, ranked by impact
       </div>
+      {/* text alternative for screen readers — the chart itself is SVG-only */}
+      <p className="sr-only">
+        Drivers ranked by NPV impact: {rows.map((r) => r.label).join(', ')}. The largest swing is{' '}
+        {rows[0].label}, moving NPV between {fmtAedM(rows[0].low)} and {fmtAedM(rows[0].high)} for
+        its {rows[0].swing} move.
+      </p>
       <div className="h-[260px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

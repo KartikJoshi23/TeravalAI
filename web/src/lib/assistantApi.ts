@@ -50,12 +50,14 @@ export async function* streamAssistant(
 
   function parseBlock(raw: string): StreamChunk | null {
     let event = 'message';
-    let data = '';
+    const dataLines: string[] = [];
     for (const line of raw.split('\n')) {
       if (line.startsWith(':')) continue;
       if (line.startsWith('event:')) event = line.slice(6).trim();
-      else if (line.startsWith('data:')) data += line.slice(5).replace(/^ /, '');
+      else if (line.startsWith('data:')) dataLines.push(line.slice(5).replace(/^ /, ''));
     }
+    // Per the SSE spec, consecutive data lines are joined with a newline.
+    const data = dataLines.join('\n');
     if (!data) return null;
     let parsed: Record<string, unknown>;
     try {
@@ -82,12 +84,18 @@ export async function* streamAssistant(
     return out;
   }
 
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    for (const c of drain()) yield c;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      for (const c of drain()) yield c;
+    }
+    const tail = parseBlock(buffer.replace(/\r\n/g, '\n').trim());
+    if (tail) yield tail;
+  } finally {
+    // Release the HTTP connection even when an `error` event throws mid-stream
+    // (or the consumer stops iterating early).
+    reader.cancel().catch(() => {});
   }
-  const tail = parseBlock(buffer.replace(/\r\n/g, '\n').trim());
-  if (tail) yield tail;
 }

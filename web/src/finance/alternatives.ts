@@ -80,7 +80,13 @@ export function evaluateAlternatives(a: Assumptions): AlternativesResult {
   const eacRent = pvRent / annuityFactor(r, CLOUD_LIFE);
 
   // --- Incremental NPV of building vs rolling the rental over the hall's life ---
-  const annualSaving = annualRent - opexBuild;
+  // Rolling the 3-year rental over 8 years re-incurs the integration capex each
+  // cycle, so the rolled route's level annual cost must include that capex
+  // annuitized over the cycle (the same scope the rent EAC charges). This makes
+  // the incremental NPV and the EAC comparison the same-scope identity that
+  // consistencyOk / self-test check 4 assert: incrNpv = a(r, 8y) × ΔEAC.
+  const annualRentRolled = annualRent + CLOUD_INTEGRATION_CAPEX / annuityFactor(r, CLOUD_LIFE);
+  const annualSaving = annualRentRolled - opexBuild;
   let incrNpv = -(capexBuild + wc);
   for (let t = 1; t <= nB; t++) incrNpv += annualSaving / Math.pow(1 + r, t);
   incrNpv += -refresh / Math.pow(1 + r, a.refreshYear) + salvage / Math.pow(1 + r, nB);

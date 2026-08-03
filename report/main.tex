@@ -35,6 +35,15 @@
 \setlength{\parskip}{5pt}
 \renewcommand{\arraystretch}{1.15}
 
+% Screenshot include that degrades gracefully: if the PNG is not yet uploaded
+% (they are captured manually and kept out of git), show a labelled placeholder
+% instead of failing the compile. On Overleaf with the PNGs present, identical.
+\newcommand{\dashfig}[2]{%
+  \IfFileExists{#1.png}%
+    {\includegraphics[width=#2\textwidth]{#1}}%
+    {\fbox{\parbox{0.88\textwidth}{\centering\vspace{1.6cm}\small\itshape dashboard screenshot pending: #1.png\vspace{1.6cm}}}}%
+}
+
 \begin{document}
 
 % ============================ TITLE PAGE ============================
@@ -192,14 +201,14 @@ Break-even GPU rate & \$3.34 / GPU-hr & Market \$2.85--3.50 $\rightarrow$ knife-
 The model also frames the \emph{relevant} question --- build versus rent. Because Barq needs the
 compute either way, the build is appraised incrementally against renting hyperscaler capacity,
 compared on Equivalent Annual Cost. Building is a largely fixed cost while renting scales with
-utilization, so \textbf{building wins only above roughly 78\% sustained utilization}; at the base
-case it beats renting by a thin incremental NPV of about +AED 211\,m (Figure~\ref{fig:bvr}). As an
+utilization, so \textbf{building wins only above roughly 77\% sustained utilization}; at the base
+case it beats renting by a thin incremental NPV of about +AED 320\,m (Figure~\ref{fig:bvr}). As an
 internal check, the sign of that incremental NPV agrees with the difference in equivalent annual
 costs, so two independent routes to the answer are mutually consistent.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.92\textwidth]{teraval-cashflow}
+\dashfig{teraval-cashflow}{0.92}
 \caption{Eight-year free cash flow (bars; Year-0 outlay and the Year-4 refresh dip are negative)
 and the cumulative \emph{discounted} cash flow (line), whose zero-crossing is the discounted
 payback of about 6.3 years.}
@@ -207,9 +216,9 @@ payback of about 6.3 years.}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.92\textwidth]{teraval-buildvsrent}
+\dashfig{teraval-buildvsrent}{0.92}
 \caption{Build vs Rent on Equivalent Annual Cost. Building's fixed cost beats flexible renting
-only at high, sustained utilization; below the $\sim$78\% crossover, renting is cheaper.}
+only at high, sustained utilization; below the $\sim$77\% crossover, renting is cheaper.}
 \label{fig:bvr}
 \end{figure}
 
@@ -248,7 +257,7 @@ simultaneously --- letting a manager see the physical and financial story change
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.95\textwidth]{teraval-overview}
+\dashfig{teraval-overview}{0.95}
 \caption{The Teraval Overview: the 3D data-centre hall, the headline KPI cards, and the
 AI-generated recommendation.}
 \label{fig:overview}
@@ -264,7 +273,7 @@ utilization; the electricity tariff barely moves the result, confirming that Abu
 power is a genuine competitive moat. The Monte-Carlo simulation puts the probability of a negative
 NPV at about 21\% at base, with a mean simulated NPV of roughly +AED 1{,}456\,m --- below the base
 case, reflecting that the downside outweighs the upside. The decision changes once the rental rate
-falls below roughly \$3.34/GPU-hr or utilization drops under about 70\%; the principal financial
+falls below roughly \$3.34/GPU-hr or utilization drops under about 67\%; the principal financial
 risk is a structural, market-wide decline in the rental rate; and the best management response is
 to secure multi-year contracted offtake before committing capital, stage the fit-out, and retain a
 cloud-rental fallback.
@@ -286,7 +295,7 @@ Pessimistic & $-$AED 4{,}138\,m & $-$9.5\% & 0.30 & Reject\\
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.92\textwidth]{teraval-scenarios}
+\dashfig{teraval-scenarios}{0.92}
 \caption{Optimistic / base / pessimistic comparison against the live ``current'' case.}
 \label{fig:scen}
 \end{figure}
@@ -311,7 +320,7 @@ official CBUAE rates), but the margin of safety is thin and the outcome hinges o
 Management should therefore (i) secure multi-year contracted offtake to hold the effective rental
 rate above the \$3.34 break-even; (ii) stage the GPU fit-out rather than release all capital at
 once; and (iii) keep hyperscaler rental available as a fallback, since building only pays above
-about 78\% sustained utilization. The dominant \emph{financial} risk is a structural collapse in
+about 77\% sustained utilization. The dominant \emph{financial} risk is a structural collapse in
 the GPU rental rate; the dominant \emph{AI-related} risk is over-reliance on optimistic forecasts.
 Managed on these terms, the project is a defensible, value-creating commitment.
 

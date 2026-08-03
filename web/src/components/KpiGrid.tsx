@@ -53,17 +53,22 @@ export default function KpiGrid() {
       label: 'Payback',
       target: e.payback ?? NaN,
       format: fmtYears,
+      // Tone and signal read the SAME facts so the card can't show a green
+      // headline next to a "never recovers" caption (possible when the
+      // undiscounted payback exists but the discounted one doesn't).
       tone:
         e.payback == null
           ? 'negative'
-          : e.payback <= a.lifeYears
-            ? 'positive'
-            : 'warning',
+          : e.discountedPayback == null || e.payback > a.lifeYears
+            ? 'warning'
+            : 'positive',
       accent: AMBER,
       signal:
-        e.discountedPayback == null
+        e.payback == null
           ? 'never recovers within horizon'
-          : `discounted ${fmtYears(e.discountedPayback)} · ${a.lifeYears}-yr life`,
+          : e.discountedPayback == null
+            ? 'discounted: never within horizon'
+            : `discounted ${fmtYears(e.discountedPayback)} · ${a.lifeYears}-yr life`,
     },
     {
       label: 'Break-even GPU rate',

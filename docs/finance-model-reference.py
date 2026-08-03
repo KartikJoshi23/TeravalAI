@@ -27,9 +27,11 @@ wc0 = 150.0
 
 
 def irr_bisect(fcf):
+    if len(fcf) < 2:               # a single flow (or none) has no return
+        return float('nan')
     lo, hi = -0.95, 10.0
     f = lambda r: sum(cf / (1 + r) ** i for i, cf in enumerate(fcf))
-    if f(lo) * f(hi) > 0:
+    if f(lo) * f(hi) > 0 or (f(lo) == 0 and f(hi) == 0):
         return float('nan')
     for _ in range(300):
         mid = (lo + hi) / 2
@@ -87,7 +89,8 @@ def run(price, util, tariff, pue, wacc, refresh_frac=0.5, refresh_year=4,
 
     neg = sum(fcf[y] * disc[y] for y in range(LIFE + 1) if fcf[y] < 0)
     pos = sum(fcf[y] * (1 + wacc) ** (LIFE - y) for y in range(LIFE + 1) if fcf[y] > 0)
-    mirr = (pos / (-neg)) ** (1 / LIFE) - 1
+    # needs both an outflow and an inflow (mirrors the TS engine's guard)
+    mirr = float('nan') if neg == 0 or pos == 0 else (pos / (-neg)) ** (1 / LIFE) - 1
 
     if verbose:
         pbs = 'never' if pb is None else f'{pb:.1f}y'
