@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-03 (evening) — collaborator laptop (Fable 5): living-background upgrade (user-requested) — canvas "data field" (particles + constellation lines + data streaks + pointer parallax) + aurora sweep, and a real reduced-motion a11y bug fixed (blobs rendered fully opaque when `animation: none`). 29/29 tests · tsc clean · build OK. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-03 (night) — MASTER laptop (Kartik, Opus 4.8): reviewed & **ACCEPTED** the collaborator's audit pass (both commits). Re-verified from scratch: **29/29 tests · tsc clean · build OK · Python reference reprints every canonical number · zero console errors**. Build-vs-Rent canon change confirmed in the live engine (incr NPV **+AED 320.5M**, crossover **77.4%**, EAC identity exact) and economically sound — accepted. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -343,20 +343,35 @@ change, engine untouched (no numbers changed):
   final KPI values render instantly. (Pane still hidden on this laptop → pixel proof via
   headless compositing Chrome, as in prior stages.)
 
+## ✅ Audit REVIEWED & ACCEPTED — MASTER (2026-08-03 night, Kartik, Opus 4.8)
+
+Master-laptop review of the collaborator's two commits (`e721e05` audit pass + `2017d5a`
+living background), methodology Phase 5 (verify, don't trust). Re-ran everything from a clean
+pull:
+- **29/29 tests · `npx tsc -b` clean · `npm run build` OK** (lazy `HallCanvas` chunk intact).
+- **Python reference reprints every canonical number unchanged** (NPV +1,854 · IRR 16.5% ·
+  MIRR 12.6% · PI 1.31 · PB 5.0/6.3 · breakeven $3.34 · scenarios +10,216/+1,854/−4,138); the
+  irr/mirr NaN guards are mirrored identically in `core.ts` and the Python reference.
+- **Build-vs-Rent canon change VERIFIED in the live engine** (via vite-node, not just tests):
+  incremental NPV **+AED 320.5M**, crossover **77.4%**, `consistencyOk: true`, build EAC 1820.8
+  < rent EAC 1878.7. Confirmed the fix makes `incrNpv = a(9%,8) × ΔEAC` an **exact identity**
+  (5.535 × 57.9 = 320.5); the old +211M genuinely under-charged the rolled rent route (missing
+  the per-cycle integration capex the rent EAC already charged). **ACCEPTED.**
+- Live DOM on the dev server: all **7 tabs** present, AI panel shows canonical numbers +
+  **21% @ 5,000 runs**, **zero console errors**. Report/slides/`tabContext` all consistent at
+  **+AED 320M / ~77%** — no stale +211M/78% anywhere.
+- (Pane hidden on this laptop → rAF paused, so count-ups freeze at 0 and tab transitions stall;
+  verified via live DOM + the actual engine + console/network, as in prior stages. A pixel
+  screenshot pass still needs a visible browser — see NEXT TASK.)
+
 ## 🔧 In progress
 
-- Nothing mid-flight. Awaiting Kartik's review of the audit pass (especially the
-  **+AED 320M / ~77% Build-vs-Rent canon change**) — and now also of the
-  living-background upgrade above.
+- Nothing mid-flight. Audit accepted; report-package assembly is the remaining work (below),
+  most of it requiring a visible browser / manual tools / Kartik's course conventions.
 
-## ▶️ NEXT TASK — MASTER (Kartik): review the audit, then assemble the report package
+## ▶️ NEXT TASK — MASTER (Kartik): assemble the report package
 
-1. **Review this audit commit** (methodology Phase 5 — verify, don't trust): `git pull`,
-   `cd web && npm install && npm test` (expect **29/29**), `npx tsc -b`, `npm run dev`, click all
-   7 tabs in a visible browser. Decide whether you ACCEPT the Build-vs-Rent correction
-   (+AED 320M / ~77% — the old +211M/78% under-charged the rent route; the panel, report, slides
-   prompt and tests are already consistent with the new numbers). If you disagree, revert the
-   single audit commit and say so here.
+1. ✅ **Audit reviewed & accepted** (see section above) — Build-vs-Rent +AED 320M / ~77% is in.
 2. **Manual report assembly (unchanged):** capture the 4 screenshots
    (`teraval-overview/cashflow/scenarios/buildvsrent.png` — Build vs Rent now shows +AED 320M),
    compile `report/main.tex` + PNGs on Overleaf (it also compiles WITHOUT the PNGs now, showing
