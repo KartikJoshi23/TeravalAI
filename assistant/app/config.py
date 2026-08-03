@@ -13,8 +13,14 @@ class Settings(BaseSettings):
     nim_base_url: str = "https://integrate.api.nvidia.com/v1"
     nim_model: str = "meta/llama-3.1-70b-instruct"
 
-    # Comma-separated list of allowed browser origins (the Vite dev + preview ports).
+    # Comma-separated list of allowed browser origins (the Vite dev + preview ports,
+    # plus the deployed frontend URL in production — see assistant/.env.example).
     cors_origins: str = "http://localhost:5173,http://localhost:4173"
+
+    # Optional regex for allowed origins. In production this matches every Vercel
+    # deployment (stable production URL *and* the per-commit preview URLs, which
+    # rotate) without having to enumerate them. Empty ⇒ no regex, list only.
+    cors_origin_regex: str = ""
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -364,20 +364,52 @@ pull:
   verified via live DOM + the actual engine + console/network, as in prior stages. A pixel
   screenshot pass still needs a visible browser — see NEXT TASK.)
 
+## ✅ Deployment prep — MASTER (2026-08-03 night, Kartik, Opus 4.8)
+
+Made the project hostable: **frontend → Vercel**, **backend → Render**, NIM stays external.
+The code was already env-driven (frontend reads `VITE_ASSISTANT_URL`; backend CORS reads
+`CORS_ORIGINS`), so this was mostly config + one CORS improvement. No finance/engine change.
+
+- **Backend CORS survives Vercel's rotating preview URLs:** added `cors_origin_regex` to
+  `assistant/app/config.py` and wired `allow_origin_regex` into `app/main.py`. Render sets it to
+  `https://([a-z0-9-]+\.)*vercel\.app`, which matches the stable production URL **and** every
+  per-commit preview URL without enumerating them. **Proven via TestClient:** vercel.app +
+  preview + localhost origins echoed; `evil.example.com` blocked.
+- **`render.yaml`** (repo root) — Render Blueprint: Python, `rootDir: assistant`,
+  build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`,
+  `healthCheckPath: /health`, `autoDeploy`, `PYTHON_VERSION 3.12.7`, `NIM_MODEL`/`NIM_BASE_URL`,
+  and `NVIDIA_NIM_API_KEY` as `sync:false` (paste in dashboard, never committed).
+- **`web/vercel.json`** — Vite framework preset + SPA rewrite (`/(.*)`→`/index.html`).
+  User sets **Root Directory = `web`** in the Vercel project.
+- **`web/.env.example`** (documents `VITE_ASSISTANT_URL`) + **`assistant/.env.example`** updated
+  (CORS prod origins + regex). **`DEPLOYMENT.md`** — full step-by-step (backend first, then
+  frontend, then verify; free-tier cold-start caveat).
+- **Verified:** backend imports clean, `/api/chat/message` + `/health` resolve, CORS matrix as
+  above; frontend `npm run build` (Vercel's command) green; `npm test` **29/29**; no secrets
+  tracked (`assistant/.env`, `web/.env.local` git-ignored).
+- Graceful degradation intact: if Render is asleep/unconfigured, the Vercel dashboard still
+  works fully and the assistant uses its grounded offline fallback.
+
 ## 🔧 In progress
 
-- Nothing mid-flight. Audit accepted; report-package assembly is the remaining work (below),
-  most of it requiring a visible browser / manual tools / Kartik's course conventions.
+- Deployment configs committed. **Actual deploy (Render + Vercel) is Kartik's manual step** —
+  needs the two accounts + the NIM key pasted into Render. See `DEPLOYMENT.md`.
+- **LaTeX report update pending** — once the live URLs exist, add them to the report (scope TBD
+  with Kartik: a footnote/appendix line vs. more).
 
-## ▶️ NEXT TASK — MASTER (Kartik): assemble the report package
+## ▶️ NEXT TASK — MASTER (Kartik): deploy, then update the report + assemble the package
 
-1. ✅ **Audit reviewed & accepted** (see section above) — Build-vs-Rent +AED 320M / ~77% is in.
-2. **Manual report assembly (unchanged):** capture the 4 screenshots
+0. **Deploy** per `DEPLOYMENT.md`: Render (backend) → copy its URL → Vercel (frontend, Root
+   Directory `web`, `VITE_ASSISTANT_URL` = Render URL). Verify the assistant badge shows
+   "NIM connected" on the live site.
+1. **Update `report/main.tex`** with the live-deployment note/URLs (do after the URLs exist).
+2. ✅ **Audit reviewed & accepted** (see section above) — Build-vs-Rent +AED 320M / ~77% is in.
+3. **Manual report assembly:** capture the 4 screenshots
    (`teraval-overview/cashflow/scenarios/buildvsrent.png` — Build vs Rent now shows +AED 320M),
    compile `report/main.tex` + PNGs on Overleaf (it also compiles WITHOUT the PNGs now, showing
    labelled placeholders), and generate slides via NotebookLM (`report/notebooklm-prompt.md`).
-3. Decide the two flagged questions above (individual-report convention; word-count convention).
-4. Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
+4. Decide the two flagged questions above (individual-report convention; word-count convention).
+5. Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
 Stop after each for review.
 
 ## Notes / decisions
