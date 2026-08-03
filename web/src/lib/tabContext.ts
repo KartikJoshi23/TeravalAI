@@ -49,7 +49,7 @@ export const TAB_INFO: Record<string, TabInfo> = {
   ethics: {
     label: 'Ethics & Audit',
     description:
-      'The Ethics & Audit tab: the ethical use of AI (accuracy, hallucination, incorrect-data, bias, confidentiality, human review) each paired with Teraval\'s mitigation, plus an assumptions-and-audit table tagging every input historical/current/forecast/user-entered/AI-generated and a live model-integrity self-test. The AI advises; the CFO decides.',
+      'The Ethics & Audit tab: the ethical use of AI (accuracy, hallucination, incorrect-data, bias, confidentiality, human review) each paired with Teraval\'s mitigation; a Data Provenance panel with official sources (CBUAE base rate 3.65% and 3-month EIBOR 3.94% anchor the WACC; the Abu Dhabi industrial tariff is pending a portal outage, benchmark AED 0.15/kWh); and an assumptions-audit table tagging every input historical/current/forecast/user-entered/AI-generated with a live model-integrity self-test. The AI advises; the CFO decides.',
     samples: ['How is hallucination prevented?', 'Who is responsible for the decision?', 'What does the self-test check?'],
   },
 };

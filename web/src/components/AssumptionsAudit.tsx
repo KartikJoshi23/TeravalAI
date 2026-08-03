@@ -32,9 +32,9 @@ export default function AssumptionsAudit() {
   const rows: { item: string; value: string; tag: Tag; source: string }[] = [
     { item: 'GPU rental price', value: `$${a.gpuPriceUsd.toFixed(2)}/GPU-hr`, tag: 'C', source: 'Cloud GPU market (H100 $2.85–3.50; GB200 premium)' },
     { item: 'Utilization', value: `${(a.utilization * 100).toFixed(0)}%`, tag: 'U', source: 'Contracted + on-demand mix assumption' },
-    { item: 'Electricity tariff', value: `AED ${a.tariffAed.toFixed(3)}/kWh`, tag: 'C', source: 'Abu Dhabi industrial flat rate' },
+    { item: 'Electricity tariff', value: `AED ${a.tariffAed.toFixed(3)}/kWh`, tag: 'C', source: 'Abu Dhabi industrial rate — official ADWEA figure pending (portal outage); benchmark 0.15' },
     { item: 'PUE (cooling)', value: a.pue.toFixed(2), tag: 'C', source: 'Liquid-cooled GB200 benchmark 1.05–1.20' },
-    { item: 'WACC (discount rate)', value: `${(a.wacc * 100).toFixed(1)}%`, tag: 'F', source: 'CAPM: R_f 4.3%, β 1.3, ERP 6%; after-tax cost of debt' },
+    { item: 'WACC (discount rate)', value: `${(a.wacc * 100).toFixed(1)}%`, tag: 'F', source: 'CAPM; risk-free anchored to CBUAE base 3.65% / 3-mo EIBOR 3.94% (Jul 2026) + β 1.3 × ERP 6% + debt spread' },
     { item: 'Rack capex', value: `$${a.rackCostUsdM.toFixed(1)}M/rack`, tag: 'C', source: 'GB200 NVL72 all-in ~$3.1–3.9M' },
     { item: 'Facility build', value: `$${a.facilityCostUsdMPerMW}M/MW`, tag: 'C', source: 'AI-grade build, incl. liquid cooling' },
     { item: 'Project life', value: `${a.lifeYears} years`, tag: 'U', source: 'Appraisal horizon' },

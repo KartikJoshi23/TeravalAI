@@ -13,6 +13,7 @@ import RiskPanel from './components/RiskPanel';
 import DecisionThresholds from './components/DecisionThresholds';
 import EthicsPanel from './components/EthicsPanel';
 import AssumptionsAudit from './components/AssumptionsAudit';
+import DataProvenance from './components/DataProvenance';
 import DataCenterScene from './components/three/DataCenterScene';
 import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
@@ -81,6 +82,7 @@ export default function App() {
               {tab === 'ethics' && (
                 <>
                   <EthicsPanel />
+                  <DataProvenance />
                   <AssumptionsAudit />
                 </>
               )}

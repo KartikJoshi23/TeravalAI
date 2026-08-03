@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-02 — collaborator laptop (Prem): real-data sourcing — CBUAE base rate 3.65% + 3-mo EIBOR 3.94% saved; Abu Dhabi tariff pending (portal outage). Prior 2026-08-01 master (Kartik): visual polish + Build-vs-Rent/EAC, Ethics & Audit, thresholds, model self-test; NIM live. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-02 — master laptop (Kartik): applied real data — Data Provenance panel + WACC anchored to CBUAE 3.65%/3.94% (kept 9% conservatively); tariff pending. Earlier 2026-08-02 collaborator (Prem): sourced the CBUAE rates. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -186,11 +186,21 @@ _Last updated: 2026-08-02 — collaborator laptop (Prem): real-data sourcing —
     engine live (checks pass), all 7 tabs present. (New tab *contents* render in a visible
     browser; headless pane stalls tab-switch animations as before.)
 
+## ✅ Data applied — MASTER (2026-08-02, Kartik)
+
+- Added a **Data Provenance** panel to the Ethics & Audit tab (`components/DataProvenance.tsx`)
+  citing the official **CBUAE base rate 3.65%** + **3-mo EIBOR 3.94%** (with evidence-file paths)
+  and the pending Abu Dhabi tariff. Audit-table basis text updated to cite the official rates.
+- **WACC decision:** anchored the CAPM build-up to the official rates (risk-free ≈ 3.65–3.94%
+  + β1.3×ERP6% + debt spread ⇒ ~8.6%); **conservatively retained the 9% hurdle** (a tougher
+  test), so NO model numbers change — engine + Python reference + 26 tests untouched.
+- **Tariff:** kept 0.15 AED/kWh (official ADWEA industrial figure still pending the portal).
+- Verified: `tsc -b` 0 · tests **26/26** · build OK · in-browser no console errors, 7 tabs,
+  canvas + 20 background motes + NIM live.
+
 ## 🔧 In progress
 
-- Nothing mid-flight in code. App feature-complete and green (**26/26 tests**).
-  Real-data sourcing is done as far as the portals allowed (2 of 3 figures) and now
-  returns to the master laptop — see NEXT TASK.
+- Nothing mid-flight. App feature-complete; real-data provenance applied.
 
 ## ✅ Real-data sourcing — COLLABORATOR (2026-08-02, Prem): 2 of 3 key figures
 
@@ -211,21 +221,17 @@ in `datasets/DATA-PROVENANCE.md`.
   **residential** comparison (no AD industrial rate). `datasets/energy-context/` empty (same
   Bayanat outage; non-blocking, "report realism" only).
 
-## ▶️ NEXT TASK — master laptop: apply the data, then Stage 7 (final)
+## ▶️ NEXT TASK — Stage 7 (final deliverable): LaTeX report + slides
 
-1. **Apply real data (see `datasets/DATA-PROVENANCE.md`):** feed the official **base rate
-   3.65%** / **3-mo EIBOR 3.94%** into the WACC build-up, and add a **"Data Provenance"**
-   block to the Ethics & Audit tab + report, citing each source + date. **Tariff still
-   pending** — wait for the Abu Dhabi Open Data / Bayanat portal and pull the ADWEA industrial
-   rate (or source from DoE Abu Dhabi); until then keep 0.15 AED/kWh and note it. Keep the TS
-   engine and `docs/finance-model-reference.py` in sync and all tests green for any change.
-2. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black border
+1. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black border
    on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five team
    members · project title · "Submitted for the partial fulfilment of…"), all 10 report sections,
-   answering the 5 project questions (Brief §11).
-3. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
+   answering the 5 project questions (Brief §11). Cite the official CBUAE rates (provenance).
+2. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
    `\includegraphics` references.
-4. **NotebookLM prompt** for the 7–10 min / 8–15 slide deck from the final report.
+3. **NotebookLM prompt** for the 7–10 min / 8–15 slide deck from the final report.
+- Follow-up (non-blocking): when the Abu Dhabi Open Data / Bayanat portal is back, pull the
+  **ADWEA industrial tariff** and update the 0.15 default + provenance.
 Stop after each for review.
 
 ## Notes / decisions
