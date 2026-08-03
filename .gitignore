@@ -7,6 +7,19 @@ dist/
 build/
 *.tsbuildinfo
 
+# LaTeX build artifacts (report/ — compiled on Overleaf; only main.tex is tracked)
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.pdf
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+report/_wc.py
+# Report figures are captured by the user + uploaded to Overleaf (not committed)
+report/teraval-*.png
+
 # Env / secrets (NVIDIA NIM key lives here — never commit)
 .env
 .env.local

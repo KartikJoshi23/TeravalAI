@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-02 — master laptop (Kartik): applied real data — Data Provenance panel + WACC anchored to CBUAE 3.65%/3.94% (kept 9% conservatively); tariff pending. Earlier 2026-08-02 collaborator (Prem): sourced the CBUAE rates. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-02 — master laptop (Kartik): Stage 7 LaTeX report written & verified (MiKTeX: 8 pages, 0 overfull, 1,492 prose words) + NotebookLM prompt; earlier applied real data (Data Provenance + WACC anchored to CBUAE 3.65%/3.94%, kept 9%). Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -221,17 +221,32 @@ in `datasets/DATA-PROVENANCE.md`.
   **residential** comparison (no AD industrial rate). `datasets/energy-context/` empty (same
   Bayanat outage; non-blocking, "report realism" only).
 
-## ▶️ NEXT TASK — Stage 7 (final deliverable): LaTeX report + slides
+## ✅ Stage 7 — LaTeX report DONE (2026-08-02, master)
 
-1. **LaTeX report** — 1,300–1,650 words, class `article` 12pt A4, ToC, single-line black border
-   on every page, title page (Corporate Finance · Dr. Nathaniel Christopher · the five team
-   members · project title · "Submitted for the partial fulfilment of…"), all 10 report sections,
-   answering the 5 project questions (Brief §11). Cite the official CBUAE rates (provenance).
-2. **Figures:** dashboard screenshots into `docs/figures/` with filenames matching the
-   `\includegraphics` references.
-3. **NotebookLM prompt** for the 7–10 min / 8–15 slide deck from the final report.
+- `report/main.tex` — complete Overleaf-ready source: class `article` 12pt A4, ToC, **single-line
+  black border on every page** (eso-pic + tikz), title page (Corporate Finance · Dr. Nathaniel
+  Christopher · the five team members · project title · "Submitted for the partial fulfilment…"),
+  **all 10 report sections**, answering the **5 project questions**, citing the official CBUAE
+  rates. **Verified locally with MiKTeX:** latexmk exit 0, **8 pages, 0 overfull**, prose body
+  **1,492 words** (within 1,300–1,650); title page + tables + border checked visually.
+- `report/notebooklm-prompt.md` — the prompt to generate the 10–12 slide / 7–10 min deck.
+- LaTeX build artifacts git-ignored; only `report/main.tex` (+ the prompt) tracked.
+
+## 🔧 In progress — nothing in code. Two manual steps remain for Kartik (below).
+
+## ▶️ NEXT TASK — capture 4 screenshots, compile, generate slides
+
+1. **Capture 4 dashboard screenshots** (visible browser, `npm run dev`) and name them EXACTLY
+   (they match the `\includegraphics` in `report/main.tex`):
+   - `teraval-overview.png`   — Overview tab (3D hall + KPI cards + AI recommendation)
+   - `teraval-cashflow.png`   — Cash Flow tab (FCF bars + cumulative line)
+   - `teraval-scenarios.png`  — Scenarios tab (comparison chart + table)
+   - `teraval-buildvsrent.png`— Build vs Rent tab (Equivalent Annual Cost)
+2. **Compile on Overleaf:** upload `report/main.tex` + the 4 PNGs into one project → compile.
+3. **Slides:** upload the compiled report PDF to NotebookLM and paste `report/notebooklm-prompt.md`.
 - Follow-up (non-blocking): when the Abu Dhabi Open Data / Bayanat portal is back, pull the
   **ADWEA industrial tariff** and update the 0.15 default + provenance.
+- **Project is then complete:** dashboard/app ✔, LaTeX report ✔, slides prompt ✔, handoff/progress ✔.
 Stop after each for review.
 
 ## Notes / decisions

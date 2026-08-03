@@ -1,0 +1,318 @@
+% ============================================================================
+% Teraval — Corporate Finance individual report
+% Compile on Overleaf with pdfLaTeX.
+% REQUIRED IMAGE FILES (upload to the SAME Overleaf project, names must match):
+%   teraval-overview.png     — Overview tab (3D hall + KPI cards + AI recommendation)
+%   teraval-cashflow.png     — Cash Flow tab (FCF bars + cumulative discounted line)
+%   teraval-scenarios.png    — Scenarios tab (comparison chart + table)
+%   teraval-buildvsrent.png  — Build vs Rent tab (Equivalent Annual Cost)
+% ============================================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,top=2.6cm,bottom=2.6cm,left=2.4cm,right=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+% --- single-line black border on EVERY page ---
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\AddToShipoutPictureBG{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[line width=0.6pt]
+      ($(current page.north west)+(1cm,-1cm)$) rectangle
+      ($(current page.south east)+(-1cm,1cm)$);
+  \end{tikzpicture}%
+}
+
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.15}
+
+\begin{document}
+
+% ============================ TITLE PAGE ============================
+\begin{titlepage}
+\centering
+\vspace*{1.2cm}
+{\large\scshape Corporate Finance\par}
+\vspace{0.4cm}
+{\rule{0.6\textwidth}{0.4pt}\par}
+\vspace{1.4cm}
+{\Huge\bfseries Teraval\par}
+\vspace{0.5cm}
+{\Large An AI-Enabled Corporate-Finance\\[2pt] Capital-Budgeting Decision Dashboard\par}
+\vspace{0.6cm}
+{\large\itshape Should Barq AI build a 40\,MW AI/GPU data-centre in Abu Dhabi?\par}
+\vspace{1.6cm}
+
+{\normalsize Submitted for the partial fulfilment of the requirements of the\\
+\textbf{Corporate Finance} module of the Masters in Artificial Intelligence with Business.\par}
+\vspace{1.6cm}
+
+\begin{tabular}{rl}
+\textbf{Subject} & Corporate Finance\\[3pt]
+\textbf{Instructor} & Dr.\ Nathaniel Christopher\\[3pt]
+\textbf{Team members} & Kartik Joshi\\
+ & Prem Kukreja\\
+ & Gagandeep Singh\\
+ & Samuel Alex\\
+ & Aditya Chitale\\
+\end{tabular}
+
+\vfill
+{\small Topic 9 --- AI Capital-Budgeting Dashboard (subsuming Topic 10, Relevant Cash-Flows).\par}
+\end{titlepage}
+
+% ============================ CONTENTS ============================
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+% ============================ 1 ============================
+\section{Executive Summary}
+Teraval appraises whether \textbf{Barq AI} --- a realistic UAE AI-cloud operator, benchmarked
+to the Stargate\,UAE / Khazna / G42 build-out --- should commit roughly \textbf{AED 5.8 billion}
+to build and operate a \textbf{40\,MW AI/GPU data-centre hall} in Abu Dhabi over an eight-year
+horizon. The base case \emph{creates value}: a net present value of \textbf{+AED 1{,}854\,m},
+an internal rate of return of \textbf{16.5\%} against a 9\% cost of capital, and a profitability
+index of \textbf{1.31}. The margin of safety is thin, however: value turns negative once the GPU
+rental rate falls below a \textbf{break-even of about \$3.34/GPU-hr}, which sits inside today's
+volatile market band of \$2.85--3.50. The recommendation is therefore to \textbf{accept, with
+conditions} --- de-risk revenue through contracted offtake and stage the capital --- while keeping
+a cloud-rental fallback. This report and the accompanying dashboard together answer the five
+project questions: the decision and its importance (\S2), the concepts and data required (\S3--4),
+the results across scenarios (\S8), how AI improves the analysis (\S6), and the final
+recommendation with its risks (\S9--10).
+
+% ============================ 2 ============================
+\section{Financial Problem}
+The decision-maker is the CFO and investment committee of Barq AI. The problem is a
+near-irreversible, ``bet-the-company'' capital commitment: about AED 5.8 billion of up-front
+capital sunk into an asset whose revenue --- the price of renting GPU compute --- \emph{collapsed
+from roughly \$8 to \$2.85--3.50 per GPU-hour} across 2024--25 as supply flooded the market. The
+decision matters because of the sheer scale of capital at risk, the volatility of the revenue
+line, and the strategic stakes of the UAE's ambition to become a global AI-compute hub. Getting
+it wrong means either a multi-billion-dirham value destruction or forgoing a defining
+infrastructure position. For scale, the reference Stargate\,UAE campus commits roughly
+\$10 billion for a 1\,GW build, of which a 200\,MW first phase completes in 2026; Barq's 40\,MW
+hall is one realistic module of exactly this kind of investment. The capital is effectively
+irreversible --- purpose-built power and liquid cooling cannot be redeployed --- so the
+opportunity cost of a wrong decision is close to the entire outlay. This is the classic
+capital-budgeting accept/reject question, and the natural capstone of the course's
+project-appraisal and capital-investment units.
+
+% ============================ 3 ============================
+\section{Relevant Corporate Finance Concepts}
+The appraisal rests on the time value of money and discounted cash flow. Only \emph{relevant
+(incremental) cash flows} enter the model --- the initial outlay, incremental operating cash
+flows, and the terminal value --- while sunk costs are excluded and working capital and salvage
+are included. The core metrics are:
+\begin{align*}
+\text{NPV} &= \sum_{t=1}^{n}\frac{CF_t}{(1+r)^t}-CF_0, &
+\text{PI} &= \frac{\text{PV of future flows}}{|CF_0|},\\
+\text{IRR: } 0 &= \sum_{t=0}^{n}\frac{CF_t}{(1+\text{IRR})^t}, &
+\text{EAC} &= \frac{\text{PV of costs}}{\big(1-(1+r)^{-n}\big)/r}.
+\end{align*}
+NPV is the primary rule (accept if positive); IRR and the profitability index confirm it; payback
+and discounted payback give a liquidity view; and \emph{Equivalent Annual Cost} (EAC) is used to
+compare the build against renting, because the two routes have different lives and cannot be
+compared on total cost or NPV. The discount rate is the weighted average cost of capital (WACC),
+with the cost of equity from the Capital Asset Pricing Model,
+$K_e = R_f + \beta(R_m-R_f)$. Modified IRR is reported alongside IRR because IRR implicitly
+assumes interim cash flows are reinvested at the IRR itself, which flatters a high-return project;
+MIRR reinvests them at the more realistic cost of capital. Payback and discounted payback ignore
+cash flows beyond the cut-off --- and, for the undiscounted version, the time value of money ---
+so they serve only as a secondary liquidity check.
+
+% ============================ 4 ============================
+\section{Data and Assumptions}
+Inputs are classified as historical (H), current market (C), forecast (F), user-entered (U) or
+AI-generated (AI). Monetary values are AED millions; USD is converted at the pegged rate
+USD\,1 = AED\,3.6725.
+
+\begin{table}[h]
+\small
+\begin{tabularx}{\textwidth}{@{}l p{4.3cm} X@{}}
+\toprule
+\textbf{Assumption} & \textbf{Base value} & \textbf{Type / basis}\\
+\midrule
+GPU rental price & \$4.0 / GPU-hr & C --- cloud GPU market\\
+Utilization & 80\% & U --- contracted + on-demand mix\\
+Facility scale & 40\,MW IT; 300 GB200 racks (21{,}600 GPUs) & C --- GB200 NVL72 platform\\
+Total capex & AED 5{,}766\,m (\$39.2\,m/MW) & C --- AI-grade build + GPUs\\
+Electricity tariff & AED 0.15 / kWh & C --- Abu Dhabi industrial (official pending)\\
+PUE (cooling) & 1.20 & C --- liquid-cooled GB200\\
+WACC & 9\% & F --- anchored to CBUAE base 3.65\% / 3-mo EIBOR 3.94\% + risk premia\\
+UAE corporate tax & 9\% & C --- introduced 2023\\
+Project life & 8 years & U --- appraisal horizon\\
+\bottomrule
+\end{tabularx}
+\caption{Key assumptions and their data type. Interest-rate anchors are official Central Bank of
+the UAE figures (July 2026); the industrial tariff awaits the Abu Dhabi Open Data portal.}
+\end{table}
+
+% ============================ 5 ============================
+\section{Financial Calculations}
+The Year-0 outlay is AED 5{,}766\,m of capital (IT hardware AED 3{,}856\,m plus facility
+AED 1{,}910\,m) plus AED 150\,m of working capital. Base-case revenue is AED 2{,}224\,m per year
+against operating costs of AED 600\,m, giving EBITDA of AED 1{,}624\,m; a mid-life GPU refresh in
+Year 4 and terminal salvage complete the stream. Discounting at 9\% yields the results in
+Table~\ref{tab:metrics}. A minimum of three major calculations is comfortably exceeded --- NPV,
+IRR, MIRR, PI, payback and break-even are all computed and cross-checked by a live model
+self-test (e.g.\ NPV discounted at the IRR equals zero). The 9\% discount rate is built up from
+the official Central Bank rates as a risk-free anchor, a levered equity risk premium and an
+after-tax cost of debt, while straight-line depreciation supplies a tax shield inside the
+operating cash flows.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Metric} & \textbf{Base case} & \textbf{Decision signal}\\
+\midrule
+Net present value & +AED 1{,}854\,m & Positive $\rightarrow$ accept\\
+Internal rate of return & 16.5\% & Above 9\% WACC $\rightarrow$ accept\\
+Modified IRR & 12.6\% & Above WACC $\rightarrow$ accept\\
+Profitability index & 1.31 & $>1 \rightarrow$ accept\\
+Payback / discounted & 5.0 / 6.3 yrs & Within the 8-year life\\
+Break-even GPU rate & \$3.34 / GPU-hr & Market \$2.85--3.50 $\rightarrow$ knife-edge\\
+\bottomrule
+\end{tabular}
+\caption{Verified base-case decision metrics.}
+\label{tab:metrics}
+\end{table}
+
+The model also frames the \emph{relevant} question --- build versus rent. Because Barq needs the
+compute either way, the build is appraised incrementally against renting hyperscaler capacity,
+compared on Equivalent Annual Cost. Building is a largely fixed cost while renting scales with
+utilization, so \textbf{building wins only above roughly 78\% sustained utilization}; at the base
+case it beats renting by a thin incremental NPV of about +AED 211\,m (Figure~\ref{fig:bvr}). As an
+internal check, the sign of that incremental NPV agrees with the difference in equivalent annual
+costs, so two independent routes to the answer are mutually consistent.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{teraval-cashflow}
+\caption{Eight-year free cash flow (bars; Year-0 outlay and the Year-4 refresh dip are negative)
+and the cumulative \emph{discounted} cash flow (line), whose zero-crossing is the discounted
+payback of about 6.3 years.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{teraval-buildvsrent}
+\caption{Build vs Rent on Equivalent Annual Cost. Building's fixed cost beats flexible renting
+only at high, sustained utilization; below the $\sim$78\% crossover, renting is cheaper.}
+\label{fig:bvr}
+\end{figure}
+
+% ============================ 6 ============================
+\section{AI Features}
+Teraval proposes six AI features, each grounded in the deterministic engine so that figures are
+never invented:
+\begin{enumerate}[leftmargin=1.4em,itemsep=1pt]
+\item \textbf{Rate \& utilization forecaster} --- projects a forward GPU-rental path with
+P10--P90 bands, replacing a flat guess with a defensible range (risk: market non-stationarity).
+\item \textbf{Scenario generator} --- auto-builds coherent optimistic/base/pessimistic driver sets.
+\item \textbf{Monte-Carlo risk simulator} --- 5{,}000 NPV draws yield a probability of loss
+($\approx$21\% at base) and a value-at-risk view.
+\item \textbf{AI Finance Assistant (NVIDIA NIM)} --- a natural-language, tab-aware chatbot that
+answers from the live model state and never free-generates numbers (risk: hallucination, mitigated
+by grounding).
+\item \textbf{Anomaly / unrealistic-assumption detector} --- flags inputs outside credible ranges.
+\item \textbf{Recommendation engine} --- synthesises metrics, break-even and the dominant driver
+into an accept/reject conclusion.
+\end{enumerate}
+Together these automate the arithmetic, forecast the volatile revenue line, quantify risk, and
+explain results in plain language --- directly improving the analysis, dashboard and
+decision-making process.
+
+% ============================ 7 ============================
+\section{Dashboard Explanation}
+The dashboard (Figure~\ref{fig:overview}) delivers the six required components across seven tabs:
+KPI cards (NPV, IRR, MIRR, PI, payback, break-even); a cash-flow trend chart; a scenario
+comparison; live sensitivity with a tornado chart; a risk-and-alert panel; and an AI
+recommendation panel. It is a dark, glassmorphism React application whose hero is a WebGL 3D
+data-centre hall that reacts to the live assumptions, with a floating, context-aware AI assistant
+available on every tab, a live model-integrity self-test, and a data-provenance panel citing the
+official Central Bank rates. Every component reads a single shared model state, so moving any
+assumption recomputes the KPI cards, charts, scenarios, risk alerts and the recommendation
+simultaneously --- letting a manager see the physical and financial story change together.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{teraval-overview}
+\caption{The Teraval Overview: the 3D data-centre hall, the headline KPI cards, and the
+AI-generated recommendation.}
+\label{fig:overview}
+\end{figure}
+
+% ============================ 8 ============================
+\section{Scenario and Sensitivity Analysis}
+Three scenarios are modelled (Table~\ref{tab:scen}, Figure~\ref{fig:scen}). The decision
+\emph{flips}: value is strongly positive in the optimistic case, thinly positive in the base case,
+and sharply negative in the pessimistic case. One-way sensitivity shows the \textbf{GPU rental
+price} is by far the dominant driver --- a 20\% fall alone turns NPV negative --- followed by
+utilization; the electricity tariff barely moves the result, confirming that Abu Dhabi's cheap
+power is a genuine competitive moat. The Monte-Carlo simulation puts the probability of a negative
+NPV at about 21\% at base, with a mean simulated NPV of roughly +AED 1{,}456\,m --- below the base
+case, reflecting that the downside outweighs the upside. The decision changes once the rental rate
+falls below roughly \$3.34/GPU-hr or utilization drops under about 70\%; the principal financial
+risk is a structural, market-wide decline in the rental rate; and the best management response is
+to secure multi-year contracted offtake before committing capital, stage the fit-out, and retain a
+cloud-rental fallback.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Scenario} & \textbf{NPV} & \textbf{IRR} & \textbf{PI} & \textbf{Decision}\\
+\midrule
+Optimistic & +AED 10{,}216\,m & 44.5\% & 2.73 & Accept\\
+Base case & +AED 1{,}854\,m & 16.5\% & 1.31 & Accept (conditional)\\
+Pessimistic & $-$AED 4{,}138\,m & $-$9.5\% & 0.30 & Reject\\
+\bottomrule
+\end{tabular}
+\caption{Scenario results --- the accept/reject decision flips with the assumptions.}
+\label{tab:scen}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{teraval-scenarios}
+\caption{Optimistic / base / pessimistic comparison against the live ``current'' case.}
+\label{fig:scen}
+\end{figure}
+
+% ============================ 9 ============================
+\section{AI Limitations and Ethical Risks}
+The AI features carry real risks. Rate and utilization \emph{forecasts} are extrapolations of a
+volatile, immature market and could mislead if read as certainty --- so they are shown as ranges,
+not points. A language model can \emph{hallucinate} figures; the assistant is therefore grounded
+in the deterministic engine and instructed to narrate only. Incorrect input data can silently flip
+the verdict, so assumptions are transparent, source-tagged and range-checked. A bull-market
+\emph{bias} could inflate revenue, which the pessimistic scenario and Monte-Carlo explicitly
+stress. Commercially sensitive assumptions stay client-side for \emph{confidentiality}. Above all,
+the tool requires \emph{human review}: it advises, but the responsibility for the final financial
+decision rests with the CFO and the investment committee, not with the AI.
+
+% ============================ 10 ============================
+\section{Final Recommendation}
+The recommendation is to \textbf{proceed with the investment, conditionally}. The base case
+creates value (NPV +AED 1{,}854\,m; IRR 16.5\% against a conservative 9\% hurdle anchored to
+official CBUAE rates), but the margin of safety is thin and the outcome hinges on one variable.
+Management should therefore (i) secure multi-year contracted offtake to hold the effective rental
+rate above the \$3.34 break-even; (ii) stage the GPU fit-out rather than release all capital at
+once; and (iii) keep hyperscaler rental available as a fallback, since building only pays above
+about 78\% sustained utilization. The dominant \emph{financial} risk is a structural collapse in
+the GPU rental rate; the dominant \emph{AI-related} risk is over-reliance on optimistic forecasts.
+Managed on these terms, the project is a defensible, value-creating commitment.
+
+\end{document}
