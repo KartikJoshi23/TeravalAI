@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-02 — master laptop (Kartik): Stage 7 LaTeX report written & verified (MiKTeX: 8 pages, 0 overfull, 1,492 prose words) + NotebookLM prompt; earlier applied real data (Data Provenance + WACC anchored to CBUAE 3.65%/3.94%, kept 9%). Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-02 — master laptop (Kartik): Stage 7 LaTeX report done + NotebookLM prompt; NEXT TASK set to a DEEP AUDIT + genuine-improvement pass for a collaborator laptop (Fable 5). Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -232,21 +232,59 @@ in `datasets/DATA-PROVENANCE.md`.
 - `report/notebooklm-prompt.md` — the prompt to generate the 10–12 slide / 7–10 min deck.
 - LaTeX build artifacts git-ignored; only `report/main.tex` (+ the prompt) tracked.
 
-## 🔧 In progress — nothing in code. Two manual steps remain for Kartik (below).
+## 🔧 In progress
 
-## ▶️ NEXT TASK — capture 4 screenshots, compile, generate slides
+- Next assigned task is a **deep audit + genuine-improvement pass on a collaborator laptop
+  (Kartik, using the Fable 5 model)** — see NEXT TASK. Nothing mid-flight in code.
 
-1. **Capture 4 dashboard screenshots** (visible browser, `npm run dev`) and name them EXACTLY
-   (they match the `\includegraphics` in `report/main.tex`):
-   - `teraval-overview.png`   — Overview tab (3D hall + KPI cards + AI recommendation)
-   - `teraval-cashflow.png`   — Cash Flow tab (FCF bars + cumulative line)
-   - `teraval-scenarios.png`  — Scenarios tab (comparison chart + table)
-   - `teraval-buildvsrent.png`— Build vs Rent tab (Equivalent Annual Cost)
-2. **Compile on Overleaf:** upload `report/main.tex` + the 4 PNGs into one project → compile.
-3. **Slides:** upload the compiled report PDF to NotebookLM and paste `report/notebooklm-prompt.md`.
-- Follow-up (non-blocking): when the Abu Dhabi Open Data / Bayanat portal is back, pull the
-  **ADWEA industrial tariff** and update the 0.15 default + provenance.
-- **Project is then complete:** dashboard/app ✔, LaTeX report ✔, slides prompt ✔, handoff/progress ✔.
+## ▶️ NEXT TASK — DEEP AUDIT of the whole project + genuine improvements (COLLABORATOR, Fable 5)
+
+Run on a collaborator laptop with the **Fable 5** model. First paste **handoff.md → Prompt 1**
+(it locks the methodology, topic and plan). Then do the following as ONE reviewable task, applying
+the 6-phase methodology (understand → investigate → design → implement → verify → report), and
+push when done. **Verify first-hand — do not assume.**
+
+**Step 1 — Deep audit of the ENTIRE project:**
+- **Finance engine** (`web/src/finance/`): re-read core/model/alternatives/thresholds/selfTest;
+  confirm the TS engine and `docs/finance-model-reference.py` still agree and all **26 Vitest
+  tests pass** (`cd web && npm install && npm test`). Hunt for edge cases, sign/`off-by-one` errors.
+- **Numbers consistency:** the SAME figures must match across engine, dashboard, data-provenance
+  panel and `report/main.tex` — NPV +AED 1,854M, IRR 16.5%, MIRR 12.6%, PI 1.31, payback 5.0y,
+  breakeven ~$3.34, scenarios (opt +10,216 / base +1,854 / pess −4,138), Build-vs-Rent
+  +AED 211M / ~78% crossover, Monte-Carlo P(loss) ~21%.
+- **Brief compliance** (`Group Project-CF.md`): six dashboard components, ≥5 AI features,
+  ≥3 major calculations, scenario + sensitivity, ethics, the AI assistant, and the report specs
+  (1,300–1,650 words, ToC, single-line page border, title page, 10 sections, 5 project questions).
+- **Code health:** dead/unused code; `npx tsc -b` clean; no browser console errors; a11y labels;
+  reduced-motion; graceful WebGL fallback; three.js lazy chunk; **no secrets committed** (`.env`
+  git-ignored). Run the app in a **visible** browser and click every tab + the assistant.
+- **Backend** (`assistant/`): grounded narrate-only NIM prompt; `/health` + SSE contract intact.
+- **Report / datasets / docs:** `report/main.tex` compiles (MiKTeX/Overleaf);
+  `datasets/DATA-PROVENANCE.md` matches the applied figures; progress/handoff/README accurate.
+Write the findings honestly (what is clean; any bug or gap found).
+
+**Step 2 — Consider GENUINE additions only** (be willing to conclude "nothing more is needed"):
+- Genuine: a real bug fix; a missing brief requirement; a finance-correctness / consistency fix;
+  a materially better UX or accessibility improvement; capturing the still-missing Abu Dhabi
+  industrial tariff if the portal is back.
+- NOT genuine (do NOT add): padding, gimmicks, gold-plating, restyling for its own sake, new
+  dependencies without clear payoff, or anything that drifts from the approved topic/plan.
+- If unsure whether an addition is worth it, **ask Kartik before building it**.
+
+**Step 3 — If (and only if) a genuine improvement is found:** implement it via the methodology;
+if the engine changes, update BOTH the TS engine and `docs/finance-model-reference.py` and keep
+all tests green; verify end-to-end (tsc, tests, build, run the app); update THIS progress.md (what
+was audited, and what was added and why — or that nothing was needed); commit and push. If nothing
+genuine is found, still record the audit verdict here and push that.
+
+**Hard rules:** don't drift from the topic/plan; keep engine ↔ Python reference in sync; never
+commit secrets or `node_modules`; update progress.md every push; then STOP and report for review.
+
+### Also still pending (manual, Kartik — separate from the audit)
+- Capture 4 screenshots (`teraval-overview/cashflow/scenarios/buildvsrent.png`), compile
+  `report/main.tex` + PNGs on Overleaf, and generate slides via NotebookLM
+  (`report/notebooklm-prompt.md`).
+- Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
 Stop after each for review.
 
 ## Notes / decisions
