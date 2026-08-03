@@ -7,7 +7,7 @@ import type { KpiCardProps } from './KpiCard';
 import { useAssumptions, useEvaluation, useBreakeven } from '../store/useEvaluation';
 import { fmtAedM, fmtPct, fmtRatio, fmtYears, fmtUsdHr } from '../lib/format';
 
-const BLUE = '#38bdf8';
+const BLUE = '#2dd4bf';
 const VIOLET = '#a78bfa';
 const AMBER = '#fbbf24';
 

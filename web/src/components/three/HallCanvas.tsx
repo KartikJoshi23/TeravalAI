@@ -83,9 +83,9 @@ function makeFrontTexture(): THREE.Texture {
     const y = i * uh;
     ctx.fillStyle = '#0a1a2e';
     ctx.fillRect(4, y + 2, 56, uh - 3);
-    ctx.fillStyle = i % 4 === 0 ? '#7dd3fc' : '#2a86c4';
+    ctx.fillStyle = i % 4 === 0 ? '#5eead4' : '#1f9e8f';
     ctx.fillRect(7, y + uh * 0.55, 50, 2);
-    ctx.fillStyle = i % 3 === 0 ? '#34d399' : '#38bdf8';
+    ctx.fillStyle = i % 3 === 0 ? '#34d399' : '#2dd4bf';
     ctx.fillRect(9, y + uh * 0.28, 3, 3);
     ctx.fillStyle = '#a78bfa';
     ctx.fillRect(15, y + uh * 0.28, 2, 3);
@@ -101,7 +101,7 @@ function HumanFigure({ position }: { position: [number, number, number] }) {
     <group position={position}>
       <mesh position={[0, 0.62, 0]}>
         <capsuleGeometry args={[0.2, 0.72, 6, 14]} />
-        <meshStandardMaterial color="#2a3550" roughness={0.7} metalness={0.3} emissive="#38bdf8" emissiveIntensity={0.12} />
+        <meshStandardMaterial color="#2a3550" roughness={0.7} metalness={0.3} emissive="#2dd4bf" emissiveIntensity={0.12} />
       </mesh>
       <mesh position={[0, 1.2, 0]}>
         <sphereGeometry args={[0.16, 18, 18]} />
@@ -199,7 +199,7 @@ function Racks({
       {/* emissive top strips — glow visible from above/outside */}
       <Instances limit={slots.length} range={slots.length}>
         <boxGeometry args={[0.52, 0.05, 0.1]} />
-        <meshStandardMaterial ref={topMat} color="#0b1120" emissive="#38bdf8" emissiveIntensity={1.2} toneMapped={false} />
+        <meshStandardMaterial ref={topMat} color="#0b1120" emissive="#2dd4bf" emissiveIntensity={1.2} toneMapped={false} />
         {slots.map((s, i) => (
           <Instance key={i} position={s.topPos} rotation={[0, s.rotY, 0]} />
         ))}
@@ -222,7 +222,7 @@ function Racks({
         ))}
       </Instances>
 
-      {highlight(hovered, '#7dd3fc')}
+      {highlight(hovered, '#5eead4')}
       {highlight(selected, '#fbbf24')}
     </group>
   );
@@ -323,7 +323,7 @@ function Hall({
       <directionalLight position={[8, 14, 6]} intensity={0.7} color="#cfe0ff" />
       <pointLight position={[0, 6.5, 0]} intensity={40} distance={40} decay={2} color="#dbe7ff" />
       <pointLight position={[-8, 3.5, 7]} intensity={22} distance={26} decay={2} color="#a78bfa" />
-      <pointLight position={[8, 3.5, -7]} intensity={22} distance={26} decay={2} color="#38bdf8" />
+      <pointLight position={[8, 3.5, -7]} intensity={22} distance={26} decay={2} color="#2dd4bf" />
 
       {/* mirror-polished floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
@@ -346,7 +346,7 @@ function Hall({
       {aisleZ.map((z, i) => (
         <mesh key={i} position={[0, 0.03, z]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[rowWidth, 0.16]} />
-          <meshStandardMaterial color="#0b1120" emissive="#38bdf8" emissiveIntensity={2.4} toneMapped={false} />
+          <meshStandardMaterial color="#0b1120" emissive="#2dd4bf" emissiveIntensity={2.4} toneMapped={false} />
         </mesh>
       ))}
 

@@ -18,7 +18,7 @@ export interface DriverDef {
   high: (v: number) => number;
 }
 
-const BLUE = '#38bdf8';
+const BLUE = '#2dd4bf';
 const VIOLET = '#a78bfa';
 const AMBER = '#fbbf24';
 

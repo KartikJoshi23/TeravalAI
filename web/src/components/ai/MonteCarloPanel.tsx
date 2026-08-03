@@ -133,7 +133,7 @@ export default function MonteCarloPanel() {
             />
             <Bar dataKey="count" radius={[2, 2, 0, 0]}>
               {bins.map((b) => (
-                <Cell key={b.x} fill={b.negative ? '#fb7185' : '#38bdf8'} fillOpacity={0.85} />
+                <Cell key={b.x} fill={b.negative ? '#fb7185' : '#2dd4bf'} fillOpacity={0.85} />
               ))}
             </Bar>
           </BarChart>

@@ -82,8 +82,8 @@ export default function RateForecastPanel() {
           <ComposedChart data={data} margin={{ top: 6, right: 12, bottom: 4, left: 4 }}>
             <defs>
               <linearGradient id="bandGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0.08} />
+                <stop offset="0%" stopColor="#2dd4bf" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="#2dd4bf" stopOpacity={0.08} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" vertical={false} />
@@ -111,7 +111,7 @@ export default function RateForecastPanel() {
               fill="url(#bandGrad)"
               isAnimationActive={false}
             />
-            <Line type="monotone" dataKey="mid" stroke="#38bdf8" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="mid" stroke="#2dd4bf" strokeWidth={2.5} dot={false} />
             <ReferenceLine
               y={breakeven}
               stroke="#fbbf24"

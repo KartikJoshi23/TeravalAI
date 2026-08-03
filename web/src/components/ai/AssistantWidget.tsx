@@ -46,7 +46,7 @@ function SparkMark() {
     <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden>
       <defs>
         <linearGradient id="tv-spark" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#38bdf8" />
+          <stop stopColor="#2dd4bf" />
           <stop offset="0.5" stopColor="#a78bfa" />
           <stop offset="1" stopColor="#fbbf24" />
         </linearGradient>
@@ -149,7 +149,7 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
-            className="glass mb-3 flex h-[520px] w-[min(370px,calc(100vw-3rem))] flex-col p-4"
+            className="glass-solid mb-3 flex h-[520px] w-[min(370px,calc(100vw-3rem))] flex-col p-4"
             aria-label="AI finance assistant"
             onKeyDown={(ev) => {
               if (ev.key === 'Escape') setOpen(false);
@@ -284,7 +284,7 @@ export default function AssistantWidget({ currentTab }: { currentTab: string }) 
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? 'Close assistant' : 'Open AI assistant'}
-        className="group relative grid h-14 w-14 place-items-center rounded-full border border-glass-border bg-gradient-to-br from-blue/25 via-violet/20 to-amber/15 shadow-[0_10px_30px_-8px_rgba(56,189,248,0.5)] backdrop-blur-md transition-transform hover:scale-105"
+        className="group relative grid h-14 w-14 place-items-center rounded-full border border-glass-border bg-gradient-to-br from-blue/25 via-violet/20 to-amber/15 shadow-[0_14px_38px_-10px_rgba(45,212,191,0.42)] backdrop-blur-md transition-transform hover:scale-105"
       >
         {/* pulsing halo */}
         {!open && (

@@ -1,23 +1,26 @@
 @import 'tailwindcss';
 
 /*
- * Teraval design tokens — dark, multi-accent (electric-blue / violet / amber),
- * glassmorphism. Registered with Tailwind's @theme so utilities like
- * `text-blue`, `bg-violet`, `border-glass` are generated automatically.
+ * Teraval design tokens — premium dark on near-black, with a restrained
+ * teal / violet / gold accent set (was electric-blue-dominated). Registered
+ * with Tailwind's @theme so utilities like `text-blue`, `bg-violet`,
+ * `border-glass` are generated automatically.
  */
 @theme {
-  --color-bg: #070810;
-  --color-bg-2: #0c0e1a;
+  --color-bg: #060608;
+  --color-bg-2: #0b0b11;
 
-  --color-txt: #e7e9f3;
-  --color-txt-dim: #9aa0b4;
-  --color-txt-faint: #6b7185;
+  --color-txt: #e8e9f1;
+  --color-txt-dim: #969aac;
+  --color-txt-faint: #676c7e;
 
   --color-glass: rgba(255, 255, 255, 0.04);
   --color-glass-border: rgba(255, 255, 255, 0.09);
 
-  /* multi-accent palette */
-  --color-blue: #38bdf8;
+  /* Restrained accent set on near-black. NOTE: the token is still named
+   * `blue` (so every existing text-blue/bg-blue/border-blue utility keeps
+   * working) but now carries a premium TEAL — the app is intentionally de-blued. */
+  --color-blue: #2dd4bf;
   --color-violet: #a78bfa;
   --color-amber: #fbbf24;
   --color-positive: #34d399;
@@ -39,11 +42,12 @@
     color: var(--color-txt);
     font-family: var(--font-sans);
     letter-spacing: 0.1px;
-    /* Toned-down, balanced base wash (the animated BackgroundFX adds the rest). */
+    /* Near-black base with a whisper of teal/violet/gold at the corners — kept
+     * very faint so the page reads black and the content stays legible. */
     background:
-      radial-gradient(1100px 600px at 8% -12%, rgba(56, 189, 248, 0.06), transparent 60%),
-      radial-gradient(1000px 700px at 102% 0%, rgba(167, 139, 250, 0.08), transparent 55%),
-      radial-gradient(900px 640px at 50% 118%, rgba(251, 191, 36, 0.05), transparent 60%),
+      radial-gradient(1100px 600px at 8% -12%, rgba(45, 212, 191, 0.030), transparent 60%),
+      radial-gradient(1000px 700px at 102% 0%, rgba(167, 139, 250, 0.040), transparent 55%),
+      radial-gradient(900px 640px at 50% 118%, rgba(251, 191, 36, 0.024), transparent 60%),
       var(--color-bg);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
@@ -69,6 +73,22 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
+  /* Near-OPAQUE surface for floating overlays (the AI assistant panel). Frosted
+   * glass at 4–6% alpha lets the animated background bleed through and looks
+   * broken over a busy backdrop; a floating panel must be solid. Keeps a faint
+   * top sheen + blur for the same premium feel, but nothing shows through. */
+  .glass-solid {
+    background: linear-gradient(180deg, #12131d 0%, #0b0c13 100%);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 1rem;
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    box-shadow:
+      0 30px 70px -22px rgba(0, 0, 0, 0.92),
+      0 2px 12px -4px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
   /* Thin gradient hairline used above headings. */
   .accent-rule {
     height: 2px;
@@ -88,8 +108,8 @@
   .bg-blob {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(78px);
-    opacity: 0.14;
+    filter: blur(96px);
+    opacity: 0.06;
     will-change: transform, opacity;
   }
   /* Huge, ultra-faint conic sheet that revolves once every ~90 s — a slow
@@ -106,14 +126,14 @@
     background: conic-gradient(
       from 0deg,
       transparent 0deg,
-      rgba(56, 189, 248, 0.05) 70deg,
+      rgba(45, 212, 191, 0.028) 70deg,
       transparent 140deg,
-      rgba(167, 139, 250, 0.06) 210deg,
+      rgba(167, 139, 250, 0.032) 210deg,
       transparent 275deg,
-      rgba(45, 212, 191, 0.04) 320deg,
+      rgba(251, 191, 36, 0.020) 320deg,
       transparent 360deg
     );
-    filter: blur(52px);
+    filter: blur(60px);
     will-change: transform;
   }
 }
@@ -121,16 +141,16 @@
 /* Living background: drifting, breathing colour fields + a slow aurora sweep
  * (the particle "data field" itself is canvas-drawn in BackgroundFX.tsx). */
 @keyframes blob-a {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.15; }
-  50% { transform: translate(8vw, 5vh) scale(1.18); opacity: 0.26; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.07; }
+  50% { transform: translate(8vw, 5vh) scale(1.18); opacity: 0.13; }
 }
 @keyframes blob-b {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.12; }
-  50% { transform: translate(-7vw, 6vh) scale(1.14); opacity: 0.22; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.06; }
+  50% { transform: translate(-7vw, 6vh) scale(1.14); opacity: 0.11; }
 }
 @keyframes blob-c {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.10; }
-  50% { transform: translate(6vw, -5vh) scale(1.2); opacity: 0.19; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.05; }
+  50% { transform: translate(6vw, -5vh) scale(1.2); opacity: 0.10; }
 }
 @keyframes aurora-spin {
   from { transform: rotate(0deg); }

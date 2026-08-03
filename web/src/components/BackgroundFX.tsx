@@ -13,9 +13,9 @@
 import { useEffect, useRef } from 'react';
 
 /* Palette weighted toward the cool accents; amber stays rare so the field
- * reads blue/violet with occasional warm sparks (multi-accent, not mono). */
+ * reads teal/violet with occasional warm sparks (multi-accent, not mono). */
 const PARTICLE_COLORS = [
-  '#38bdf8', '#38bdf8', '#7dd3fc',
+  '#2dd4bf', '#2dd4bf', '#5eead4',
   '#a78bfa', '#a78bfa', '#c4b5fd',
   '#5eead4', '#2dd4bf',
   '#fbbf24',
@@ -95,8 +95,9 @@ export default function BackgroundFX() {
     const streaks: Streak[] = [];
 
     // Density-scaled particle count, clamped so huge/small screens stay sane.
+    // Kept sparse so the field reads as a calm backdrop, not visual noise.
     const seed = () => {
-      const count = Math.round(Math.min(90, Math.max(45, (w * h) / 26000)));
+      const count = Math.round(Math.min(52, Math.max(26, (w * h) / 36000)));
       particles = Array.from({ length: count }, () => makeParticle(w, h));
     };
 
@@ -154,8 +155,8 @@ export default function BackgroundFX() {
           const dy = a.y - b.y;
           const d2 = dx * dx + dy * dy;
           if (d2 > LINK_DIST * LINK_DIST) continue;
-          const alpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.09;
-          ctx.strokeStyle = `rgba(148, 163, 255, ${alpha.toFixed(3)})`;
+          const alpha = (1 - Math.sqrt(d2) / LINK_DIST) * 0.045;
+          ctx.strokeStyle = `rgba(120, 190, 180, ${alpha.toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(ax, ay);
           ctx.lineTo(b.x - px * PARALLAX * b.depth, b.y - py * PARALLAX * b.depth);
@@ -166,13 +167,13 @@ export default function BackgroundFX() {
       // Particles: a soft halo plus a bright core, twinkling gently.
       for (const p of particles) {
         const tw = 0.5 + 0.5 * Math.sin(p.twinklePhase + t * p.twinkleSpeed);
-        const alpha = 0.22 + tw * 0.5;
+        const alpha = 0.12 + tw * 0.26;
         const x = p.x - px * PARALLAX * p.depth;
         const y = p.y - py * PARALLAX * p.depth;
-        ctx.globalAlpha = alpha * 0.28;
+        ctx.globalAlpha = alpha * 0.16;
         ctx.fillStyle = p.color;
         ctx.beginPath();
-        ctx.arc(x, y, p.r * 3.2, 0, Math.PI * 2);
+        ctx.arc(x, y, p.r * 2.8, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = alpha;
         ctx.beginPath();
@@ -192,7 +193,7 @@ export default function BackgroundFX() {
         s.x += s.vx * dt;
         s.y += s.vy * dt;
         const phase = s.life / s.maxLife;
-        const alpha = Math.sin(phase * Math.PI) * 0.55; // ease in and out
+        const alpha = Math.sin(phase * Math.PI) * 0.3; // ease in and out
         const nx = s.vx / Math.hypot(s.vx, s.vy);
         const ny = s.vy / Math.hypot(s.vx, s.vy);
         const tailX = s.x - nx * s.len;
@@ -266,15 +267,16 @@ export default function BackgroundFX() {
       <div className="bg-blob anim-blob-a" style={{ width: '48vw', height: '48vw', top: '-10vh', right: '-6vw', background: '#a78bfa' }} />
       <div className="bg-blob anim-blob-b" style={{ width: '42vw', height: '42vw', top: '28vh', left: '-10vw', background: '#2dd4bf' }} />
       <div className="bg-blob anim-blob-c" style={{ width: '40vw', height: '40vw', bottom: '-12vh', left: '30vw', background: '#fbbf24' }} />
-      <div className="bg-blob anim-blob-b" style={{ width: '36vw', height: '36vw', top: '-4vh', left: '16vw', background: '#38bdf8' }} />
+      <div className="bg-blob anim-blob-b" style={{ width: '36vw', height: '36vw', top: '-4vh', left: '16vw', background: '#2dd4bf' }} />
 
       {/* the living data field: particles, constellation lines, data streaks */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* very light bottom fade to seat the content — no heavy vignette */}
+      {/* Gentle vignette to seat the content and keep the edges black so text
+       * never competes with the field. */}
       <div
         className="absolute inset-0"
-        style={{ background: 'radial-gradient(130% 130% at 50% 30%, transparent 60%, rgba(4,5,11,0.35) 100%)' }}
+        style={{ background: 'radial-gradient(125% 125% at 50% 28%, transparent 55%, rgba(3,3,6,0.62) 100%)' }}
       />
     </div>
   );

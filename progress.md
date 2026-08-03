@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-03 (night) — MASTER laptop (Kartik, Opus 4.8): reviewed & **ACCEPTED** the collaborator's audit pass (both commits). Re-verified from scratch: **29/29 tests · tsc clean · build OK · Python reference reprints every canonical number · zero console errors**. Build-vs-Rent canon change confirmed in the live engine (incr NPV **+AED 320.5M**, crossover **77.4%**, EAC identity exact) and economically sound — accepted. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-03 (late night) — MASTER laptop (Kartik, Opus 4.8): **UI polish per user feedback** — fixed the transparent AI-assistant panel (now a solid surface), toned the living background down (~½ brightness), and de-blued the whole palette to a premium black + teal/violet/gold. 29/29 tests · tsc clean · build OK · zero console errors. Pushed to trigger the Vercel deploy. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -389,6 +389,31 @@ The code was already env-driven (frontend reads `VITE_ASSISTANT_URL`; backend CO
   tracked (`assistant/.env`, `web/.env.local` git-ignored).
 - Graceful degradation intact: if Render is asleep/unconfigured, the Vercel dashboard still
   works fully and the assistant uses its grounded offline fallback.
+
+## ✅ UI polish (user feedback) — MASTER (2026-08-03 late night, Kartik, Opus 4.8)
+
+Three visual issues raised on the live dashboard, fixed in one pass (no engine/number change):
+
+- **Transparent AI-assistant panel FIXED (the urgent one):** the floating panel used `.glass`
+  (4–6% white + backdrop-blur), so the animated background bled through and looked broken over a
+  busy backdrop. Added **`.glass-solid`** (near-opaque `#12131d→#0b0c13` + blur + deeper shadow)
+  and switched the panel to it. Verified in-DOM: computed background is a solid gradient, nothing
+  shows through.
+- **Background too bright → toned down ~½:** `BackgroundFX` particle alpha 0.72→0.38, halo
+  0.28→0.16, constellation lines 0.09→0.045 (and de-blued from periwinkle to a dim teal-grey),
+  streaks 0.55→0.30, density ~halved (52/26 cap). `index.css` blob opacities and aurora
+  roughly halved + blur increased; deeper corner vignette so text never competes with the field.
+- **Blue domination → premium black theme:** base is now near-black neutral **#060608** (was navy
+  #070810); the electric-blue accent **#38bdf8 → teal #2dd4bf** everywhere (token + all literals +
+  the 3D hall's emissives/point-light, light/mid-blue variants → teal too). Palette is now
+  **black + teal + violet + gold** (semantic green/rose unchanged). Verified no chart lost
+  two-series contrast (bars teal vs line violet, etc.). The `--color-blue` **token keeps its name**
+  (so all `text-blue`/`bg-blue`/`border-blue` utilities keep working) but now holds teal — noted
+  in the CSS.
+- **Verified:** `npx tsc -b` clean · `npm run build` OK · `npm test` **29/29** · dev server zero
+  console errors; assistant panel confirmed solid + body `#060608` + `--color-blue`=`#2dd4bf` via
+  live DOM. (Pane hidden on this laptop → pixel screenshot not possible; correctness verified via
+  DOM/build/console. Kartik/Vercel is the visual check — easy to tune dimmer/brighter if needed.)
 
 ## 🔧 In progress
 
