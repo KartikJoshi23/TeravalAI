@@ -78,9 +78,7 @@ export default function ScenarioComparison() {
     >
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-txt">Scenario comparison</h2>
-        <p className="text-xs text-txt-dim">
-          Verified optimistic / base / pessimistic cases vs your live &ldquo;current&rdquo; settings — NPV in AED millions
-        </p>
+        <p className="text-xs text-txt-dim">Optimistic / base / pessimistic vs your live case · AED millions</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

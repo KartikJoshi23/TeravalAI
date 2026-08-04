@@ -34,7 +34,6 @@ import {
   trainSurrogate,
   forecastGpuPrice,
   predictAcceptProbability,
-  featurize,
   type SurrogateModel,
   type ForecastSummary,
 } from '../../lib/ml';
@@ -143,9 +142,8 @@ function SurrogateSection() {
         </span>
       </div>
       <p className="mb-4 text-xs text-txt-dim">
-        A classifier trained on <span className="font-mono text-txt">{(s.metrics.nTrain + s.metrics.nTest).toLocaleString('en-US')}</span>{' '}
-        driver combinations, each labelled value-creating / value-destroying by the deterministic
-        engine. It learns the accept/reject boundary — evaluated on a held-out test set.
+        Logistic regression trained on <span className="font-mono text-txt">{(s.metrics.nTrain + s.metrics.nTest).toLocaleString('en-US')}</span>{' '}
+        engine-labelled scenarios; scored on a held-out test set.
       </p>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -274,8 +272,7 @@ function ForecasterSection() {
         </span>
       </div>
       <p className="mb-4 text-xs text-txt-dim">
-        A first-order autoregression fitted by least squares to a representative monthly market series
-        (blended H100/A100 rental, 2023→2026), validated on a held-out window.
+        AR(1) fit by least squares to a representative monthly market series (2023→2026); held-out validation.
       </p>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -326,20 +323,15 @@ function ForecasterSection() {
         </ResponsiveContainer>
       </div>
 
-      <p className="mt-3 text-xs leading-relaxed text-txt-dim">
-        The forecaster tracks the <span className="text-txt">spot/market</span> rental rate. Its central
-        path settles near <span className="font-mono text-amber">${f.model.longRun.toFixed(2)}</span> —{' '}
+      <p className="mt-3 text-xs text-txt-dim">
+        Forecasts the <span className="text-txt">spot</span> rate to{' '}
+        <span className="font-mono text-amber">${f.model.longRun.toFixed(2)}</span>{' '}
         {belowBreakeven ? (
-          <>
-            <span className="text-txt">below</span> the{' '}
-            <span className="font-mono text-amber">$3.34</span> break-even and the{' '}
-            <span className="font-mono text-positive">$4.00</span> contracted base rate. That gap is
-            precisely the <span className="text-txt">contracted premium</span> the appraisal relies on:
-            the model quantifies why the recommendation insists on securing multi-year offtake{' '}
-            <span className="text-txt">above the declining spot market</span> rather than riding it.
-          </>
+          <>— below the <span className="font-mono text-amber">$3.34</span> break-even and the{' '}
+            <span className="font-mono text-positive">$4.00</span> contracted rate. That gap is the
+            contracted premium the plan must secure.</>
         ) : (
-          <>within reach of the <span className="font-mono text-positive">$4.00</span> contracted base rate — leaving thin but positive headroom.</>
+          <>— within reach of the <span className="font-mono text-positive">$4.00</span> contracted rate.</>
         )}
       </p>
     </motion.section>
@@ -347,8 +339,6 @@ function ForecasterSection() {
 }
 
 export default function PredictiveAI() {
-  const a = useAssumptions();
-  const featCount = featurize(a).length;
   return (
     <div className="flex flex-col gap-6">
       <div className="glass p-5">
@@ -359,11 +349,9 @@ export default function PredictiveAI() {
           </span>
         </div>
         <p className="text-sm text-txt-dim">
-          Two models are <span className="text-txt">trained and tested</span> in your browser on
-          reproducible, seeded data — a supervised classifier that learns the investment decision from
-          the engine, and a time-series forecaster fit to market history. They <span className="text-txt">augment</span>{' '}
-          the analysis; the deterministic engine still computes every valuation. Inputs per case:{' '}
-          <span className="font-mono text-txt">{featCount}</span> features.
+          Two models <span className="text-txt">trained and tested</span> in-browser — a classifier that
+          learns the decision, and a forecaster fit to market history. They augment the analysis; the
+          engine still computes every valuation.
         </p>
       </div>
       <SurrogateSection />

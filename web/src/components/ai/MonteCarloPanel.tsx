@@ -84,7 +84,7 @@ export default function MonteCarloPanel() {
             </span>
           </div>
           <p className="text-xs text-txt-dim">
-            {MC_RUNS.toLocaleString('en-US')} NPV draws over triangular driver distributions · run #{run + 1}
+            {MC_RUNS.toLocaleString('en-US')} NPV draws · run #{run + 1}
           </p>
         </div>
         <button
@@ -140,13 +140,6 @@ export default function MonteCarloPanel() {
         </ResponsiveContainer>
       </div>
 
-      <p className="mt-3 text-xs text-txt-dim">
-        Across {MC_RUNS.toLocaleString('en-US')} simulations the middle 80% of NPV outcomes spans{' '}
-        <span className="font-mono text-txt">{fmtAedM(result.p10)}</span> to{' '}
-        <span className="font-mono text-txt">{fmtAedM(result.p90)}</span> (mean{' '}
-        <span className="font-mono text-txt">{fmtAedM(result.mean)}</span>); NPV is negative in{' '}
-        <span className="font-mono text-txt">{fmtPct(result.probNegative, 0)}</span> of runs.
-      </p>
     </motion.section>
   );
 }

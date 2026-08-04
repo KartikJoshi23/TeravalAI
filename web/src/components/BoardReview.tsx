@@ -41,9 +41,7 @@ export default function BoardReview() {
           <div>
             <h2 className="text-lg font-semibold text-txt">Departmental Review Board</h2>
             <p className="max-w-2xl text-xs text-txt-dim">
-              Five departments each score the live case with a documented rule over the engine's
-              numbers, then a weight-averaged verdict aggregates them. Any unmet non-negotiable makes
-              it &ldquo;approve with conditions&rdquo;, never unconditional.
+              Five departments each score the live case; a weighted verdict aggregates them.
             </p>
           </div>
           <div

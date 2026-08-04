@@ -68,9 +68,8 @@ export default function AlternativesPanel() {
           </span>
         </div>
         <p className="mt-1 text-xs text-txt-dim">
-          Barq needs the compute either way — so the real question is build &amp; own vs rent
-          hyperscaler capacity. Different lives ({alt.build.lifeYears}y vs {alt.rent.lifeYears}y)
-          → compared on equivalent annual cost.
+          Build &amp; own vs rent hyperscaler capacity, compared on EAC (different lives:{' '}
+          {alt.build.lifeYears}y vs {alt.rent.lifeYears}y).
         </p>
       </div>
 
@@ -86,8 +85,7 @@ export default function AlternativesPanel() {
           </div>
         </div>
         <p className="mt-1.5 text-xs text-txt-dim">
-          The build is a largely fixed cost; renting scales with utilization. So building wins
-          only at high, sustained utilization — {crossover == null ? 'across the modelled range' : (
+          Building wins only {crossover == null ? 'across the modelled range' : (
             <>
               above <span className="font-mono text-txt">{(crossover * 100).toFixed(0)}%</span> utilization
               (you are at <span className="font-mono text-txt">{(a.utilization * 100).toFixed(0)}%</span>)

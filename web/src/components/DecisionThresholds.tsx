@@ -68,7 +68,7 @@ export default function DecisionThresholds() {
     >
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-txt">The decision in six numbers</h2>
-        <p className="text-xs text-txt-dim">Each is the point at which the verdict flips — the margin of safety, quantified live.</p>
+        <p className="text-xs text-txt-dim">Where each verdict flips — the margin of safety, live.</p>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {tiles.map((t) => (

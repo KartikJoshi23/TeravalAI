@@ -62,9 +62,8 @@ export default function DataProvenance() {
           </span>
         </div>
         <p className="mt-1 text-xs text-txt-dim">
-          Where the key assumptions come from. Interest-rate anchors are official CBUAE figures
-          (evidence in <span className="font-mono">datasets/</span>); the industrial tariff is
-          pending a portal outage.
+          Interest-rate anchors are official CBUAE figures (evidence in{' '}
+          <span className="font-mono">datasets/</span>); the tariff is pending a portal outage.
         </p>
       </div>
 

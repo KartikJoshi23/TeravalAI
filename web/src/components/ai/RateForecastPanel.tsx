@@ -73,9 +73,7 @@ export default function RateForecastPanel() {
           AI · F1
         </span>
       </div>
-      <p className="-mt-3 mb-3 text-xs text-txt-dim">
-        Forward $/GPU-hr with P10–P90 band, reverting toward a long-run market level
-      </p>
+      <p className="-mt-3 mb-3 text-xs text-txt-dim">Forward $/GPU-hr with P10–P90 band</p>
 
       <div className="h-[240px] w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -129,17 +127,9 @@ export default function RateForecastPanel() {
 
       <p className="mt-3 text-xs text-txt-dim">
         {belowYear == null ? (
-          <>
-            The P10 path stays above the{' '}
-            <span className="font-mono text-amber">{fmtUsdHr(breakeven)}</span> break-even across the
-            horizon — revenue has headroom, but the band widens with time.
-          </>
+          <>P10 stays above the <span className="font-mono text-amber">{fmtUsdHr(breakeven)}</span> break-even — revenue has headroom.</>
         ) : (
-          <>
-            The downside (P10) path dips below the{' '}
-            <span className="font-mono text-amber">{fmtUsdHr(breakeven)}</span> break-even by{' '}
-            <span className="font-mono text-txt">Y{belowYear}</span> — the core risk to revenue.
-          </>
+          <>P10 dips below the <span className="font-mono text-amber">{fmtUsdHr(breakeven)}</span> break-even by <span className="font-mono text-txt">Y{belowYear}</span> — the core revenue risk.</>
         )}
       </p>
     </motion.section>
