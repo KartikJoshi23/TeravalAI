@@ -38,7 +38,7 @@ export default function Header() {
           >
             ↓ Download summary
           </button>
-          <span className="text-xs uppercase tracking-wider text-txt-faint">Base-case verdict</span>
+          <span className="text-xs uppercase tracking-wider text-txt-faint">Current verdict</span>
           <DecisionBadge />
         </div>
       </motion.div>

@@ -25,7 +25,7 @@ export interface SelfTestResult {
 
 export function runSelfTest(a: Assumptions = BASE_ASSUMPTIONS): SelfTestResult {
   const e = evaluate(a);
-  const m = evaluate(a).breakdown;
+  const m = e.breakdown;
   const alt = evaluateAlternatives(a);
   const checks: Check[] = [];
 

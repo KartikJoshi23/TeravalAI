@@ -73,7 +73,8 @@ const PINK = '#fb7185';
 export function computeBoard(a: Assumptions): BoardResult {
   const e: Evaluation = evaluate(a);
   const breakeven = breakevenGpuPrice(a);
-  const beUtil = breakevenUtilization(a) ?? 0;
+  const beUtil = breakevenUtilization(a); // null when NPV stays positive across the util range
+  const beUtilTxt = beUtil == null ? 'the break-even point' : pct(beUtil);
   const crossover = buildRentCrossoverUtil(a) ?? 0.77;
   const overrun = maxCapexOverrun(a);
   const alt = evaluateAlternatives(a);
@@ -109,7 +110,7 @@ export function computeBoard(a: Assumptions): BoardResult {
       conditions: ['Release capex in tranches gated on measured utilization, not one up-front commit'],
       nonNegotiable: 'Staged capex release (no single up-front commitment)',
       nonNegotiableMet: false,
-      whatWouldChange: `Turns to oppose if NPV < 0 — price below ${usd(breakeven)}/GPU-hr break-even, utilization below ${pct(beUtil)}, or WACC above the ${pct(e.irr)} IRR.`,
+      whatWouldChange: `Turns to oppose if NPV < 0 — price below ${usd(breakeven)}/GPU-hr break-even, utilization below ${beUtilTxt}, or WACC above the ${pct(e.irr)} IRR.`,
       accent: BLUE,
     });
   }

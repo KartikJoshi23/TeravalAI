@@ -128,12 +128,14 @@ function Racks({
   const util = useModelStore((s) => s.assumptions.utilization);
   const tex = useMemo(() => makeFrontTexture(), []);
 
-  // If the scene unmounts while a rack is hovered (tab switch), restore the cursor.
+  // On unmount (tab switch): restore the cursor and dispose the front texture —
+  // it's created imperatively, so react-three-fiber won't auto-dispose it.
   useEffect(
     () => () => {
       document.body.style.cursor = 'auto';
+      tex.dispose();
     },
-    [],
+    [tex],
   );
 
   useFrame((state) => {
@@ -263,6 +265,9 @@ function Heat({ animate }: { animate: boolean }) {
     g.userData.spd = spd;
     return g;
   }, []);
+
+  // Dispose the imperatively-created geometry on unmount (tab switch).
+  useEffect(() => () => geom.dispose(), [geom]);
 
   useFrame((_, delta) => {
     if (matRef.current) {

@@ -431,10 +431,13 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 ## 🔧 In progress
 
 - **Two parallel streams:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
-  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1, P2 & P3 are DONE** (see below);
-  only **P4 (Custom Case) remains — optional; the spec recommends deferring.** The finance engine +
-  every canonical number stay FROZEN; these are presentation/aggregation layers over the
-  deterministic engine.
+  (2) **COLLABORATOR** — Project Atlas features: **P1, P2 & P3 DONE**; **P4 DEFERRED to future work**
+  (per spec — heavy docx template/parser, tangential). Then a **deep audit + fixes DONE** (2026-08-04):
+  read the whole solution (engine, libs, all components, assistant, 3D); tsc/lint/tests/build all
+  clean. Fixed 4 real items — `selfTest.ts` redundant `evaluate()`; `board.ts` null break-even-util
+  text; `HallCanvas.tsx` GPU texture+geometry not disposed on tab-unmount (leak); `Header.tsx`
+  "Base-case verdict" mislabelled a live badge → "Current verdict". Now writing an **internal team
+  report** (`report/internal-team-report.tex`, plain-language, covers everything). Engine FROZEN.
 
 ## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
 
