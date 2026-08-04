@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 — MASTER laptop (Kartik, Opus 4.8): live deploy verified end-to-end (Vercel + Render + NIM); report live-deployment note added (8 pages, in band). Then re-analysed teammate Aditya's **Project Atlas** and **spec'd 4 new features** for the COLLABORATOR to build (see "NEXT BUILD" below) — top pick is a **Departmental Review Board**. This push is a PLAN update; no code changed. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Departmental Review Board** (8th "Board Review" tab) — deterministic department scores over the live engine + weighted verdict; **32/32 tests**. P2–P4 remain. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -430,10 +430,10 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 
 ## 🔧 In progress
 
-- **Two parallel streams now:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
-  (2) **COLLABORATOR** — build the 4 features spec'd in "NEXT BUILD". The finance engine + every
-  canonical number stay FROZEN; these are presentation/aggregation layers over the existing
-  deterministic engine.
+- **Two parallel streams:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
+  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1 (Board Review) is DONE**
+  (see below); **P2 (Download decision summary) is next.** The finance engine + every canonical
+  number stay FROZEN; these are presentation/aggregation layers over the deterministic engine.
 
 ## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
 
@@ -445,7 +445,7 @@ engine — no invented figures; engine + `docs/finance-model-reference.py` UNTOU
 priority order, **one reviewable stage at a time, stop after each for review**, update this file +
 keep the 29 tests green (add tests where noted).
 
-**P1 — Departmental Review Board (new "Board Review" tab). ⭐ Flagship — biggest payoff.**
+**P1 — Departmental Review Board (new "Board Review" tab). ✅ DONE (2026-08-04, collaborator).**
 A multi-stakeholder governance view: 4–5 departments each run their own objective over the SAME live
 Zustand store state, reach a grounded scored position, and a **weighted board verdict** aggregates
 them — all moving live as sliders change. Departments (Barq AI, 40 MW Abu Dhabi GPU hall):
@@ -467,6 +467,17 @@ engine threshold). Verdict = weighted score → overall stance; show the most-vs
 any unmet non-negotiable ⇒ "approve WITH conditions", not unconditional. Wire: 8th tab in `TabNav`,
 reads the store (live), add assistant tab-context so "explain this view" works. Tests: base-case
 verdict + that dropping utilization below the ~77% crossover flips Commercial's stance.
+  - ✅ **DONE (collaborator, 2026-08-04):** `lib/board.ts` (documented per-department scores /100 +
+    weighted verdict, all from the live engine — base: Finance 65 / Ops 77 / Commercial 57 / ESG 60 /
+    Tech 64 → **APPROVE WITH CONDITIONS 65/100**, 0 opposes, every non-negotiable surfaced),
+    `components/BoardReview.tsx` (verdict banner + 5 dept cards: score bar, stance, grounded concerns,
+    conditions, non-negotiable met/required, threshold-tied "what would change its position"), 8th
+    **Board Review** tab wired in `App.tsx`, assistant tab-context added in `lib/tabContext.ts`.
+    `lib/board.test.ts` (+3 → **32/32**: base verdict/no-opposes, Commercial flips to oppose below the
+    ~77% crossover, unmet non-negotiable blocks unconditional approval). Verified: `tsc -b` clean,
+    `npm run build` OK, rendered in-browser (headless needs a `waitForSelector` past the tab-switch
+    animation), no console errors bar the offline-assistant health probe. Engine + reference untouched.
+    **NEXT: P2 — Download decision summary (`window.print()` + `@media print`, no new deps).**
 
 **P2 — "Download decision summary" (PDF via print). Small, high-utility, independent.**
 A button (header or Recommendation tab) → a clean ONE-PAGE summary of the CURRENT live case: scenario,

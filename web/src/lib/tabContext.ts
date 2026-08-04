@@ -46,6 +46,12 @@ export const TAB_INFO: Record<string, TabInfo> = {
       'The AI Analysis tab: a Monte-Carlo NPV distribution with the probability of a negative NPV, an AI GPU-rate forecast with P10–P90 bands, and an AI scenario generator. All figures are grounded in the deterministic engine.',
     samples: ['What is the probability of a loss?', 'What does the forecast band show?', 'Explain the Monte-Carlo result.'],
   },
+  board: {
+    label: 'Board Review',
+    description:
+      'The Board Review tab: a Departmental Review Board where five departments — Finance/CFO, Infrastructure/Ops, Commercial/Revenue, Sustainability/ESG and Technology/AI — each score the SAME live case with a documented deterministic rule over the engine numbers, take a stance (supports / supports-with-conditions / opposes), and a weighted verdict aggregates them. The base case is "approve with conditions" (staged capex, N+1 cooling, a contracted-utilization floor, a PUE ceiling). Any unmet non-negotiable prevents unconditional approval.',
+    samples: ['What is the board verdict?', 'Which department is most opposed?', 'Why only approve with conditions?'],
+  },
   ethics: {
     label: 'Ethics & Audit',
     description:

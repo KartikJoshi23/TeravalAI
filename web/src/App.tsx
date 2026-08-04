@@ -14,6 +14,7 @@ import DecisionThresholds from './components/DecisionThresholds';
 import EthicsPanel from './components/EthicsPanel';
 import AssumptionsAudit from './components/AssumptionsAudit';
 import DataProvenance from './components/DataProvenance';
+import BoardReview from './components/BoardReview';
 import DataCenterScene from './components/three/DataCenterScene';
 import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
@@ -28,6 +29,7 @@ const TABS: TabDef[] = [
   { id: 'scenarios', label: 'Scenarios' },
   { id: 'sensitivity', label: 'Sensitivity & Risk' },
   { id: 'ai', label: 'AI Analysis' },
+  { id: 'board', label: 'Board Review' },
   { id: 'ethics', label: 'Ethics & Audit' },
 ];
 
@@ -103,6 +105,8 @@ export default function App() {
                   <RateForecastPanel />
                 </>
               )}
+
+              {tab === 'board' && <BoardReview />}
             </motion.div>
           </AnimatePresence>
         </main>
