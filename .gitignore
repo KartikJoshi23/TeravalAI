@@ -19,6 +19,7 @@ report/*.synctex.gz
 report/_wc.py
 # Report figures are captured by the user + uploaded to Overleaf (not committed)
 report/teraval-*.png
+report/Screenshots/
 
 # Env / secrets (NVIDIA NIM key lives here — never commit)
 .env

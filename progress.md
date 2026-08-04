@@ -10,6 +10,8 @@ _UX fix (2026-08-04, night, per user feedback): Overview was too content-heavy. 
 
 _Density pass (2026-08-04, night): per user "trim panel text everywhere", cut the verbose subtitles + explanatory paragraphs across the panels down to short captions so each view is chart/number-led — MonteCarlo (removed redundant bottom paragraph), RateForecast, Predictive-AI (intro + both subtitles + the spot-vs-contracted narrative), Alternatives (both blurbs), BoardReview, ScenarioComparison, DataProvenance, DecisionThresholds. Kept the brief-required prose (recommendation body, ethics mitigations). 45/45 · tsc clean · build OK._
 
+_Report figures (2026-08-05, collaborator): the 4 dashboard screenshots for `report/main.tex` (overview, cash-flow, build-vs-rent, scenarios) were captured into `report/Screenshots/`. `main.tex`'s `\dashfig` now points at that subfolder (with a flat fallback), plus `\emergencystretch` added. Compiles with pdflatex: **9 pages, 0 overfull, 0 placeholders** — all four real figures embedded. Screenshots stay git-ignored / Overleaf-side (`report/Screenshots/` added to `.gitignore`)._
+
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
 > **HANDOFF 2026-08-01: real-data sourcing is now assigned to a COLLABORATOR** — see NEXT TASK + `datasets/README.md`. Collaborator downloads official tariff/interest-rate/energy datasets into `datasets/` and pushes; master laptop then applies them + does the LaTeX report.

@@ -1,11 +1,12 @@
 % ============================================================================
 % Teraval — Corporate Finance individual report
 % Compile on Overleaf with pdfLaTeX.
-% REQUIRED IMAGE FILES (upload to the SAME Overleaf project, names must match):
-%   teraval-overview.png     — Overview tab (3D hall + KPI cards + AI recommendation)
-%   teraval-cashflow.png     — Cash Flow tab (FCF bars + cumulative discounted line)
-%   teraval-scenarios.png    — Scenarios tab (comparison chart + table)
-%   teraval-buildvsrent.png  — Build vs Rent tab (Equivalent Annual Cost)
+% REQUIRED IMAGE FILES — put these in a "Screenshots/" subfolder next to main.tex
+% (a flat copy beside main.tex also works). Names must match exactly:
+%   teraval-overview.png     — Overview tab (3D hall + KPI cards)
+%   teraval-cashflow.png     — Cash Flow & Build-vs-Rent tab (cash-flow trend chart)
+%   teraval-buildvsrent.png  — Cash Flow & Build-vs-Rent tab (Build vs Rent / EAC panel)
+%   teraval-scenarios.png    — Scenarios & Sensitivity tab (scenario comparison)
 % ============================================================================
 \documentclass[12pt,a4paper]{article}
 
@@ -33,15 +34,18 @@
 
 \captionsetup{font=small,labelfont=bf}
 \setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{2em}  % absorb tiny overruns → no overfull boxes
 \renewcommand{\arraystretch}{1.15}
 
 % Screenshot include that degrades gracefully: if the PNG is not yet uploaded
 % (they are captured manually and kept out of git), show a labelled placeholder
 % instead of failing the compile. On Overleaf with the PNGs present, identical.
 \newcommand{\dashfig}[2]{%
-  \IfFileExists{#1.png}%
-    {\includegraphics[width=#2\textwidth]{#1}}%
-    {\fbox{\parbox{0.88\textwidth}{\centering\vspace{1.6cm}\small\itshape dashboard screenshot pending: #1.png\vspace{1.6cm}}}}%
+  \IfFileExists{Screenshots/#1.png}%
+    {\includegraphics[width=#2\textwidth]{Screenshots/#1}}%
+    {\IfFileExists{#1.png}%
+      {\includegraphics[width=#2\textwidth]{#1}}%
+      {\fbox{\parbox{0.88\textwidth}{\centering\vspace{1.6cm}\small\itshape dashboard screenshot pending: #1.png\vspace{1.6cm}}}}}%
 }
 
 \begin{document}
