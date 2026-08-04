@@ -119,6 +119,11 @@ export default function PrintSummary() {
       <p style={{ fontSize: '13px', lineHeight: 1.5, color: dim, marginTop: '6px' }}>
         <strong style={{ color: ink }}>Key risk:</strong> {rec.keyRisk}
       </p>
+      {rec.stageGate && (
+        <p style={{ fontSize: '13px', lineHeight: 1.5, color: dim, marginTop: '6px' }}>
+          <strong style={{ color: ink }}>Stage-gate plan:</strong> {rec.stageGate}
+        </p>
+      )}
 
       <div style={{ borderTop: `1px solid ${line}`, marginTop: '16px', paddingTop: '8px', fontSize: '10px', color: dim }}>
         Figures computed by Teraval's deterministic finance engine and verified against the reference

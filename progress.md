@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Board Review** tab + **P2 Download-summary** (print-to-PDF one-pager of the live case); **32/32 tests**. P3–P4 remain. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Board Review** + **P2 Download-summary** + **P3 stage-gate recommendation nuance**; **35/35 tests**. Only **P4 (optional Custom Case)** remains. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -431,9 +431,9 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 ## 🔧 In progress
 
 - **Two parallel streams:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
-  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1 (Board Review) & P2 (Download
-  summary) are DONE** (see below); **P3 (stage-gate recommendation nuance) is next.** The finance
-  engine + every canonical number stay FROZEN; these are presentation/aggregation layers over the
+  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1, P2 & P3 are DONE** (see below);
+  only **P4 (Custom Case) remains — optional; the spec recommends deferring.** The finance engine +
+  every canonical number stay FROZEN; these are presentation/aggregation layers over the
   deterministic engine.
 
 ## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
@@ -496,11 +496,19 @@ academic write-up; this is a live snapshot of whatever's dialled in).
     tests, build OK; in print media the app is fully hidden and a clean **one-page A4 PDF** renders
     with the correct figures. **NEXT: P3 — stage-gate recommendation nuance.**
 
-**P3 — Stage-gate recommendation nuance. Quick polish (do alongside P1).**
+**P3 — Stage-gate recommendation nuance. ✅ DONE (2026-08-04, collaborator).**
 Enrich `RecommendationPanel`: when ACCEPT-but-thin (P(loss) meaningful / breakeven close), frame it as
 "conditional accept — stage-gate the capex, release in tranches gated on measured utilization; keep the
 rent/RaaS fallback." Grounded in our thresholds; ties naturally to the Board's conditions. One short
 paragraph + a little logic.
+  - ✅ **DONE (collaborator, 2026-08-04):** `lib/recommendation.ts` gained an optional `stageGate`
+    field — on a thin ACCEPT (P(loss) ≥ 15% or break-even within 25% of the price) it composes a
+    grounded stage-gate paragraph tied to the **break-even utilization (~67%)** and **build-vs-rent
+    crossover (~77%)** thresholds + the Year-4 refresh. Shown as an amber "Stage-gate plan" callout in
+    `RecommendationPanel` and carried into the P2 `PrintSummary`. `lib/recommendation.test.ts` (+3 →
+    **35/35**: present on thin base accept, absent on reject and on a safe optimistic accept). Verified:
+    `tsc -b` clean, build OK, renders live + in the one-page PDF. Engine + reference untouched.
+    **NEXT: P4 — Custom Case (OPTIONAL; spec recommends deferring).**
 
 **P4 — Custom Case (bring-your-own-numbers). OPTIONAL stretch — recommend deferring.**
 Atlas lets you download a `.docx` template, fill figures, upload, and re-run everything client-side.

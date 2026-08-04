@@ -48,6 +48,15 @@ export default function RecommendationPanel() {
       <h3 className={`mt-3 text-sm font-semibold ${s.text}`}>{rec.headline}</h3>
       <p className="mt-2 text-sm leading-relaxed text-txt-dim">{rec.body}</p>
 
+      {rec.stageGate && (
+        <div className="mt-3 rounded-lg border border-amber/30 bg-amber/5 p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-amber">
+            Stage-gate plan
+          </div>
+          <p className="mt-1 text-xs text-txt-dim">{rec.stageGate}</p>
+        </div>
+      )}
+
       <div className="mt-4 rounded-lg border border-negative/25 bg-negative/5 p-3">
         <div className="text-[11px] font-semibold uppercase tracking-wider text-negative">Key risk</div>
         <p className="mt-1 text-xs text-txt-dim">{rec.keyRisk}</p>

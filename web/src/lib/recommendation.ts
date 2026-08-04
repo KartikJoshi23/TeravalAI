@@ -6,7 +6,7 @@
  * Stage 6 and never invents figures.
  */
 import type { Assumptions, Evaluation } from '../finance';
-import { oneWaySensitivity } from '../finance';
+import { oneWaySensitivity, breakevenUtilization, buildRentCrossoverUtil } from '../finance';
 import { DRIVERS } from './drivers';
 import { fmtAedM, fmtPct, fmtRatio, fmtUsdHr, fmtYears } from './format';
 import { MC_RUNS } from './simulate';
@@ -17,6 +17,8 @@ export interface Recommendation {
   body: string;
   keyRisk: string;
   bullets: string[];
+  /** Present on a thin ACCEPT: the stage-gate / tranche-release plan (P3). */
+  stageGate?: string;
 }
 
 /** The driver with the largest one-way NPV span at the current assumptions. */
@@ -55,6 +57,27 @@ export function buildRecommendation(
   ];
 
   const keyRisk = `A structural fall in the GPU rental rate below the ${be} break-even — ${driver} is the dominant driver.`;
+
+  // P3 — stage-gate nuance: an ACCEPT with a thin margin (meaningful loss
+  // probability, or break-even close to the current price) is really a
+  // *conditional* accept — release capex in tranches gated on measured
+  // utilization, and keep a rent/RaaS fallback rather than committing up front.
+  const thinAccept =
+    e.decision === 'accept' &&
+    (probNegative >= 0.15 ||
+      (Number.isFinite(breakeven) && a.gpuPriceUsd < breakeven * 1.25));
+  let stageGate: string | undefined;
+  if (thinAccept) {
+    const beUtil = breakevenUtilization(a);
+    const crossover = buildRentCrossoverUtil(a);
+    const beUtilTxt = beUtil == null ? 'the break-even utilization' : `~${Math.round(beUtil * 100)}%`;
+    const crossTxt = crossover == null ? 'the build-vs-rent crossover' : `~${Math.round(crossover * 100)}%`;
+    stageGate =
+      `Because the margin is thin (P(loss) ≈ ${fmtPct(probNegative, 0)}, and the ${be} break-even sits close to the ` +
+      `${fmtUsdHr(a.gpuPriceUsd)}/GPU-hr price), treat this as a stage-gated accept: release the capex in tranches gated ` +
+      `on measured utilization holding above ${beUtilTxt} (and the ${crossTxt} build-vs-rent crossover), and keep a ` +
+      `rent/RaaS fallback for the Year-${a.refreshYear} GPU refresh rather than committing it all up front.`;
+  }
 
   if (e.decision === 'reject') {
     return {
@@ -96,5 +119,6 @@ export function buildRecommendation(
       `and stage the GPU fit-out.`,
     keyRisk,
     bullets,
+    stageGate,
   };
 }
