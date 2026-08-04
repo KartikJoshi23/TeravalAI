@@ -38,6 +38,32 @@ def _sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data, default=str)}\n\n"
 
 
+# --- Scope guardrail (defence-in-depth; the system prompt in prompts.py is the
+# primary guard, this just avoids paying for a NIM call on blatant off-topic abuse).
+_REFUSAL = (
+    "I'm the Teraval finance assistant — I can only help with this Barq AI "
+    "capital-budgeting appraisal. Try asking about NPV, break-even, scenarios, "
+    "or the recommendation."
+)
+_FINANCE_KEYWORDS = {
+    "npv", "irr", "mirr", "wacc", " pi", "profitab", "break", "even", "cost", "price",
+    "risk", "invest", "capex", "capital", "gpu", "scenario", "sensitiv", "tornado",
+    "monte", "carlo", "board", "ethic", "recommend", "payback", "cash", "flow", " eac",
+    "rent", "build", "tariff", "pue", "utiliz", "forecast", "value", "discount", "margin",
+    "offtake", "refresh", "depreciat", "tax", "decision", "verdict", "assumption", "barq",
+    "data cent", "hall", "project", "model", "accept", "reject", "hurdle", "return",
+    "profit", "loss", "revenue", "money", "worth", "spend", "summary", "kpi", "chart",
+}
+
+
+def _off_topic(question: str) -> bool:
+    """True when a non-trivial question contains no finance-relevant keyword."""
+    q = question.strip().lower()
+    if len(q) <= 10:  # let short greetings ("hi", "thanks") reach the model
+        return False
+    return not any(k in q for k in _FINANCE_KEYWORDS)
+
+
 def _build_messages(req: MessageRequest) -> list[dict[str, str]]:
     messages: list[dict[str, str]] = [
         {"role": "system", "content": build_system_prompt(req.context)}
@@ -54,6 +80,10 @@ def post_message(req: MessageRequest) -> StreamingResponse:
     # A sync generator: FastAPI runs it in a threadpool, so iterating the
     # (blocking) OpenAI/NIM stream here does not stall the event loop.
     def gen() -> Iterator[str]:
+        # Guardrail: refuse blatant off-topic questions without calling the LLM.
+        if _off_topic(req.question):
+            yield _sse("final", {"answer": _REFUSAL})
+            return
         try:
             client = get_client()
             stream = client.chat.completions.create(

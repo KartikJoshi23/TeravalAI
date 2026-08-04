@@ -8,6 +8,37 @@
 import type { AssistantContext } from './assistantContext';
 import { fmtAedM, fmtPct, fmtRatio, fmtUsdHr, fmtYears } from './format';
 
+/** Scope guardrail: the assistant only discusses this appraisal. */
+const GUARDRAIL =
+  "I'm the Teraval finance assistant — I can only help with this Barq AI capital-budgeting appraisal. " +
+  'Try asking about NPV, break-even, scenarios, the GPU rental rate, or the recommendation.';
+
+// A question is in scope if it mentions anything finance/project-related.
+const FINANCE_KW = [
+  'npv', 'irr', 'mirr', 'wacc', 'profitab', 'pi ', ' pi', 'break', 'even', 'cost', 'price',
+  'risk', 'invest', 'capex', 'capital', 'gpu', 'scenario', 'sensitiv', 'tornado', 'monte',
+  'carlo', 'board', 'ethic', 'recommend', 'payback', 'cash', 'flow', ' eac', 'rent', 'build',
+  'tariff', 'pue', 'utiliz', 'forecast', 'value', 'discount', 'margin', 'offtake', 'refresh',
+  'depreciat', 'tax', 'decision', 'verdict', 'assumption', 'barq', 'data cent', 'hall',
+  'project', 'model', 'accept', 'reject', 'hurdle', 'return', 'profit', 'loss', 'revenue',
+  'worth', 'spend', 'kpi', 'chart', 'graph', 'year', 'dip', 'slider', 'metric', 'number',
+];
+// Phrases that are never a legitimate finance question, even if a finance-ish
+// word appears (e.g. "capital of France" contains "capital").
+const STRONG_OFFTOPIC = [
+  'python', 'javascript', ' java ', 'c++', 'recipe', 'how to cook', 'capital of', 'capital city',
+  'tell me a joke', 'write me a poem', 'write me an essay', 'write a poem', 'write a song',
+  'meaning of life', 'weather in', 'who won', 'translate ',
+];
+// Softer off-topic signals — refused only when NO finance keyword is present.
+const OFFTOPIC_KW = [
+  'teach', 'tutor', 'learn ', 'code', 'coding', 'program', 'joke', 'poem', 'essay', 'story',
+  'homework', 'history of', 'who is', 'who was', 'song', 'lyric', 'movie', 'workout', 'diet',
+  'weather', 'write me', 'help me with', 'how do i make',
+];
+
+const inScope = (q: string) => FINANCE_KW.some((k) => q.includes(k));
+
 function has(q: string, ...terms: string[]): boolean {
   return terms.some((t) => q.includes(t));
 }
@@ -16,6 +47,10 @@ export function answerLocally(question: string, c: AssistantContext): string {
   const q = question.toLowerCase();
   const m = c.metrics;
   const be = `${fmtUsdHr(c.breakevenGpuPriceUsd)}/GPU-hr`;
+
+  // --- Scope guardrail (refuse off-topic BEFORE any answer branch) ---
+  if (STRONG_OFFTOPIC.some((k) => q.includes(k))) return GUARDRAIL;
+  if (!inScope(q) && OFFTOPIC_KW.some((k) => q.includes(k))) return GUARDRAIL;
 
   // Specific intents FIRST — the generic tab description is the LAST resort, so
   // chips like "What does break-even mean here?" get their dedicated answer.
@@ -175,6 +210,9 @@ export function answerLocally(question: string, c: AssistantContext): string {
     return `${c.focus.description} Ask me anything specific about it — I answer from the live model numbers.`;
   }
 
-  // Fallback: the grounded summary.
-  return `${c.summary} Ask me about NPV, IRR, break-even, the most sensitive driver, scenarios, or risk.`;
+  // Fallback: two-tier. Finance-adjacent → the grounded summary; otherwise refuse.
+  if (inScope(q)) {
+    return `${c.summary} Ask me about NPV, IRR, break-even, the most sensitive driver, scenarios, or risk.`;
+  }
+  return GUARDRAIL;
 }

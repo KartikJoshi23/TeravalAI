@@ -507,7 +507,7 @@ every push; keep all existing tests green; engine + `docs/finance-model-referenc
 
 ---
 
-### TASK 1 — Chatbot guardrails (CRITICAL — currently ZERO guardrails)
+### TASK 1 — Chatbot guardrails (CRITICAL) — ✅ DONE (2026-08-05, collaborator)
 
 **The problem:** the Teraval AI assistant happily answers ANY question — "teach me Python
 programming", "write me an essay", "tell me a joke" — instead of refusing off-topic requests. It
@@ -584,6 +584,21 @@ or `_build_messages`, before the `client.chat.completions.create()` call:
   - "Should we build or rent?" → MUST still work.
   If any off-topic query gets a compliant answer, the guardrails are broken — fix before pushing.
 - Update this `progress.md` section to ✅ DONE with verification results.
+
+**✅ DONE (2026-08-05, collaborator).** All three layers implemented:
+- **1A** `prompts.py`: SCOPE GUARDRAIL bullet added to `SYSTEM_PREAMBLE` (every NIM call refuses off-topic).
+- **1B** `assistantFallback.ts`: guardrail refusal + finance/off-topic keyword lists; a strong-off-topic
+  check + a `!inScope && offtopic` check at the TOP, and a two-tier bottom (finance-adjacent → summary,
+  else refuse). New `assistantFallback.test.ts` (+2 tests).
+- **1C** `chat.py`: `_off_topic()` pre-check in `post_message` returns a canned SSE refusal without an
+  LLM call when a >10-char question has no finance keyword.
+- **Bug fixed during test:** `'eac'` matched "t**eac**h" and `'pi'` matched "ca**pi**tal" → tightened to
+  `' eac'` / `' pi'` on both sides.
+- **Verified:** `tsc -b` clean · `npm test` **47/47** (2 new) · `build` OK · backend `_off_topic` unit
+  cases all pass · direct SSE call to a running backend returns the refusal `final` event for off-topic ·
+  **end-to-end in-browser (backend + dev server): "teach me Python", "write me an essay", "tell me a joke"
+  all REFUSED; "What is the NPV?", "Should we build or rent?", "What does break-even mean?" all answered
+  grounded.** Engine + reference untouched.
 
 ---
 
