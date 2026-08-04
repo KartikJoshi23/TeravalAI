@@ -483,6 +483,13 @@ tab-context rekeyed to the 5 tabs. Verified live: 5 tabs, brief renders, zero co
   the 5-point what/info/result/helps/limitation structure**; a dedicated "how the ML works (train/test)"
   section that **corrects the old "no ML split" claim**; sample assistant Q&A; ethics; expanded
   glossary. Plain-English voice kept (user liked the language). Added `amsmath` for the formulas.
+- **Slides + screenshots (2026-08-04):** `report/notebooklm-prompt.md` updated to 12 slides — added a
+  dedicated **machine-learning slide** (surrogate + forecaster + train/test) and updated the data/AI
+  and dashboard (5-tab) slides. **The 4 dashboard screenshots are now CAPTURED** into `report/`
+  (`teraval-overview/cashflow/buildvsrent/scenarios.png`, git-ignored) via headless system Chrome
+  (playwright-core in scratchpad, driving the installed Chrome with SwiftShader — the WebGL hall
+  rendered). Overview now shows the Decision Brief; Build-vs-Rent shows +AED 320M. Ready to upload to
+  Overleaf with `main.tex`. (Re-run any time: scratchpad `shots/shot.mjs` against `npm run dev`.)
 
 ## 🔧 In progress
 
