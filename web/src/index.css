@@ -89,6 +89,15 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
 
+  /* Sticky top navigation. OPAQUE on purpose: a translucent sticky bar lets the
+   * page content scroll through it, which reads as a broken overlap. Solid fixes it. */
+  .topbar {
+    background: linear-gradient(180deg, #101119 0%, #0b0c12 100%);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 0.9rem;
+    box-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.85);
+  }
+
   /* Thin gradient hairline used above headings. */
   .accent-rule {
     height: 2px;

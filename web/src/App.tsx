@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Header from './components/Header';
 import BackgroundFX from './components/BackgroundFX';
@@ -25,8 +25,7 @@ import PredictiveAI from './components/ai/PredictiveAI';
 import AssistantWidget from './components/ai/AssistantWidget';
 import PrintSummary from './components/PrintSummary';
 
-// Five tabs grouped by the decision narrative — every earlier view is kept, now
-// organised into labelled sections inside these tabs.
+// Five tabs grouped by the decision narrative — every earlier view is kept.
 const TABS: TabDef[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'financials', label: 'Cash Flow & Build-vs-Rent' },
@@ -34,16 +33,6 @@ const TABS: TabDef[] = [
   { id: 'ai', label: 'AI & Forecasting' },
   { id: 'governance', label: 'Board & Ethics' },
 ];
-
-/** A thin section divider so merged tabs keep each view's identity. */
-function SectionLabel({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 pt-1">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-txt-dim">{children}</h2>
-      <div className="h-px flex-1 bg-glass-border" />
-    </div>
-  );
-}
 
 export default function App() {
   const [tab, setTab] = useState('overview');
@@ -70,30 +59,23 @@ export default function App() {
             >
               {tab === 'overview' && (
                 <>
-                  <DecisionBrief />
-                  <SectionLabel>The asset — live 3D hall</SectionLabel>
                   <DataCenterScene />
-                  <SectionLabel>The scorecard — key metrics</SectionLabel>
+                  <DecisionBrief />
                   <KpiGrid />
-                  <SectionLabel>The synthesis — AI recommendation</SectionLabel>
                   <RecommendationPanel />
                 </>
               )}
 
               {tab === 'financials' && (
                 <>
-                  <SectionLabel>Cash flow over the 8-year life</SectionLabel>
                   <CashFlowChart />
-                  <SectionLabel>Build vs Rent (Equivalent Annual Cost)</SectionLabel>
                   <AlternativesPanel />
                 </>
               )}
 
               {tab === 'scenarios' && (
                 <>
-                  <SectionLabel>Optimistic / base / pessimistic</SectionLabel>
                   <ScenarioComparison />
-                  <SectionLabel>Decision thresholds & sensitivity</SectionLabel>
                   <DecisionThresholds />
                   <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                     <div className="xl:col-span-2">
@@ -108,7 +90,6 @@ export default function App() {
 
               {tab === 'ai' && (
                 <>
-                  <SectionLabel>Simulation & scenario AI</SectionLabel>
                   <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
                     <div className="xl:col-span-2">
                       <MonteCarloPanel />
@@ -118,16 +99,13 @@ export default function App() {
                     </div>
                   </div>
                   <RateForecastPanel />
-                  <SectionLabel>Trained machine-learning models</SectionLabel>
                   <PredictiveAI />
                 </>
               )}
 
               {tab === 'governance' && (
                 <>
-                  <SectionLabel>Departmental board review</SectionLabel>
                   <BoardReview />
-                  <SectionLabel>Ethics, provenance & audit</SectionLabel>
                   <EthicsPanel />
                   <DataProvenance />
                   <AssumptionsAudit />

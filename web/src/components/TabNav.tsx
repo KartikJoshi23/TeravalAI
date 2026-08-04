@@ -44,7 +44,7 @@ export default function TabNav({
       role="tablist"
       aria-label="Dashboard sections"
       onKeyDown={onKeyDown}
-      className="glass sticky top-3 z-30 mt-6 flex flex-wrap items-center gap-1 p-1.5"
+      className="topbar sticky top-0 z-30 mt-6 flex flex-wrap items-center gap-1 p-1.5"
     >
       {tabs.map((t) => {
         const isActive = t.id === active;
