@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Departmental Review Board** (8th "Board Review" tab) — deterministic department scores over the live engine + weighted verdict; **32/32 tests**. P2–P4 remain. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Board Review** tab + **P2 Download-summary** (print-to-PDF one-pager of the live case); **32/32 tests**. P3–P4 remain. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -431,9 +431,10 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 ## 🔧 In progress
 
 - **Two parallel streams:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
-  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1 (Board Review) is DONE**
-  (see below); **P2 (Download decision summary) is next.** The finance engine + every canonical
-  number stay FROZEN; these are presentation/aggregation layers over the deterministic engine.
+  (2) **COLLABORATOR** — building the 4 features in "NEXT BUILD". **P1 (Board Review) & P2 (Download
+  summary) are DONE** (see below); **P3 (stage-gate recommendation nuance) is next.** The finance
+  engine + every canonical number stay FROZEN; these are presentation/aggregation layers over the
+  deterministic engine.
 
 ## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
 
@@ -479,13 +480,21 @@ verdict + that dropping utilization below the ~77% crossover flips Commercial's 
     animation), no console errors bar the offline-assistant health probe. Engine + reference untouched.
     **NEXT: P2 — Download decision summary (`window.print()` + `@media print`, no new deps).**
 
-**P2 — "Download decision summary" (PDF via print). Small, high-utility, independent.**
+**P2 — "Download decision summary" (PDF via print). ✅ DONE (2026-08-04, collaborator).**
 A button (header or Recommendation tab) → a clean ONE-PAGE summary of the CURRENT live case: scenario,
 the 6 driver assumptions, the 6 KPIs, scenario verdict, the recommendation paragraph (+ board verdict
 if P1 shipped), timestamp → `window.print()`. Use `@media print` CSS to hide the app chrome/3D/nav and
 show only the summary; the user picks "Save as PDF". **NO new deps** (no jsPDF/html2canvas — bundle
 bloat and they choke on the WebGL canvas/Recharts). Complements the LaTeX report (that's the fixed
 academic write-up; this is a live snapshot of whatever's dialled in).
+  - ✅ **DONE (collaborator, 2026-08-04):** `components/PrintSummary.tsx` — a print-only one-page
+    summary (title, live case flag, 6 driver assumptions, 6 KPIs, scenario verdict + board verdict +
+    P(loss), the grounded recommendation paragraph + key risk, timestamp, CFO-responsibility footer;
+    reuses `buildRecommendation` + `computeBoard`, all engine-grounded). Header **"↓ Download summary"**
+    button → `window.print()`. `@media print` in `index.css` hides the whole app (`#root > *:not(
+    .print-summary)`) and reveals only the summary. **No new deps.** Verified: `tsc -b` clean, 32/32
+    tests, build OK; in print media the app is fully hidden and a clean **one-page A4 PDF** renders
+    with the correct figures. **NEXT: P3 — stage-gate recommendation nuance.**
 
 **P3 — Stage-gate recommendation nuance. Quick polish (do alongside P1).**
 Enrich `RecommendationPanel`: when ACCEPT-but-thin (P(loss) meaningful / breakeven close), frame it as

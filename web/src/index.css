@@ -164,3 +164,25 @@
 @media (prefers-reduced-motion: reduce) {
   .anim-blob-a, .anim-blob-b, .anim-blob-c, .anim-aurora { animation: none; }
 }
+
+/* P2 — Download decision summary. The PrintSummary is hidden on screen; when the
+ * user prints (header "Download summary" → Save as PDF), we hide the live app
+ * (3D canvas, nav, background, assistant) and reveal only the one-page summary. */
+.print-summary {
+  display: none;
+}
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  #root > *:not(.print-summary) {
+    display: none !important;
+  }
+  .print-summary {
+    display: block !important;
+  }
+}

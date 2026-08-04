@@ -21,6 +21,7 @@ import RecommendationPanel from './components/ai/RecommendationPanel';
 import RateForecastPanel from './components/ai/RateForecastPanel';
 import ScenarioGenerator from './components/ai/ScenarioGenerator';
 import AssistantWidget from './components/ai/AssistantWidget';
+import PrintSummary from './components/PrintSummary';
 
 const TABS: TabDef[] = [
   { id: 'overview', label: 'Overview' },
@@ -119,6 +120,9 @@ export default function App() {
 
       {/* Floating AI assistant — available on every tab, aware of the current one. */}
       <AssistantWidget currentTab={tab} />
+
+      {/* Print-only one-page decision summary (header "Download summary" → Save as PDF). */}
+      <PrintSummary />
     </>
   );
 }

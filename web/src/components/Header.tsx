@@ -29,7 +29,15 @@ export default function Header() {
             <SelfTestBadge />
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            title="Save the current live case as a one-page PDF (opens the print dialog)"
+            className="rounded-lg border border-glass-border px-3 py-1.5 text-xs font-medium text-txt-dim transition-colors hover:border-blue/50 hover:text-txt"
+          >
+            ↓ Download summary
+          </button>
           <span className="text-xs uppercase tracking-wider text-txt-faint">Base-case verdict</span>
           <DecisionBadge />
         </div>
