@@ -255,6 +255,15 @@ official Central Bank rates. Every component reads a single shared model state, 
 assumption recomputes the KPI cards, charts, scenarios, risk alerts and the recommendation
 simultaneously --- letting a manager see the physical and financial story change together.
 
+\smallskip
+\noindent\textbf{Live deployment.} The dashboard is deployed publicly --- the React frontend on
+Vercel at \href{https://teraval-ai.vercel.app}{teraval-ai.vercel.app}, backed by the FastAPI +
+NVIDIA~NIM assistant on Render at
+\href{https://teraval-assistant.onrender.com}{teraval-assistant.onrender.com}; full source at
+\href{https://github.com/KartikJoshi23/TeravalAI}{github.com/KartikJoshi23/TeravalAI}. If the
+backend is offline the assistant falls back to a grounded local answerer, so every quoted figure
+stays reproducible from the deterministic engine.
+
 \begin{figure}[h]
 \centering
 \dashfig{teraval-overview}{0.95}

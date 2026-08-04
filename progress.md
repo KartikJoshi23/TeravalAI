@@ -415,19 +415,28 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
   live DOM. (Pane hidden on this laptop → pixel screenshot not possible; correctness verified via
   DOM/build/console. Kartik/Vercel is the visual check — easy to tune dimmer/brighter if needed.)
 
+## ✅ DEPLOYED LIVE + report note added (2026-08-04, Kartik + Opus 4.8)
+
+- **Live:** frontend https://teraval-ai.vercel.app · backend https://teraval-assistant.onrender.com
+  (`/health` → `nim_configured:true`). Verified end-to-end via curl from the Vercel origin: CORS
+  allows the origin (health + chat preflight), and a real streaming chat POST returns a grounded
+  LLM answer. (Debugging notes: the "offline" symptom was (a) initially the wrong URL pasted —
+  needed the `…onrender.com` service URL not the `dashboard.render.com` address bar, then (b)
+  browser cache, then (c) **Brave Shields** blocking the cross-origin call — works in Chrome/Edge/
+  Firefox; app degrades gracefully to the offline answerer under Brave.)
+- **Report note added:** `report/main.tex` Dashboard-Explanation section now has a "Live
+  deployment" paragraph linking the Vercel + Render + GitHub URLs (hyperref). Recompiled with
+  MiKTeX: **latexmk exit 0, 8 pages, 0 overfull, prose 1,544 words (band 1,300–1,650).**
+
 ## 🔧 In progress
 
-- Deployment configs committed. **Actual deploy (Render + Vercel) is Kartik's manual step** —
-  needs the two accounts + the NIM key pasted into Render. See `DEPLOYMENT.md`.
-- **LaTeX report update pending** — once the live URLs exist, add them to the report (scope TBD
-  with Kartik: a footnote/appendix line vs. more).
+- Deploy is live and verified. Remaining is the **manual report/slide assembly** (screenshots →
+  Overleaf → NotebookLM) + the two grading-convention questions.
 
-## ▶️ NEXT TASK — MASTER (Kartik): deploy, then update the report + assemble the package
+## ▶️ NEXT TASK — MASTER (Kartik): assemble the report + slide package
 
-0. **Deploy** per `DEPLOYMENT.md`: Render (backend) → copy its URL → Vercel (frontend, Root
-   Directory `web`, `VITE_ASSISTANT_URL` = Render URL). Verify the assistant badge shows
-   "NIM connected" on the live site.
-1. **Update `report/main.tex`** with the live-deployment note/URLs (do after the URLs exist).
+0. ✅ **Deployed live** (Vercel + Render) — verified end-to-end.
+1. ✅ **Report live-deployment note added** to `report/main.tex` (8 pages, in band).
 2. ✅ **Audit reviewed & accepted** (see section above) — Build-vs-Rent +AED 320M / ~77% is in.
 3. **Manual report assembly:** capture the 4 screenshots
    (`teraval-overview/cashflow/scenarios/buildvsrent.png` — Build vs Rent now shows +AED 320M),
