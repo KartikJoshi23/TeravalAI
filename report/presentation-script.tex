@@ -1,0 +1,444 @@
+% ============================================================================
+% Teraval — Presentation Script (speaker script for the 7–10 minute talk)
+% Compile on Overleaf / locally with pdfLaTeX. No image files needed.
+% ============================================================================
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,top=2.6cm,bottom=2.6cm,left=2.4cm,right=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+% --- single-line black border on EVERY page (matches main.tex) ---
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\AddToShipoutPictureBG{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[line width=0.6pt]
+      ($(current page.north west)+(1cm,-1cm)$) rectangle
+      ($(current page.south east)+(-1cm,1cm)$);
+  \end{tikzpicture}%
+}
+
+\definecolor{tvblue}{HTML}{1D4ED8}
+\definecolor{tvgreen}{HTML}{047857}
+\definecolor{tvamber}{HTML}{B45309}
+\definecolor{tvgrey}{HTML}{444444}
+\setlength{\parskip}{5pt}
+\setlength{\emergencystretch}{2em}  % absorb tiny overruns → no overfull boxes
+
+% block labels
+\newcommand{\block}[2]{\par\medskip\noindent\textcolor{#1}{\textbf{#2}}\par\nobreak\smallskip}
+\newcommand{\SC}{\block{tvblue}{SCRIPT --- speak this}}
+\newcommand{\EX}{\block{tvgreen}{EXPLANATION --- the words used above}}
+\newcommand{\PQ}{\block{tvamber}{PROBABLE QUESTIONS \& ANSWERS}}
+\newcommand{\qa}[2]{\par\noindent\textbf{Q.}~#1\par\noindent\textbf{A.}~#2\par\smallskip}
+\newenvironment{terms}{\begin{description}[leftmargin=0pt,itemsep=2pt,font=\normalfont\bfseries]}{\end{description}}
+
+\begin{document}
+
+% ============================ TITLE PAGE ============================
+\begin{titlepage}
+\centering
+\vspace*{1.4cm}
+{\large\scshape Corporate Finance\par}
+\vspace{0.4cm}
+{\rule{0.6\textwidth}{0.4pt}\par}
+\vspace{1.4cm}
+{\Huge\bfseries Teraval\par}
+\vspace{0.5cm}
+{\Large Presentation Script\par}
+\vspace{0.3cm}
+{\large The words to speak for the 7--10 minute talk\par}
+\vspace{1.6cm}
+{\large\itshape AI-Enabled Corporate-Finance Capital-Budgeting Dashboard\par}
+\vspace{2.0cm}
+{\large\textbf{Team}\par}
+\vspace{0.3cm}
+{\large Kartik Joshi \quad Prem Kukreja \quad Gagandeep Singh\par}
+{\large Samuel Alex \quad Aditya Chitale\par}
+\vspace{1.4cm}
+{\large \textbf{Instructor:} Dr.\ Nathaniel Christopher\par}
+\vfill
+{\small Submitted for the partial fulfilment of the Corporate Finance module.\par}
+\end{titlepage}
+
+% ============================ HOW TO USE ============================
+\section*{How to use this script}
+This is the \emph{spoken} part of the presentation --- the words to say, not the slides.
+It is written so anyone can read it aloud and sound natural, not like they are reading.
+Under every section there are three blocks:
+\begin{itemize}
+  \item \textcolor{tvblue}{\textbf{SCRIPT}} --- the actual words to speak (about 60--90 seconds each).
+  \item \textcolor{tvgreen}{\textbf{EXPLANATION}} --- plain-English meanings of any term used, so the
+  speaker fully understands what they are saying.
+  \item \textcolor{tvamber}{\textbf{PROBABLE QUESTIONS \& ANSWERS}} --- likely questions and short,
+  simple answers to have ready.
+\end{itemize}
+Read in full, the ten SCRIPT blocks run about 11--13 minutes at a calm pace. For a tight 7--10 minute
+slot, speak briskly and, if needed, merge Sections~3--4 (concepts + data) and 6--7 (cash flow +
+scenarios), or trim the shortest sections --- the ten are modular on purpose. Every number in here
+matches the dashboard exactly. Tip: pause after each big number, and point at the screen when you name
+a tab.
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Opening \& Overview}
+
+\SC
+Hi everyone, we're team Teraval, and we built a tool that helps a company make one very expensive
+decision using numbers instead of guesswork. Here's the situation. Imagine a company --- we call it
+Barq AI --- that wants to build a giant warehouse full of powerful AI computers in Abu Dhabi, and
+rent out that computing power. Building it costs about five point eight billion dirhams. That's a
+bet-the-company amount of money. So the big question is simple: is it worth it, yes or no? Our
+dashboard, on the screen now, answers exactly that. It does all the finance maths automatically, shows
+it as clear charts, lets you drag sliders to test ``what if'' situations, layers real artificial
+intelligence on top to forecast and stress-test, and ends with a clear recommendation. Over the next
+few minutes we'll walk you through it tab by tab. And the short version of our answer, which we'll
+prove step by step, is: yes, build it --- but carefully, with a few conditions attached.
+
+\EX
+\begin{terms}
+  \item[Barq AI:] the (realistic but made-up) company making the decision. ``Barq'' means lightning
+  in Arabic --- fitting for a business that sells computing speed.
+  \item[Dashboard:] a single screen that shows all the important numbers and charts together.
+  \item[AI computers / GPUs:] special chips that do the heavy maths for artificial intelligence; here
+  they are rented out by the hour.
+\end{terms}
+
+\PQ
+\qa{In one line, what does your tool actually do?}{It takes a huge investment decision and turns it
+into clear numbers and charts, then recommends yes or no --- with the risks spelled out.}
+\qa{Is Barq AI a real company?}{No --- it's a realistic made-up operator, so we can use real market
+data without needing a real firm's private financials.}
+\qa{Why should a non-finance person care?}{Because it explains every number in plain English and even
+has a chatbot you can ask --- you don't need a finance degree to follow the decision.}
+
+% ============================================================================
+\section{The Financial Problem}
+
+\SC
+So here's the thing we're really deciding. Barq AI needs to spend about five point eight billion
+dirhams to build and own a forty-megawatt AI data-centre hall --- that's a very large building full of
+computers --- and run it for eight years, renting the computing power to AI companies. Why is this so
+hard? Three reasons. First, the money. Five point eight billion is enormous; get it wrong and the
+company could sink. Second, it's almost impossible to undo. Once you pour the concrete and install
+special cooling, you can't easily turn it back into cash if things go bad. And third --- this is the
+scary one --- the price they'd earn is falling fast. The price to rent one GPU for one hour dropped
+from about eight dollars to roughly three dollars as lots of new suppliers appeared. If that price
+keeps falling, the whole project can lose money. One thing does help, though: Abu Dhabi has very cheap
+electricity, which is the biggest running cost, so location is a real advantage.
+
+\EX
+\begin{terms}
+  \item[40 megawatts (MW):] the amount of electrical power the computers use --- a measure of how big
+  the facility is. 40 MW is very large.
+  \item[Irreversible:] once you've built it, you can't easily get your money back out.
+  \item[GPU-hour:] renting one GPU for one hour --- the unit Barq sells and earns money on.
+\end{terms}
+
+\PQ
+\qa{Why not just rent computers instead of building?}{Great question --- we actually test exactly that
+later; it's a whole tab. Building only wins if the hall stays very busy.}
+\qa{Where does the five point eight billion figure come from?}{It's the cost of the GPU hardware plus
+the building and cooling --- about three hundred racks of NVIDIA GB200 chips plus a purpose-built
+40~MW hall.}
+\qa{What's the single biggest risk?}{The GPU rental price falling. It's the number that swings the
+answer the most, and it's already close to our danger line.}
+
+% ============================================================================
+\section{The Finance Concepts (the words we'll use)}
+
+\SC
+Before the numbers, let me quickly explain the finance words, because we'll use them a lot, and
+they're simpler than they sound. The first idea is that money today is worth more than money later,
+because today's money can be invested --- so we ``discount'' future money to today's value. Add up all
+the future cash the project brings in, shrink it to today's value, subtract what we spend, and you get
+the N-P-V, the Net Present Value. If it's positive, the project makes us richer --- that's the whole
+game. The I-R-R is just the yearly percentage return; if it beats our cost of money, good. The
+Profitability Index is the value we get per dirham spent --- above one is good. Payback is how many
+years until we get our money back. And the discount rate we use is called the WACC --- basically the
+company's yearly cost of money. Everything on the dashboard is built from these few simple ideas.
+
+\EX
+\begin{terms}
+  \item[Discounting / present value:] shrinking a future amount to what it's worth today, because
+  today's money could be earning a return.
+  \item[NPV (Net Present Value):] all the future cash, shrunk to today's value, minus what we spend.
+  Positive means the project adds value.
+  \item[IRR (Internal Rate of Return):] the yearly \% return the project earns on the money tied up
+  in it.
+  \item[MIRR:] a more careful version of IRR that fixes a known flaw in it.
+  \item[PI (Profitability Index):] value created for every one dirham invested; above 1 is good.
+  \item[Payback / discounted payback:] how many years to earn the money back --- the discounted one
+  also accounts for the time-value of money, so it's longer and more honest.
+  \item[WACC:] the blended yearly cost of the money used to fund the project (both borrowing and
+  investors' money). It's the bar the project has to beat.
+\end{terms}
+
+\PQ
+\qa{Why do you discount future money at all?}{Because a dirham next year is worth less than one today
+--- today's could already be invested and growing. Ignoring that would overstate the project.}
+\qa{Which number is the most important?}{NPV. It directly answers ``does this add value?'' Everything
+else supports it.}
+\qa{Isn't IRR enough on its own?}{Not quite --- IRR can mislead, so we also show MIRR, and we always
+look at NPV alongside it.}
+
+% ============================================================================
+\section{Data \& Assumptions}
+
+\SC
+Now, where do our numbers come from? We're honest about every input. The key ones are: the GPU rental
+price, four dollars an hour; how busy the hall is, eighty percent; the size, forty megawatts; the
+up-front cost, about five point eight billion dirhams; the electricity price, fifteen fils a unit;
+the cooling efficiency, and the WACC, nine percent, over an eight-year life. And we tag every single
+input by where it comes from --- is it historical data, current market data, a forecast, something the
+user typed in, or AI-generated? That table is right there in the Ethics and Audit tab. Two of our
+inputs are backed by official government data: we pulled the UAE central bank's base rate, three point
+six five percent, and the three-month interbank rate, three point nine four percent, straight from the
+central bank, and used them to build our discount rate. So this isn't made-up --- it's anchored to
+real, current, official numbers.
+
+\EX
+\begin{terms}
+  \item[Utilization (80\%):] how much of the time the computers are actually rented and earning ---
+  our base assumption is 80 percent.
+  \item[Fils:] one hundredth of a dirham; so 15 fils is AED 0.15 per unit of electricity.
+  \item[PUE (cooling efficiency):] how much extra power the cooling needs; 1.0 is perfect, 1.2 is
+  good for this kind of liquid-cooled hall.
+  \item[Data tags (H/C/F/U/AI):] Historical, Current, Forecast, User-entered, or AI-generated --- we
+  label every assumption so nothing is hidden.
+  \item[Central bank base rate / EIBOR:] official UAE interest rates; we used them to build our
+  discount rate.
+\end{terms}
+
+\PQ
+\qa{Why did you choose 9\% for the WACC?}{We built it up from the official central-bank rate of three
+point six five percent, added a premium for the equity investors, and blended in the cost of debt.
+Nine percent is actually conservative --- a tougher test than the raw maths gives.}
+\qa{Is 80\% utilization realistic?}{It's an achievable mix of long-term contracts and on-demand use ---
+and we test lower values too. Below about sixty-seven percent the project stops making money.}
+\qa{What about the electricity tariff --- is that official?}{We sourced the two interest rates
+officially; the exact industrial tariff download was blocked by a portal outage, so we use the
+well-known AED 0.15 benchmark and flag it honestly in the data-provenance panel.}
+
+% ============================================================================
+\section{Financial Calculations \& Results}
+
+\SC
+Okay, the moment of truth --- what do the numbers say? On the KPI cards you'll see the results. The
+NPV is positive: about plus one thousand eight hundred and fifty-four million dirhams. In plain terms,
+after paying for everything and accounting for time, the project adds roughly one point eight billion
+dirhams of value. The yearly return, the IRR, is sixteen point five percent --- well above our nine
+percent cost of money. The Profitability Index is one point three one, comfortably above one. It pays
+back in five years, six point three if we're strict about it. So on every standard test, it's a yes.
+But --- and this is the key finding --- look at the break-even price: three dollars thirty-four per
+GPU-hour. That's the price at which the project exactly breaks even. And the market is already at two
+eighty-five to three fifty. So we're profitable, but the safety margin is thin. One more thing: the
+dashboard even runs a live self-test to prove its own maths is internally consistent.
+
+\EX
+\begin{terms}
+  \item[KPI cards:] the boxes at the top showing the headline numbers (NPV, IRR, and so on).
+  \item[Break-even price (\$3.34):] the GPU rental price at which NPV is exactly zero. Below it, the
+  project loses money.
+  \item[Self-test:] a live check that the model's own maths obeys the finance rules (for example,
+  discounting at the IRR must give an NPV of zero). If it ever broke, a badge turns red.
+\end{terms}
+
+\PQ
+\qa{Positive NPV and 16.5\% return --- so it's a clear yes?}{On the numbers, yes. The catch is the thin
+margin: break-even is three thirty-four and the market's already close to it. That's why our final
+answer has conditions.}
+\qa{What does the self-test actually prove?}{That our calculator is internally consistent --- it isn't
+fudging numbers. It's like showing your working is correct, live, on screen.}
+\qa{Payback is 5 years but discounted payback is 6.3 --- why the difference?}{Because the discounted
+one also charges for the time-value of money, so it's always longer. Both are within the eight-year
+life, which is fine.}
+
+% ============================================================================
+\section{Cash Flow \& Build-vs-Rent}
+
+\SC
+Let's look at the money flow over time --- this is the Cash Flow tab. Each bar is one year's cash. Year
+zero is the big spend, so it's a deep negative. Then money comes in each year. Notice year four dips ---
+that's because we replace ageing GPUs halfway through to stay competitive. The line climbing across is
+the running total in today's money; where it crosses zero, around year six, that's our payback point.
+Now the smart question isn't ``build or do nothing'' --- Barq needs this computing either way. The real
+choice is: build and own the hall, or just rent computing from a cloud giant? Because those two options
+last different numbers of years, we compare them fairly using something called Equivalent Annual Cost.
+And here's the neat insight: building is a big fixed cost, while renting grows with how much you use.
+So building only wins if the hall stays very busy --- above about seventy-seven percent. At our base
+case it just wins, but only by a thin margin, around plus three hundred and twenty million.
+
+\EX
+\begin{terms}
+  \item[Free cash flow (the bars):] the actual cash in or out each year.
+  \item[Year-4 refresh:] we reinvest to replace older GPUs mid-life, so that year's cash dips.
+  \item[Cumulative discounted line:] the running total of cash in today's money; crossing zero is the
+  discounted payback.
+  \item[EAC (Equivalent Annual Cost):] turns each option's whole-life cost into one fair ``rent-like''
+  yearly figure, so options of different lengths can be compared.
+  \item[Build-vs-rent crossover (\textasciitilde 77\%):] the busyness level above which owning beats
+  renting.
+\end{terms}
+
+\PQ
+\qa{Why compare against renting instead of doing nothing?}{Because Barq needs the compute regardless.
+The honest comparison is against the next-best way of getting it --- that's a textbook ``relevant cash
+flow'' test.}
+\qa{Why not just always rent, since it's flexible?}{Renting wins when you're not busy, but it's more
+expensive per hour when you're very busy. Above about seventy-seven percent usage, owning is cheaper.}
+\qa{What's that dip in year four?}{The GPU refresh --- we spend to replace ageing chips halfway through
+so the hall stays competitive. It's a real cost, so it's in the NPV.}
+
+% ============================================================================
+\section{Scenarios \& Sensitivity}
+
+\SC
+No forecast is certain, so we test the decision against good and bad futures. On the Scenarios tab we
+show three: an optimistic case where NPV jumps to about plus ten thousand million; our base case at
+plus one thousand eight hundred; and a pessimistic case that goes deeply negative, about minus four
+thousand million --- a clear reject. So the decision genuinely can flip. Then on the Sensitivity tab,
+you can drag sliders for each input and everything updates live. This tornado chart ranks which input
+matters most --- and the clear winner is the GPU rental price, with utilization second. Everything
+hinges on those two. We also run a Monte-Carlo simulation --- basically five thousand random ``what-if''
+worlds --- and it tells us there's about a twenty-one percent chance the project loses money. So it's a
+yes, but a yes with real, measurable risk. That honesty is the point: we're not hiding the downside,
+we're quantifying it.
+
+\EX
+\begin{terms}
+  \item[Scenario:] a deliberate ``what if'' picture --- optimistic, base, or pessimistic.
+  \item[Sensitivity / sliders:] dragging an input to see how the answer changes.
+  \item[Tornado chart:] a bar chart that ranks the inputs by how much each one moves the NPV.
+  \item[Monte-Carlo simulation:] running thousands of random combinations to see the range of possible
+  outcomes and the chance of a loss.
+  \item[P(loss) \textasciitilde 21\%:] the probability the NPV comes out negative.
+\end{terms}
+
+\PQ
+\qa{What if GPU prices keep falling?}{That's exactly the risk. Our break-even is three thirty-four, and
+the market is already at two eighty-five to three fifty. Below break-even, NPV turns negative --- which
+is why our number-one condition is to lock in a rate above three thirty-four before spending.}
+\qa{A twenty-one percent chance of loss --- isn't that high?}{It's meaningful, which is why we don't
+call it an unconditional yes. Our conditions are designed to shrink exactly that risk.}
+\qa{Which input should management watch most?}{The GPU rental price, then utilization --- the tornado
+chart shows they dominate everything else.}
+
+% ============================================================================
+\section{AI \& Forecasting}
+
+\SC
+Now the AI part --- and this is real AI, not just a label. We have seven AI features, but let me
+highlight the two trained machine-learning models, because these actually learn from data. The first
+is a forecaster: it studies the pattern of GPU prices and predicts where they're heading --- and it's
+accurate, with a test error of only about six cents. It forecasts prices settling near two dollars
+seventy-three, which is below our break-even --- a genuine warning. The second is a risk classifier
+that we trained on thousands of examples to predict ``value-creating or not,'' and it's about
+ninety-seven percent accurate on data it has never seen, with a near-perfect score. Importantly, both
+models are trained and tested on a proper split of data, and both agree with our finance engine ---
+they augment it, they don't replace it. On top of those, we have Monte-Carlo simulation and a grounded
+chatbot you can ask questions to. And crucially, the AI never invents numbers --- it's handed the real
+computed figures and only explains them.
+
+\EX
+\begin{terms}
+  \item[Machine-learning model:] a program that learns patterns from example data, rather than being
+  told fixed rules.
+  \item[Train/test split:] we teach the model on part of the data and check it on a separate part it
+  has never seen, to prove it really learned.
+  \item[Forecaster (test error \textasciitilde 6\%):] predicts future GPU prices; its error on unseen
+  data is tiny.
+  \item[Risk classifier (\textasciitilde 97\% accurate):] predicts whether a set of inputs will create
+  value; trained on thousands of engine-labelled examples.
+  \item[Grounded chatbot:] an AI assistant that can only use the real numbers it's given --- so it can't
+  make things up.
+\end{terms}
+
+\PQ
+\qa{Is this really machine learning, or just charts?}{Really machine learning --- two models that train
+on data, are tested on a held-out set, and hit a stated accuracy bar. It's reproducible: same data,
+same result every time.}
+\qa{If the finance engine already gives the answer, why add ML?}{The engine gives the exact answer for
+given inputs; the ML forecasts the uncertain inputs (like future price) and gives a fast risk read.
+It augments the engine, it doesn't replace it.}
+\qa{How do you stop the chatbot from making things up?}{We hand it the real computed numbers and tell
+it to only explain them --- and we added guardrails so it politely refuses anything off-topic.}
+
+% ============================================================================
+\section{Board Review \& Ethics}
+
+\SC
+Big decisions aren't made by one person, so we built a Board Review tab that mimics a real committee.
+Five departments --- Finance, Operations, Commercial, Sustainability, and Technology --- each score the
+project out of a hundred using a fixed, transparent rule, and take a stance. Then a weighted verdict
+combines them. At our base case, the board says: approve --- with conditions --- scoring sixty-five out
+of a hundred. And every score moves live as you change the sliders. On ethics, we take it seriously.
+We show forecasts as ranges, never as false certainty. We ground the chatbot so it can't hallucinate
+numbers. We stress the downside honestly with the pessimistic case and Monte-Carlo. We tag every
+assumption with its source, and our interest rates come straight from the central bank. And most
+importantly, we're clear on responsibility: the AI advises, but the final invest-or-reject decision
+always stays with the human --- the CFO and the committee, not the machine.
+
+\EX
+\begin{terms}
+  \item[Board Review:] a view where five departments each score the project and a weighted verdict
+  combines them --- like a real approval committee.
+  \item[Approve with conditions:] a yes, but only if certain requirements are met first.
+  \item[Hallucination:] when an AI confidently makes up a wrong fact --- we prevent it by grounding.
+  \item[Data provenance:] a record of exactly where each official number came from.
+\end{terms}
+
+\PQ
+\qa{Why ``approve with conditions'' and not just approve?}{Because several departments attach a
+non-negotiable requirement --- like locking in customers first. Any unmet requirement means it's a
+conditional yes, never a blank cheque.}
+\qa{Who is responsible if the decision goes wrong?}{The human decision-makers --- the CFO and the
+investment committee. Our tool supports the decision; it never makes it.}
+\qa{How do you handle bias in the AI forecasts?}{We stress-test the downside deliberately with the
+pessimistic scenario and a five-thousand-run simulation, and we lead with the probability of a loss.}
+
+% ============================================================================
+\section{Final Recommendation \& Closing}
+
+\SC
+So, to bring it all together --- what should Barq AI do? Our recommendation is: accept the project, but
+conditionally. It creates about one point eight billion dirhams of value with a healthy sixteen point
+five percent return, so the upside is real. But the margin is thin and there's a one-in-five chance of
+a loss, driven almost entirely by the GPU rental price. So we attach three conditions. One: lock in
+customers with multi-year contracts at a rate above our three-dollar-thirty-four break-even before
+spending. Two: release the money in stages, tied to the hall actually staying busy, instead of all at
+once. And three: keep a ``rent instead'' fallback ready in case the market turns. Do those three
+things, and a thin, risky yes becomes a smart, protected yes. That's Teraval --- we turned a five point
+eight billion dirham gamble into a clear, defensible, data-backed decision. Thank you --- we're happy
+to take any questions.
+
+\EX
+\begin{terms}
+  \item[Conditional accept:] yes, provided specific protections are put in place first.
+  \item[Contracted offtake:] signing customers to multi-year deals that guarantee a price and usage.
+  \item[Staged capex:] releasing the investment money in steps, each unlocked by hitting a target,
+  rather than all up front.
+\end{terms}
+
+\PQ
+\qa{If you had to give a one-word answer, yes or no?}{Yes --- but a conditional yes. The conditions are
+what turn a risky bet into a sensible investment.}
+\qa{What's the single most important condition?}{Locking in customer contracts above the three
+thirty-four break-even before committing the money --- it directly removes the biggest risk.}
+\qa{How confident are you in the recommendation?}{Confident, because it's not opinion --- it's built on
+verified maths, real official data, stress-testing, and trained models, all of which point the same
+way. And we've been honest about the one-in-five downside.}
+
+\vspace{1em}
+\begin{center}\small\textcolor{tvgrey}{%
+End of script. All ten SCRIPT blocks read in full run about 11--13 minutes; trim or merge sections to
+fit a 7--10 minute slot.}\end{center}
+
+\end{document}

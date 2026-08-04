@@ -602,7 +602,7 @@ or `_build_messages`, before the `client.chat.completions.create()` call:
 
 ---
 
-### TASK 2 — LaTeX presentation script (`report/presentation-script.tex`)
+### TASK 2 — LaTeX presentation script (`report/presentation-script.tex`) — ✅ DONE (2026-08-05, collaborator)
 
 **Create a complete LaTeX document** that serves as the **speaker script** for the 7–10 minute
 project presentation (~8–15 slides). This is NOT the slides themselves — it's the words the
@@ -688,6 +688,16 @@ speakers will READ (but it must sound so natural that no one can tell they're re
 - Every technical term used in the script must appear in the explanation block.
 - Every number quoted must match the canonical figures (see the verified numbers throughout this file).
 - Update this `progress.md` section to ✅ DONE.
+
+**✅ DONE (2026-08-05, collaborator).** `report/presentation-script.tex` created — title page (same
+team + border as `main.tex`), a "How to use" note, ToC, then **10 tab-wise sections**, each with the
+three blocks: **SCRIPT** (conversational, ~200 words), **EXPLANATION** (every term defined simply),
+**PROBABLE QUESTIONS \& ANSWERS** (3 per section). Language kept high-school-simple; numbers match the
+canonical figures (NPV +1,854M, IRR 16.5%, break-even $3.34, scenarios ±, tornado GPU-price #1,
+P(loss) 21%, build-beats-rent >~77%, board 65/100 approve-with-conditions, CBUAE 3.65%/3.94%, and the
+two trained ML models ~97% acc / AUC ~0.998 / forecast error ~6%, spot ~$2.73). **Verified:** compiles
+with `pdflatex` (two passes) **exit 0, 0 overfull hboxes, 11 pages**. Honest timing note added (10 full
+sections ≈ 11–13 min; trim/merge to fit 7–10). Separate from `main.tex` and the internal report.
 
 ---
 
