@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 (later) — MASTER (Kartik, Opus 4.8): began the **genuine AI/ML layer** (brief §2/§3 gap: the old "AI features" were rule-based). **Stage A DONE** — real trained models grounded in the engine: ML-2 surrogate risk classifier (logistic regression, **96.7% held-out test acc, AUC 0.998**, learned importance reproduces the tornado: Price×Util>Price>Util) + ML-1 GPU-price AR(1) forecaster (**test RMSE $0.063, MAPE 1.7%**; forecasts ~$2.73 vs $3.34 breakeven — a real risk signal). **45/45 tests · tsc clean · build OK.** NEXT: Stage B (Predictive AI tab) + Stage C (report §5/§6). Prior: COLLABORATOR (Prem) built P1 Board + P2 Download + P3 stage-gate. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 (night) — MASTER (Kartik, Opus 4.8): **genuine AI/ML layer COMPLETE (Stages A–C) + UX overhaul.** Two real trained models grounded in the engine (surrogate risk classifier: logistic regression, **96.7% held-out acc, AUC 0.998**; AR(1) GPU-price forecaster: **test RMSE $0.06**) shown on a **Predictive-AI** section. Consolidated **9 tabs → 5** and gave the Overview a **Decision Brief**. Both reports updated: `main.tex` (8pp, 1,627 words) reflects the ML; `internal-team-report.tex` **fully rewritten — detailed, 14pp/4,239 words**, covers brief §1–11 + the 5 questions with formulas. **45/45 tests · tsc clean · build OK · 0 overfull.** Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -464,10 +464,27 @@ narrative). Models train once (module cache) on first open; only the accept-prob
 Wired into `App.tsx` + `TabNav` + assistant `tabContext`. **Verified live:** tab renders all real
 metrics, **zero console errors**; `tsc` clean · `npm test` **45/45** · build OK.
 
-**NEXT — AI/ML Stage C:** report §5 (reframe AI features around the trained models + metrics) + §3 data
-table (authentic historical/forecast/AI-generated rows) + a line in §9 ethics on the representative
-forecaster data; refresh `internal-team-report.tex`'s "no ML split" note. *Stopping after Stage B for
-Kartik's review before touching the graded report.*
+**Stage B addendum — UX (2026-08-04):** consolidated the **9 tabs → 5** (grouped by decision
+narrative, nothing removed, labelled section dividers): Overview · Cash Flow & Build-vs-Rent ·
+Scenarios & Sensitivity · AI & Forecasting · Board & Ethics. Added a **`DecisionBrief`** atop the
+Overview (states the question, ~AED 5.8B stakes, live verdict strip, "how to read this page") so the
+recommendation reads as a conclusion; Overview reordered asset→scorecard→synthesis. Assistant
+tab-context rekeyed to the 5 tabs. Verified live: 5 tabs, brief renders, zero console errors; 45/45.
+
+**Stage C — DONE (2026-08-04): both reports updated for the ML.**
+- `report/main.tex` (graded, in band): §6 AI features reframed around the two trained models (held-out
+  acc 96.7%/AUC 0.998; forecaster RMSE $0.06) with the 5-point framing; §4 data table gained authentic
+  Historical (GPU-price series) + AI-generated (forecast) rows; §7 = five tabs + Predictive-AI + the
+  Overview brief; §9 = ML augments, never computes, a valuation. **MiKTeX: 8 pages, 0 overfull, 1,627
+  words (band 1,300–1,650; user OK'd up to 1,700).**
+- `report/internal-team-report.tex` **fully rewritten — detailed** (user found the old one too vague).
+  Now **14 pages, 4,239 words, 0 overfull**: follows the brief section by section (1–11) + answers all
+  five questions; finance concepts WITH formulas; worked base-case calculation; **each AI feature in
+  the 5-point what/info/result/helps/limitation structure**; a dedicated "how the ML works (train/test)"
+  section that **corrects the old "no ML split" claim**; sample assistant Q&A; ethics; expanded
+  glossary. Plain-English voice kept (user liked the language). Added `amsmath` for the formulas.
+
+## 🔧 In progress
 
 ## 🔧 In progress
 

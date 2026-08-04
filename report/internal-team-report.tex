@@ -4,10 +4,12 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage{amsmath}
 \usepackage[margin=2.2cm]{geometry}
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{array}
 \usepackage{enumitem}
 \usepackage{parskip}
 \usepackage[hidelinks]{hyperref}
@@ -15,359 +17,595 @@
 \definecolor{tvblue}{HTML}{2563EB}
 \definecolor{tvgrey}{HTML}{444444}
 \newcommand{\term}[1]{\textcolor{tvblue}{\textbf{#1}}}
+\newcommand{\q}[1]{\medskip\noindent\textbf{#1}\par\nobreak}
 \setlist{itemsep=2pt, topsep=3pt}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
-\title{\textbf{Teraval --- Internal Team Report}\\[4pt]
-\large A plain-English guide to everything in the project}
+\title{\textbf{Teraval --- Internal Team Report (Detailed)}\\[4pt]
+\large A complete, plain-English walkthrough of the whole project}
 \author{Team: Kartik Joshi, Prem Kukreja, Gagandeep Singh, Samuel Alex, Aditya Chitale\\
 Module: Corporate Finance \quad$\cdot$\quad Instructor: Dr.\ Nathaniel Christopher}
-\date{Repository: \texttt{github.com/KartikJoshi23/TeravalAI}}
+\date{Repository: \texttt{github.com/KartikJoshi23/TeravalAI}\\
+Live: \texttt{teraval-ai.vercel.app}}
 
 \begin{document}
 \maketitle
 
 \begin{quote}
-\small \textbf{How to read this document.} This is our own team notebook. It explains
-\emph{everything} we built, in the simplest words we could find --- if a sentence needs a
-big word, we define it right there. If you are new to the project, read it top to bottom
-and you will understand the whole thing. Nothing is left out.
+\small \textbf{How to read this document.} This is our own team notebook, written so \emph{anyone}
+on the team --- finance or not --- can understand every part of the project and defend it in the
+viva. It follows the assignment brief section by section (1--11) and answers all five project
+questions in full. Where a big word appears, it is defined on the spot. Formulas are shown and then
+explained in plain English, with our real numbers plugged in. Nothing is left as ``it just works.''
 \end{quote}
 
 \tableofcontents
 \newpage
 
 % =====================================================================
-\section{The one-paragraph summary}
-\term{Teraval} is a website (a ``dashboard'') that helps a company decide whether a very
-expensive project is worth building. Our example company is \term{Barq AI}, and the project
-is a big \term{data centre} --- a warehouse full of powerful computers (GPUs) --- in Abu
-Dhabi that would rent out computing power for artificial intelligence. Building it would cost
-about \textbf{AED 5.8 billion}. Teraval does all the money maths, shows it as easy charts,
-lets you play with the numbers using sliders, adds some AI helpers, and finally says: ``Yes,
-build it --- but carefully.''
+\section{Introduction (Brief \S1)}
 
-% =====================================================================
-\section{The real-world question we are answering}
-A company called Barq AI has to decide: \emph{should we spend about AED 5.8 billion to build a
-40~MW AI/GPU data-centre hall in Abu Dhabi and rent out its computing power for 8 years?}
+\subsection{The project topic}
+We chose \term{Topic 9 --- AI Capital-Budgeting Dashboard}. \term{Capital budgeting} is the part of
+corporate finance that decides whether a big, long-term investment is worth making: you estimate all
+the future cash the project will bring in and take out, pull those future amounts back to
+``today's money,'' and check whether what you get back is worth more than what you put in. Our
+dashboard does exactly this for one concrete, realistic project, and layers artificial-intelligence
+tools on top to forecast, stress-test and explain the decision. (Topic~9 naturally absorbs Topic~10,
+``relevant cash flows,'' because our build-vs-rent analysis is a textbook relevant-cash-flow problem.)
 
-Why this is a hard and important decision:
+\subsection{The company and the decision-maker}
+The company is \term{Barq AI}, a (hypothetical but realistic) UAE artificial-intelligence
+infrastructure operator. ``Barq'' means \emph{lightning} in Arabic --- fitting for a business that
+sells raw computing speed. The decision-maker is Barq's \term{CFO} and \term{investment committee}:
+the people who must sign off on spending several billion dirhams. The dashboard is the tool they
+would take into that meeting.
+
+\subsection{The financial problem}
+Barq must decide: \emph{should we spend about \textbf{AED 5.8 billion} to build and own a
+\textbf{40~MW} AI/GPU data-centre hall in Abu Dhabi, and operate it for \textbf{8 years}, renting out
+its computing power to AI companies?} A \term{data centre} is a building full of powerful computers;
+a \term{GPU} (graphics processing unit) is the chip that does the heavy maths for AI, rented out here
+by the GPU-hour. 40~MW is the electrical power the computers draw --- a very large facility.
+
+\subsection{Why the decision is important}
 \begin{itemize}
-  \item \textbf{Huge amount of money.} AED 5.8 billion is a ``bet the company'' decision.
-  \item \textbf{Prices keep changing.} The price to rent a GPU for one hour crashed from about
-  \$8 to about \$2.85--3.50 recently. If the price stays low, the project can lose money.
-  \item \textbf{Timing.} The UAE is trying to become a world hub for AI computing, and Abu
-  Dhabi's electricity is cheap, which helps.
+  \item \textbf{Bet-the-company scale.} AED 5.8~billion is enormous; getting it wrong could sink
+  the firm.
+  \item \textbf{It is largely irreversible.} Purpose-built power and liquid cooling cannot easily be
+  repurposed if the project fails --- you cannot un-pour the concrete.
+  \item \textbf{The revenue price is volatile.} The price to rent a GPU for one hour fell from about
+  \$8 to roughly \$2.85--3.50 as supply grew. If the price stays low, the project can lose money ---
+  this single number decides almost everything.
+  \item \textbf{Timing and location help.} The UAE is deliberately becoming a global AI-computing hub,
+  and Abu Dhabi's electricity is cheap, which lowers the biggest running cost.
 \end{itemize}
 
-Everything in Teraval exists to answer this one question with numbers instead of gut feeling.
+\subsection{The purpose of the dashboard}
+To replace gut feeling with numbers: to compute every standard capital-budgeting metric correctly and
+live, to show them as clear visuals, to stress-test the decision against bad luck, to add genuine AI
+(forecasting and a trained risk model) that improves the analysis, and to end with a defensible
+recommendation --- while always leaving the final call to a human.
 
 % =====================================================================
-\section{The money words, explained like you are 15}
-These are the finance ideas the dashboard uses. Each is one simple sentence.
+\section{Corporate Finance Concepts, with formulas (Brief \S2)}
+These are the finance ideas the project uses. Each has its formula and a plain-English meaning.
 
+\subsection{Time value of money and discounting}
+Money today is worth more than the same money later, because today's money can be invested. To
+compare cash arriving in different years, we shrink each future amount to its \term{present value}
+(PV):
+\[
+  \text{PV} \;=\; \frac{\text{FV}}{(1+r)^{n}},
+\]
+where FV is the future amount, $r$ is the yearly discount rate, and $n$ is the number of years away.
+Example: AED~100 in 5 years at $r=9\%$ is worth $100/1.09^{5}\approx\text{AED }65$ today.
+
+\subsection{Relevant (incremental) cash flows}
+Only cash flows that \emph{change because of the decision} count. Sunk costs (already spent) and
+unaffected costs are ignored. This is why our build-vs-rent test compares Barq's project
+\emph{against the next-best way of getting the same computing} (renting), not against ``doing
+nothing'' --- Barq needs the compute either way.
+
+\subsection{Discounted cash flow (DCF) and Net Present Value (NPV)}
+\term{DCF} means valuing something by discounting all its future cash flows. The headline DCF metric
+is \term{NPV}: add up every year's cash flow, each discounted to today, including the up-front spend
+(a negative number at year~0):
+\[
+  \text{NPV} \;=\; \sum_{t=0}^{n} \frac{\text{CF}_t}{(1+r)^{t}}.
+\]
+\textbf{Rule: NPV $>0$ means the project creates value --- accept; NPV $<0$ means it destroys value
+--- reject.} It is the single most important number in the project.
+
+\subsection{Internal Rate of Return (IRR) and Modified IRR (MIRR)}
+The \term{IRR} is the discount rate at which NPV would be exactly zero --- effectively the project's
+own yearly \% return:
+\[
+  \text{find } r^{*} \text{ such that } \sum_{t=0}^{n}\frac{\text{CF}_t}{(1+r^{*})^{t}} = 0,
+  \qquad \text{IRR}=r^{*}.
+\]
+If IRR $>$ WACC, the project beats its cost of money. IRR has a known flaw (it assumes cash is
+reinvested at the IRR itself), so we also compute \term{MIRR}, which reinvests positive cash at the
+WACC instead:
+\[
+  \text{MIRR} \;=\; \left(\frac{\text{FV of positive flows at WACC}}{-\,\text{PV of negative flows}}\right)^{1/n} - 1 .
+\]
+
+\subsection{Profitability Index (PI)}
+Value created per dirham invested:
+\[
+  \text{PI} \;=\; \frac{\text{PV of the inflows}}{\text{initial outlay}}
+  \;=\; 1 + \frac{\text{NPV}}{\lvert \text{CF}_0 \rvert}.
+\]
+PI $>1$ means every AED~1 invested returns more than AED~1 of value --- accept.
+
+\subsection{Payback and discounted payback}
+\term{Payback} is how many years until the cumulative cash flow first turns positive (you have your
+money back). \term{Discounted payback} does the same but on \emph{discounted} cash flows, so it is
+always longer and more honest. Short payback = less risk exposure.
+
+\subsection{The discount rate: WACC}
+The rate $r$ we discount with is the \term{Weighted Average Cost of Capital} --- the blended yearly
+return the company's investors (debt + equity) require:
+\[
+  \text{WACC} \;=\; \frac{E}{V}\,r_e \;+\; \frac{D}{V}\,r_d\,(1-T),
+\]
+where $E,D$ are equity and debt, $V=E+D$, $r_e,r_d$ are the costs of equity and debt, and $T$ is the
+tax rate (interest is tax-deductible, hence the $(1-T)$). We build ours up from the official Central
+Bank of the UAE risk-free anchor (base rate 3.65\%, 3-month EIBOR 3.94\%), a levered equity risk
+premium, and an after-tax cost of debt --- which lands near 8.6\%. \textbf{We deliberately kept 9\%},
+a slightly tougher bar, so our ``accept'' is conservative, not flattering.
+
+\subsection{Depreciation and the tax shield}
+Big assets are \term{depreciated} (their cost is spread over their useful life for accounting). We
+use \term{straight-line} depreciation (equal amount each year). Depreciation is not cash, but it
+reduces taxable profit, so it creates a \term{tax shield} (cash saved on tax) that we add back inside
+operating cash flow.
+
+\subsection{Equivalent Annual Cost (EAC) and the annuity factor}
+To compare two options that last \emph{different numbers of years} (own the hall for 8 years vs. a
+3-year cloud rental), you cannot compare their totals fairly. Instead you convert each into a level
+yearly cost with the same present value --- its \term{EAC}:
+\[
+  \text{EAC} \;=\; \frac{\text{PV of all the option's costs}}{a(r,n)},
+  \qquad
+  a(r,n) \;=\; \frac{1-(1+r)^{-n}}{r},
+\]
+where $a(r,n)$ is the \term{annuity factor} (the present value of AED~1 received each year for $n$
+years). Lower EAC wins. (An \term{annuity} is a fixed payment each period; a \term{perpetuity} is one
+that never ends --- we use the annuity idea directly in EAC.)
+
+\subsection{Break-even}
+The \term{break-even} value of an input is the value at which NPV is exactly zero. Our key one is the
+break-even GPU rental price: \textbf{\$3.34/GPU-hr}. Below it, the project loses money. We find it by
+\term{bisection} (repeatedly halving a search range until NPV crosses zero).
+
+\subsection{Monte-Carlo and probability of loss}
+Instead of one guess per uncertain input, we give each a \emph{range} and draw thousands of random
+combinations, computing NPV for each. The share of runs with NPV $<0$ is the \term{probability of
+loss}. This turns ``it might go wrong'' into a number ($\approx$21\%).
+
+% =====================================================================
+\section{Data and Assumptions (Brief \S3)}
+\label{sec:data}
+Every input is tagged \term{Historical (H)}, \term{Current (C)}, \term{Forecast (F)},
+\term{User-entered (U)} or \term{AI-generated (AI)}. Money is in AED millions; USD converts at the
+pegged \$1 = AED~3.6725.
+
+\begin{center}
+\small
+\begin{longtable}{L{4.4cm} L{4.2cm} L{6cm}}
+\toprule
+\textbf{Input} & \textbf{Base value} & \textbf{Type and basis}\\
+\midrule
+\endhead
+GPU rental price & \$4.00 / GPU-hr & \textbf{U/C} --- assumed contracted rate; market is \$2.85--3.50\\
+Utilization & 80\% & \textbf{U} --- mix of contracted + on-demand demand\\
+Electricity tariff & AED 0.15 / kWh & \textbf{C} --- Abu Dhabi industrial (official figure pending)\\
+PUE (cooling overhead) & 1.20 & \textbf{C} --- typical for liquid-cooled GB200\\
+WACC (discount rate) & 9\% & \textbf{F} --- built from official CBUAE rates + risk premia\\
+Facility scale & 40 MW; 300 racks; 21{,}600 GPUs & \textbf{C} --- GB200 NVL72 platform\\
+Rack cost & \$3.5 m / rack & \textbf{C} --- vendor list pricing\\
+Facility build cost & \$13 m / MW & \textbf{C} --- AI-grade data-centre build\\
+Project life & 8 years & \textbf{U} --- appraisal horizon (GPU useful life)\\
+Tax rate & 9\% & \textbf{C} --- UAE corporate tax (from 2023)\\
+Working capital & AED 150 m & \textbf{U} --- recovered at the end\\
+CBUAE base rate & 3.65\% & \textbf{H/C} --- Central Bank of the UAE, 29 Jul 2026 (evidence file)\\
+3-month EIBOR & 3.94\% & \textbf{H/C} --- CBUAE EIBOR table, 31 Jul 2026 (evidence file)\\
+GPU-price history & 40-month series, \$5.6$\to$\$3.1 & \textbf{H} --- representative 2023--26 market trend (trains the ML forecaster)\\
+Forecast spot rate & $\approx$\$2.73 / GPU-hr & \textbf{AI} --- output of the trained AR(1) forecaster\\
+Accept-probability & 95\% at base & \textbf{AI} --- output of the trained risk classifier\\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\textbf{What each data type means here:}
 \begin{itemize}
-  \item \term{Cash flow} --- the money coming in or going out each year.
-  \item \term{Discounting / Time value of money} --- money later is worth less than money now
-  (AED 100 next year is worth less than AED 100 today), so future money is shrunk down to
-  ``today's value.''
-  \item \term{WACC (discount rate)} --- the yearly ``cost of money'' for the company; how much
-  return investors expect. We use \textbf{9\%}. It is the bar the project must beat.
-  \item \term{NPV (Net Present Value)} --- add up all future cash, shrunk to today's value,
-  minus what you spend. \textbf{Positive NPV = the project makes you richer.} This is the main
-  score.
-  \item \term{IRR (Internal Rate of Return)} --- the yearly \% return the project earns. If it
-  is higher than the 9\% WACC, that is good.
-  \item \term{MIRR} --- a more careful version of IRR that fixes a known flaw in it.
-  \item \term{PI (Profitability Index)} --- value created per AED spent. Above 1 is good.
-  \item \term{Payback} --- how many years until you get your money back.
-  \item \term{Break-even} --- the price (or usage level) at which the project exactly breaks
-  even (NPV~=~0). Below it you lose money.
-  \item \term{EAC (Equivalent Annual Cost)} --- turns a project's whole-life cost into one
-  fair ``rent-like'' yearly number, so we can compare options that last different numbers of
-  years.
+  \item \textbf{Historical} --- the past: the 40-month GPU-price series and the dated CBUAE rate
+  screenshots in the \texttt{datasets/} folder.
+  \item \textbf{Current} --- today's market/structural facts (hardware costs, tariff, tax, platform).
+  \item \textbf{Forecast} --- forward-looking judgement, chiefly the 9\% WACC.
+  \item \textbf{User-entered} --- the six dashboard sliders an analyst moves (price, utilization,
+  WACC, tariff, PUE, rack cost) plus the horizon.
+  \item \textbf{AI-generated} --- \emph{genuinely} produced by our trained models: the forecast spot
+  price and the accept-probability (see Section~\ref{sec:ml}). This is real, not a relabelled formula.
 \end{itemize}
 
+\textbf{Official-data note.} We downloaded the CBUAE base rate and EIBOR (with evidence files). The
+Abu Dhabi industrial electricity tariff could not be downloaded --- the \texttt{data.bayanat.ae}
+portal was down --- so we kept the AED~0.15/kWh benchmark and documented the gap honestly.
+
 % =====================================================================
-\section{The headline answer (the verified numbers)}
-Using realistic assumptions, the base case looks like this:
+\section{Financial Calculations, worked (Brief \S4)}
+The brief asks for at least three major calculations; we have many. Here is the base case built up
+from scratch.
+
+\subsection{Step 1 --- the up-front spend (Year 0)}
+\begin{itemize}
+  \item IT hardware: $300\text{ racks}\times\$3.5\text{m}\times3.6725 = \text{AED }3{,}856\text{ m}$.
+  \item Facility: $40\text{ MW}\times\$13\text{m}\times3.6725 = \text{AED }1{,}910\text{ m}$.
+  \item Capex $=3{,}856+1{,}910=\text{AED }5{,}766\text{ m}$; plus working capital AED~150~m
+  $\Rightarrow$ \textbf{initial outlay AED 5{,}916 m} (this is $\text{CF}_0$, negative).
+\end{itemize}
+
+\subsection{Step 2 --- the yearly operating cash}
+\begin{itemize}
+  \item Revenue $=21{,}600\text{ GPUs}\times8{,}760\text{ hrs}\times80\%\times\$4.00\times3.6725
+  \approx \textbf{AED 2{,}224 m/yr}$.
+  \item Energy $\approx$ AED~57~m; total operating cost $\approx$ \textbf{AED 600 m/yr}; so
+  \textbf{EBITDA $\approx$ AED 1{,}624 m/yr} (earnings before interest, tax, depreciation).
+  \item Subtract depreciation, apply 9\% tax on the profit, add the tax shield back $\Rightarrow$
+  operating cash flow. A GPU \term{refresh} outflow hits in Year~4; salvage + working-capital
+  recovery come in Year~8.
+\end{itemize}
+
+\subsection{Step 3 --- discount and score}
+Discounting the 8-year free-cash-flow stream at 9\% gives the headline results:
 
 \begin{center}
 \begin{tabular}{lll}
 \toprule
-\textbf{Measure} & \textbf{Value} & \textbf{Meaning} \\
+\textbf{Metric} & \textbf{Value} & \textbf{What it says} \\
 \midrule
-NPV & \textbf{+AED 1,854M} & positive $\rightarrow$ creates value \\
-IRR & 16.5\% & beats the 9\% WACC \\
-MIRR & 12.6\% & also beats 9\% \\
-Profitability Index & 1.31 & above 1 $\rightarrow$ good \\
+NPV & \textbf{+AED 1{,}854 m} & positive $\rightarrow$ creates value $\rightarrow$ accept \\
+IRR & 16.5\% & beats the 9\% WACC $\rightarrow$ accept \\
+MIRR & 12.6\% & still beats 9\% \\
+Profitability Index & 1.31 & $>1 \rightarrow$ AED 1.31 of value per AED spent \\
 Payback & 5.0 years & within the 8-year life \\
 Discounted payback & 6.3 years & within life, but late \\
-Break-even GPU price & \textbf{\$3.34/GPU-hr} & scary: the market is \$2.85--3.50 \\
+Break-even GPU price & \textbf{\$3.34/GPU-hr} & inside today's \$2.85--3.50 market --- thin! \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\textbf{Plain meaning:} the project makes money (about AED 1.85 billion of value), but the
-safety margin is thin --- the break-even price sits right inside today's market range. That
-single fact is the heart of the whole project.
+\subsection{Step 4 --- the relevant-cash-flow test: build vs rent}
+Because Barq needs the compute either way, we compare \emph{building} against \emph{renting} the same
+capacity from a hyperscaler, on \term{EAC} (different lives). Building is a fixed cost; renting scales
+with usage. Result: \textbf{building wins only above about 77\% sustained utilization}; at the base
+case building beats renting by a thin \textbf{incremental NPV of +AED 320 m}. As a self-check, the
+sign of that incremental NPV matches the difference in EACs --- two independent routes agree.
+
+\subsection{Step 5 --- the decision indicated}
+Every deterministic metric points the same way at the base case: \textbf{accept}. But the break-even
+price sits right inside the current market and the safety margin is thin --- which is exactly why the
+scenario, sensitivity, Monte-Carlo and AI sections exist: to test whether ``accept'' survives bad luck.
 
 % =====================================================================
-\section{The technology we used, and why}
-Think of the app as three layers.
+\section{AI Features --- the five-point breakdown (Brief \S5)}
+The brief wants at least five AI features, each explained five ways. We have \textbf{seven}, and
+\textbf{two of them are genuinely trained machine-learning models} (Section~\ref{sec:ml}), not
+rule-based helpers. Every feature is \emph{grounded}: the deterministic engine computes all
+valuations; the AI forecasts inputs, quantifies risk, or explains --- it never invents a valuation.
 
-\subsection*{Layer 1 --- the website you see (front-end)}
-\begin{itemize}
-  \item \term{React 19 + TypeScript} --- the language/framework for building the interface.
-  TypeScript catches mistakes before they happen.
-  \item \term{Vite} --- the tool that builds and runs the site very fast.
-  \item \term{TailwindCSS v4} --- how we style everything (the dark theme, glass cards).
-  \item \term{Zustand} --- a small ``memory box'' that holds the current slider values so every
-  chart updates together.
-  \item \term{Framer Motion + GSAP} --- animations (the sliding tabs, the counting numbers).
-  \item \term{Recharts} --- the 2D charts (bars, lines, the tornado).
-  \item \term{Three.js + react-three-fiber + drei + postprocessing} --- the 3D data-centre hall
-  with the glowing server racks.
-\end{itemize}
+\newcommand{\feat}[6]{%
+  \medskip\noindent\textbf{#1}\par
+  \begin{itemize}[leftmargin=1.4em,itemsep=1pt,topsep=1pt]
+    \item \textbf{What it does:} #2
+    \item \textbf{Information it uses:} #3
+    \item \textbf{Result it produces:} #4
+    \item \textbf{How it helps the decision-maker:} #5
+    \item \textbf{Limitation / risk:} #6
+  \end{itemize}}
 
-\subsection*{Layer 2 --- the money brain (finance engine)}
-\begin{itemize}
-  \item A pure \term{TypeScript} module (\texttt{web/src/finance/}) that does all the maths:
-  NPV, IRR, MIRR, PI, payback, break-even, build-vs-rent, and a Monte-Carlo simulator.
-  \item It is copied exactly into a \term{Python} file (\texttt{docs/finance-model-reference.py})
-  that uses \texttt{numpy}. The two must always give the same numbers. This is our ``source of
-  truth.''
-\end{itemize}
+\feat{F1 --- Trained GPU-price forecaster (machine learning)}
+{Learns how the GPU rental price moves over time and projects it forward with a confidence band.}
+{A 40-month historical price series; it fits an AR(1) time-series model by least squares.}
+{A forward price path with P10--P90 bands and a held-out test error (RMSE $\approx$\$0.06, MAPE 1.7\%);
+central forecast $\approx$\$2.73/GPU-hr.}
+{Replaces a flat guess with a data-driven, validated estimate of the most important and most volatile
+input, and flags that spot prices sit below break-even.}
+{The market is non-stationary and the training series is representative, not a licensed feed --- so it
+is shown as a band, never as certainty.}
 
-\subsection*{Layer 3 --- the AI chat helper (assistant back-end)}
-\begin{itemize}
-  \item \term{FastAPI} (Python) --- a tiny web service.
-  \item \term{NVIDIA NIM} --- the actual AI language model (it is ``OpenAI-compatible,'' so the
-  same code style works). It only \emph{explains} the numbers; it never makes numbers up.
-\end{itemize}
+\feat{F2 --- Trained risk classifier / surrogate (machine learning)}
+{Learns the accept/reject boundary of the whole model, so it can instantly predict the chance a given
+set of assumptions creates value.}
+{$\sim$4{,}000 driver combinations, each labelled accept/reject \emph{by our own deterministic
+engine}; a logistic-regression classifier is trained on a 75/25 train/test split.}
+{A live accept-probability, a learned price$\times$utilization ``decision surface,'' and permutation
+feature-importance --- with held-out test accuracy 96.7\% and ROC-AUC 0.998.}
+{Gives an instant risk read as sliders move and, via feature-importance, an independent, data-driven
+confirmation that price and utilization dominate.}
+{It emulates the current model, so it inherits the model's own assumptions --- it is not an external
+opinion.}
 
-\subsection*{Tools that keep it correct, and where it lives online}
-\begin{itemize}
-  \item \term{Vitest} --- our automatic test suite (35 tests). \term{oxlint} --- a code-quality
-  checker. \term{tsc} --- the TypeScript checker.
-  \item \term{Playwright} --- headless browser we used to take screenshots and prove things work.
-  \item \term{Vercel} hosts the website; \term{Render} hosts the AI back-end. The app is live.
-  \item \term{LaTeX} (this document) for reports; \term{NotebookLM} to turn the report into slides.
-\end{itemize}
+\feat{F3 --- Monte-Carlo risk simulator}
+{Runs thousands of random ``what-if'' worlds to measure the spread of possible outcomes.}
+{Triangular ranges around each key input; 5{,}000 draws through the engine with a fixed random seed.}
+{The probability of loss ($\approx$21\%), the average NPV (+AED 1{,}456 m), and P10/P90 outcomes.}
+{Turns vague uncertainty into a concrete risk number the committee can weigh.}
+{Results depend on the assumed input ranges; wrong ranges give a falsely tight or loose picture.}
+
+\feat{F4 --- AI Finance Assistant (NVIDIA NIM chatbot)}
+{Answers natural-language questions about the dashboard in plain English.}
+{The live computed model state for the current tab, handed to an NVIDIA NIM language model.}
+{A written, tab-aware explanation streamed word by word.}
+{Lets a non-financial manager interrogate the analysis conversationally.}
+{Language models can \emph{hallucinate}; we mitigate by grounding it in the engine's numbers and
+telling it to explain only, never generate figures --- and it falls back to a local answerer if the
+server is off.}
+
+\feat{F5 --- Scenario generator}
+{Auto-builds a coherent optimistic / base / pessimistic set of assumptions.}
+{The current slider values, shifted by sensible amounts in the favourable/unfavourable directions.}
+{Three ready-made scenarios you can apply with one click.}
+{Saves manual set-up and keeps the three cases internally consistent.}
+{The shift sizes are judgement calls, not laws of nature.}
+
+\feat{F6 --- Anomaly / unrealistic-assumption detector}
+{Flags inputs that are outside believable ranges.}
+{The current assumptions vs. physical/market limits (e.g.\ a PUE below~1 is impossible).}
+{A warning when an input is implausible.}
+{Stops ``garbage-in, garbage-out'' before it reaches the decision.}
+{It checks plausibility, not correctness --- a believable-but-wrong number still passes.}
+
+\feat{F7 --- Recommendation engine}
+{Writes the final accept/reject paragraph and a stage-gate plan.}
+{NPV, IRR, PI, break-even, the dominant driver, and the probability of loss.}
+{A short, grounded conclusion with conditions attached when the ``accept'' is thin.}
+{Gives the committee a ready, defensible narrative tied to the numbers.}
+{It synthesises; it does not decide --- the human must still sign.}
 
 % =====================================================================
-\section{The dashboard, tab by tab}
-The app has a top navigation bar with \textbf{8 tabs}, a floating \textbf{AI assistant} button
-(bottom-right, on every tab), and a header (logo, a live ``model self-test'' badge, a
-``Download summary'' button, and the current Accept/Reject verdict).
+\section{How the machine learning actually works (train / test)}
+\label{sec:ml}
+\textbf{Important correction.} An earlier version of this project had \emph{no} machine learning ---
+its ``AI'' was simulations plus a chatbot --- and we honestly said so. That has now changed: we added
+two genuinely trained models (F1 and F2 above) that \emph{do} use a train/test split and report
+held-out metrics. Here is exactly how, so we can defend it.
 
+\subsection{What a train/test split is, and why it matters}
+In machine learning you \term{train} a model on part of the data and \term{test} it on a separate part
+it never saw during training. If it also does well on the unseen \emph{test} data, it has genuinely
+\emph{learned the pattern} rather than memorised the answers (\term{overfitting}). Reporting the
+\emph{test} score --- not the training score --- is what makes the claim honest.
+
+\subsection{The risk classifier (F2), step by step}
 \begin{enumerate}
-  \item \term{Overview.} The landing page. Shows a live \textbf{3D data-centre hall} (racks glow
-  brighter when usage is higher; a heat plume changes colour with cooling efficiency; click a
-  rack to inspect it), the six headline \textbf{KPI cards} (NPV, IRR, MIRR, PI, Payback,
-  Break-even), and the \textbf{AI recommendation}.
-
-  \item \term{Cash Flow.} A chart of money in/out for each of the 8 years. Year~0 is the big
-  spend; Year~4 dips because we replace ageing GPUs (a ``refresh''); the line shows the running
-  total that crosses zero at the discounted payback point ($\approx$6.3 years).
-
-  \item \term{Build vs Rent.} Should Barq \emph{build and own} the hall, or \emph{rent} computing
-  from a cloud giant? Because the two last different numbers of years, we compare them with
-  \term{EAC}. Building is a fixed cost; renting grows with usage --- so \textbf{building only wins
-  above about 77\% usage}. At the base case, building is slightly better (extra value of roughly
-  +AED 320M).
-
-  \item \term{Scenarios.} Three futures side by side:
-  \emph{Optimistic} (+AED 10,216M, accept), \emph{Base} (+AED 1,854M, accept), and
-  \emph{Pessimistic} ($-$AED 4,138M, reject). This shows the decision can flip.
-
-  \item \term{Sensitivity \& Risk.} Six \textbf{sliders} (GPU price, usage, WACC, tariff, cooling,
-  rack cost). Drag one and \emph{every} number in the app updates instantly. A \term{tornado chart}
-  ranks which input matters most (answer: GPU price \#1, usage \#2). A \textbf{risk panel} lights
-  up warnings (e.g.\ ``price below break-even''). It also shows \textbf{decision thresholds} ---
-  the exact point at which the verdict flips.
-
-  \item \term{AI Analysis.} The AI features: a \textbf{Monte-Carlo} simulator (see
-  Section~\ref{sec:data}), an AI \textbf{rate forecast} with a range band, and an AI
-  \textbf{scenario generator}.
-
-  \item \term{Board Review.} Our newest feature. Five ``departments'' (Finance, Operations,
-  Commercial, Sustainability, Technology) each score the project out of 100 using a fixed rule,
-  take a stance (support / support-with-conditions / oppose), and a \textbf{weighted board verdict}
-  combines them. At the base case: \textbf{APPROVE WITH CONDITIONS, 65/100.} Every score comes from
-  the engine, so it all changes live with the sliders.
-
-  \item \term{Ethics \& Audit.} The ethics of using AI (with our real safeguards), a
-  \textbf{Data Provenance} panel (which numbers are official and where they came from), and an
-  \textbf{Assumptions Audit} table that tags every input and runs a live ``model self-test.''
+  \item \textbf{Make data.} We draw $\sim$4{,}000 random combinations of the five drivers and ask the
+  \emph{deterministic engine} for the truth of each: value-creating (NPV~$>0$) or not. So the labels
+  are our own finance model --- the AI cannot fabricate; it can only learn what the engine already
+  says.
+  \item \textbf{Split.} 75\% train, 25\% test (3{,}000 / 1{,}000), shuffled with a fixed seed.
+  \item \textbf{Train.} A \term{logistic regression} --- $p = 1/(1+e^{-(\mathbf{w}\cdot\mathbf{x}+b)})$
+  --- is fitted by gradient descent to minimise cross-entropy loss. We add a price$\times$utilization
+  feature because revenue depends on their product.
+  \item \textbf{Test.} On the held-out 1{,}000: \textbf{accuracy 96.7\%, ROC-AUC 0.998, F1 0.968}
+  (precision 0.973, recall 0.963). Train accuracy (98.4\%) is close to test accuracy, so it is not
+  overfit.
+  \item \textbf{Use.} It outputs a live accept-probability (95\% at base) and, by \term{permutation
+  importance} (scramble one input, see how much accuracy falls), ranks the drivers:
+  price$\times$util $>$ price $>$ utilization $>$ WACC $>$ tariff $>$ PUE --- which independently
+  matches our tornado chart.
 \end{enumerate}
 
-\textbf{The floating AI Assistant} (on all tabs) answers questions in plain English. It is
-\emph{grounded}: it is handed the live numbers and told to only explain them, never invent them.
-If the AI server is off, it falls back to a built-in answer-er so it still works.
+\subsection{The price forecaster (F1), step by step}
+It fits a \term{first-order autoregression} --- each month depends on the previous one:
+\[
+  p_t \;=\; c + \phi\,p_{t-1} + \varepsilon_t, \qquad
+  \text{long-run level} = \frac{c}{1-\phi}.
+\]
+Fitted by \term{ordinary least squares} on the first $\sim$29 months and tested on the last~10, it
+gives $\phi=0.955$ (a stable, mean-reverting process), a long-run level of \$2.63, and a held-out
+one-step \textbf{RMSE of \$0.063 (MAPE 1.7\%)}. Forecasting forward 8 years gives an average spot
+price of $\approx$\$2.73 (P10--P90 \$2.27--3.19).
 
-\textbf{Download summary} (header button) prints a clean one-page PDF of whatever is currently
-on screen --- a live snapshot to share.
+\subsection{The honest, useful conclusion}
+The forecaster tracks the \emph{spot/market} rate; our base case uses \$4.00, a \emph{contracted}
+rate. The gap between them (\$2.73 spot vs \$4.00 contracted, with break-even at \$3.34) is exactly
+the ``contracted premium'' Barq must secure. So the AI does not contradict the project --- it
+\emph{quantifies why the recommendation insists on locking in multi-year customer contracts} rather
+than riding the falling spot market. Both models \emph{augment} the analysis; the deterministic engine
+still computes every valuation.
 
 % =====================================================================
-\section{The six AI features (Brief requires five; we have six)}
+\section{The dashboard, component by component (Brief \S5 dashboard)}
+The app has \textbf{five tabs} (grouped so nothing is buried), a header (logo, live self-test badge,
+``Download summary'' button, current verdict), and a floating AI assistant on every tab. The brief's
+six required components are all present (KPI cards, cash-flow chart, scenario comparison, sensitivity,
+risk panel, AI recommendation) plus several extras.
+
 \begin{enumerate}
-  \item \textbf{F1 --- Rate forecaster.} Draws a likely future path for the GPU rental price with
-  a ``P10--P90'' range (a low-to-high band), so we never pretend to know the exact future.
-  \item \textbf{F2 --- Scenario generator.} Auto-builds an up/base/down set of assumptions from
-  wherever the sliders are right now.
-  \item \textbf{F3 --- Monte-Carlo risk simulator.} Runs 5,000 ``what-if'' worlds and reports the
-  chance of losing money.
-  \item \textbf{F4 --- AI Finance Assistant.} The chat helper (NVIDIA NIM), grounded in the engine.
-  \item \textbf{F5 --- Anomaly / unrealistic-input detector.} Flags inputs outside believable
-  ranges (e.g.\ cooling better than physically possible).
-  \item \textbf{F6 --- Recommendation engine.} Writes the final accept/reject paragraph, including
-  a ``stage-gate'' plan when the accept is thin.
+  \item \textbf{Overview.} Opens with a \term{Decision Brief} that states the question, the stakes and
+  \emph{how to read the page} --- so the verdict lands as a conclusion, not a surprise. Then the live
+  \term{3D data-centre hall} (racks brighten with utilization; the heat plume warms as cooling gets
+  less efficient; click a rack to inspect), the six \term{KPI cards} (NPV, IRR, MIRR, PI, payback,
+  break-even --- each labelled accept/reject), and the \term{AI recommendation}.
+  \item \textbf{Cash Flow \& Build-vs-Rent.} The 8-year cash-flow chart (Year~0 the big spend, Year~4
+  the refresh dip, a line crossing zero at the discounted payback), then the Build-vs-Rent / EAC
+  comparison.
+  \item \textbf{Scenarios \& Sensitivity.} The three scenarios side by side; \term{decision
+  thresholds} (the exact point the verdict flips); six live \term{sliders}; a \term{tornado chart}
+  ranking each driver's impact; and a \term{risk-and-alert panel}.
+  \item \textbf{AI \& Forecasting.} The Monte-Carlo distribution, the scenario generator, the rate
+  forecast band --- and the \term{Predictive-AI} section showing the two trained ML models (metrics,
+  confusion matrix, decision surface, feature-importance, live accept-probability).
+  \item \textbf{Board \& Ethics.} A \term{Departmental Review Board} (five departments each score the
+  same live case by a fixed rule and a weighted verdict aggregates them --- base case: ``approve with
+  conditions''), then the ethics panel, the data-provenance panel, and the assumptions-audit table
+  with a live model self-test.
 \end{enumerate}
+Every component reads one shared ``memory box'' of assumptions, so moving any slider updates the whole
+app at once. \textbf{Download summary} prints a clean one-page PDF of the current live case.
 
 % =====================================================================
-\section{Data, ``spread,'' and the train/test-split question}
-\label{sec:data}
+\section{The AI Finance Assistant --- sample questions and answers (Brief \S6)}
+The floating assistant answers questions about the dashboard, grounded in the live numbers. Five (plus)
+worked examples:
 
-\subsection*{Is there a machine-learning train/test split? Short answer: no --- and here is why}
-People often ask for a \term{train/test split} (splitting data to \emph{train} a model on some
-and \emph{test} it on the rest). That belongs to \emph{machine-learning} projects that
-\emph{learn} a model from examples.
-
-\textbf{Teraval does not learn a model from data.} Its brain is a \emph{deterministic financial
-calculator} --- given the same inputs, it always returns the same answer, using textbook formulas
-(NPV, IRR, etc.). There is nothing to ``train,'' so there is \textbf{no train/test split}. Instead
-of learning from a dataset, we \emph{feed in assumptions} and \emph{compute} the result. The
-``AI'' parts are simulations and an explaining chatbot, not a trained predictor. Being honest
-about this is important --- inventing a fake train/test split would be misleading.
-
-\subsection*{So what plays the role of ``data''? Three things}
-\begin{enumerate}
-  \item \textbf{Real official data} (in the \texttt{datasets/} folder). We downloaded official
-  figures to back our assumptions:
-  \begin{center}
-  \begin{tabular}{llll}
-  \toprule
-  \textbf{Figure} & \textbf{Value} & \textbf{Source} & \textbf{Status} \\
-  \midrule
-  CBUAE Base Rate & 3.65\% & Central Bank of the UAE, 29 Jul 2026 & official \\
-  3-month EIBOR & 3.94\% & CBUAE EIBOR table, 31 Jul 2026 & official \\
-  Abu Dhabi industrial tariff & AED 0.15/kWh & Abu Dhabi Open Data (ADWEA) & pending* \\
-  \bottomrule
-  \end{tabular}
-  \end{center}
-  \footnotesize *The tariff download was blocked by a portal outage (\texttt{data.bayanat.ae} was
-  down); we kept the AED 0.15 benchmark and documented it. The two interest rates feed the WACC.
-  \normalsize
-
-  \item \textbf{The assumption set} --- the model's inputs (the six sliders plus structural
-  numbers like 300 racks, 21,600 GPUs, 40~MW, 8-year life, 9\% tax). Each is tagged as Historical,
-  Current, Forecast, User-entered, or AI-generated in the Assumptions Audit tab.
-
-  \item \textbf{The Monte-Carlo distributions} --- this is what people usually mean by
-  ``spread.'' Instead of one guess per input, we give each key input a \emph{range} shaped like a
-  triangle (lowest, most-likely, highest), then draw 5,000 random combinations and compute NPV for
-  each. See below.
-\end{enumerate}
-
-\subsection*{The ``spread'' of outcomes (two ways we show it)}
-\textbf{(a) Monte-Carlo spread} --- from 5,000 simulated worlds at the base case:
-\begin{center}
-\begin{tabular}{ll}
-\toprule
-Chance of losing money, P(NPV $<$ 0) & $\approx$ 21\% \\
-Average NPV & +AED 1,456M \\
-Low end (P10) & $-$AED 767M \\
-High end (P90) & +AED 3,757M \\
-\bottomrule
-\end{tabular}
-\end{center}
-The distribution is drawn as a histogram (a hill shape); the left, red part is the ``loss'' zone.
-
-\textbf{(b) Scenario spread} --- three deliberate futures:
-\begin{center}
-\begin{tabular}{llll}
-\toprule
-Scenario & NPV & IRR & Decision \\
-\midrule
-Optimistic & +AED 10,216M & 44.5\% & Accept \\
-Base & +AED 1,854M & 16.5\% & Accept (conditional) \\
-Pessimistic & $-$AED 4,138M & $-$9.5\% & Reject \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\textbf{The Monte-Carlo is repeatable.} We use a fixed random ``seed,'' so the 21\% figure is the
-same everywhere in the app and every time --- important for a report you can trust.
-
-% =====================================================================
-\section{How we keep the numbers trustworthy}
-\begin{itemize}
-  \item \textbf{35 automatic tests} (Vitest) check the maths against the verified figures. If a
-  number ever drifts, a test fails.
-  \item \textbf{Live self-test} in the app checks financial identities (e.g.\ discounting at the
-  IRR must give NPV~=~0; PI~$>$~1 exactly when NPV~$>$~0). A badge in the header turns red if the
-  model's logic ever breaks.
-  \item \textbf{Two copies in sync} --- the TypeScript engine and the Python reference must match.
-  \item \textbf{Grounding} --- the AI never invents numbers; it is handed the computed values and
-  told to only explain them.
-  \item \textbf{Type-checked and linted} --- \texttt{tsc} and \texttt{oxlint} both pass clean.
-\end{itemize}
-
-% =====================================================================
-\section{Ethics (short version)}
-The AI \emph{advises}; the human \emph{decides}. We show forecasts as ranges (never as certainty),
-ground the chatbot so it cannot hallucinate figures, tag every assumption with its source, stress
-the downside with the pessimistic case and Monte-Carlo, and state on every recommendation that the
-final invest/reject call rests with the CFO --- not the AI.
-
-% =====================================================================
-\section{The final recommendation}
-\textbf{Accept --- but as a ``stage-gated'' accept.} The base case creates about AED 1.85 billion
-of value with a 16.5\% return, but the margin is thin (break-even \$3.34 is close to the \$4.00
-price, and there is a $\approx$21\% chance of a loss). So the advice is: \emph{proceed, but release
-the money in stages tied to real, measured usage staying above roughly 67--77\%, lock in multi-year
-rental customers first, and keep a ``rent instead'' fallback.} The internal Board Review reaches the
-same conclusion: \textbf{Approve With Conditions (65/100).}
-
-% =====================================================================
-\section{Probable questions (and short answers)}
-\begin{description}[leftmargin=0pt, style=nextline]
-  \item[``Is this machine learning? Where is the train/test split?''] No. It is a deterministic
-  finance calculator plus simulations, so there is no training and no split (see Section~\ref{sec:data}).
-  \item[``Why 9\% WACC when the official rates suggest about 8.6\%?''] We kept 9\% on purpose --- a
-  tougher bar --- so the ``accept'' verdict is conservative, not exaggerated.
-  \item[``Which single number decides everything?''] The GPU rental price. A $-$20\% move flips NPV
-  negative. Usage is the second-most important.
-  \item[``What if electricity gets more expensive?''] Barely matters --- Abu Dhabi's cheap power is
-  a real advantage; even a big tariff rise moves NPV far less than the GPU price does.
-  \item[``How does the chatbot avoid making up numbers?''] It is ``grounded'': it receives the live
-  computed figures and is instructed to explain only, never to generate numbers.
-  \item[``What happens if the AI server is down?''] The assistant falls back to a built-in,
-  engine-grounded answer-er, so the app still answers correctly.
-  \item[``Is it actually live?''] Yes --- front-end on Vercel, AI back-end on Render.
-  \item[``What is still pending / future work?''] (1) the official tariff file (portal was down);
-  (2) an optional ``Custom Case'' feature (upload your own numbers) --- deferred as future work.
+\begin{description}[leftmargin=0pt,style=nextline]
+  \item[Q1. ``What is the project's NPV, and should we accept it?''] The base-case NPV is
+  \textbf{+AED 1{,}854 m}, so it creates value and the signal is \emph{accept} --- but conditionally,
+  because the safety margin is thin.
+  \item[Q2. ``Why does the NPV fall when the GPU price drops?''] Revenue is directly proportional to
+  the GPU price, so a lower price lowers every year's cash flow; below \$3.34/GPU-hr the NPV turns
+  negative.
+  \item[Q3. ``Which assumption has the greatest effect on the result?''] The GPU rental price (rank~1
+  on the tornado and in the ML feature-importance), followed by utilization.
+  \item[Q4. ``What happens if utilization falls to 65\%?''] The project moves toward the pessimistic
+  case and can turn negative; renting also becomes cheaper than building below $\sim$77\% utilization.
+  \item[Q5. ``Should management accept or reject the project?''] Accept, \emph{as a stage-gated
+  commitment}: release capital in tranches tied to measured utilization, lock in multi-year contracts,
+  and keep a rent fallback.
+  \item[Q6. ``Explain the result to a non-financial manager.''] ``We put in about AED~5.8~bn; over
+  8~years the discounted cash we get back is about AED~1.85~bn more than that, a 16.5\% return --- good,
+  but it depends heavily on keeping GPU rental prices up, so we should sign customers first.''
+  \item[Q7. ``What is the probability of losing money?''] About \textbf{21\%}, from a 5{,}000-run
+  Monte-Carlo simulation.
 \end{description}
+If the AI server is off, a built-in, engine-grounded answerer gives the same factual replies.
+
+% =====================================================================
+\section{Scenario and Sensitivity Analysis (Brief \S7)}
+
+\subsection{The three scenarios}
+\begin{center}
+\begin{tabular}{L{2.4cm} L{5.6cm} l l}
+\toprule
+\textbf{Scenario} & \textbf{Key assumptions} & \textbf{NPV} & \textbf{Decision}\\
+\midrule
+Optimistic & \$6.0/hr, 90\% util, cheaper power, 8\% WACC & +AED 10{,}216 m & Accept\\
+Base & \$4.0/hr, 80\% util, 9\% WACC & +AED 1{,}854 m & Accept (conditional)\\
+Pessimistic & \$2.5/hr, 65\% util, dearer power, 11\% WACC & $-$AED 4{,}138 m & Reject\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{The four things the brief asks us to explain}
+\begin{itemize}
+  \item \textbf{Which variable has the greatest impact?} The \textbf{GPU rental price} --- the tornado
+  chart and the ML feature-importance agree. Utilization is second.
+  \item \textbf{Under what conditions does the decision change?} It flips to reject when the price falls
+  below the \$3.34 break-even, or utilization drops under $\sim$67\%, or the two combine (the
+  pessimistic case). The decision-thresholds panel shows each flip point live.
+  \item \textbf{The main financial risk.} A structural, lasting fall in the GPU rental rate below
+  break-even --- and the Monte-Carlo says there is a $\approx$21\% chance the base case loses money.
+  \item \textbf{The best management response.} De-risk the revenue: sign multi-year contracted offtake
+  above break-even, stage the capital release, and keep renting available as a fallback below the 77\%
+  build-vs-rent crossover.
+\end{itemize}
+
+% =====================================================================
+\section{Ethical Use of AI (Brief \S8)}
+Each ethics point the brief lists, with our real safeguard:
+\begin{itemize}
+  \item \textbf{Accuracy of AI estimates.} Forecasts are shown as \emph{ranges} (P10--P90), and the ML
+  models report \emph{held-out test error} so their accuracy is stated, not assumed.
+  \item \textbf{Risk of incorrect data.} Every input is source-tagged and range-checked; the anomaly
+  detector flags implausible values.
+  \item \textbf{AI hallucinations.} The chatbot is \emph{grounded} --- handed the computed numbers and
+  told to explain only --- so it cannot invent figures.
+  \item \textbf{Confidentiality.} All computation is client-side; commercially sensitive assumptions
+  never leave the browser.
+  \item \textbf{Bias in forecasts.} A bull-market bias is explicitly stress-tested by the pessimistic
+  scenario and the Monte-Carlo downside.
+  \item \textbf{Human review.} A live self-test checks the maths, and every recommendation states that
+  the AI advises only.
+  \item \textbf{Responsibility.} \textbf{The final invest/reject decision rests with the CFO and the
+  investment committee, not with the AI.}
+\end{itemize}
+
+% =====================================================================
+\section{Final Recommendation (Brief \S9)}
+\textbf{Proceed with the investment --- conditionally, as a stage-gated commitment.} The base case
+creates about AED~1.85~billion of value at a 16.5\% return against a conservative 9\% hurdle, and the
+build-vs-rent and board analyses agree. But the margin is thin: break-even (\$3.34) sits close to the
+\$4.00 price, the data-driven forecast puts the \emph{spot} rate below break-even, and there is a
+$\approx$21\% modelled chance of loss. So management should: \textbf{(i)} secure multi-year contracted
+offtake to hold the effective rate above break-even; \textbf{(ii)} release the capital in tranches
+gated on measured utilization staying above roughly 67--77\%; and \textbf{(iii)} keep hyperscaler
+rental as a fallback. This conclusion is supported by the financial calculations, the dashboard, the
+scenario and sensitivity analysis, the AI-generated insights (forecaster + risk classifier), and our
+own judgement. The internal Board Review reaches the same verdict: \emph{approve with conditions}.
+
+% =====================================================================
+\section{The Five Project Questions, answered (Brief \S11)}
+
+\q{Q1. What financial decision is being analysed, and why is it important?}
+Whether Barq AI should commit $\approx$AED~5.8~bn to build and own a 40~MW Abu Dhabi GPU data centre
+and operate it for 8 years. It matters because it is bet-the-company scale, largely irreversible, and
+its payoff hinges on a single volatile price (GPU rental), in a strategically timed UAE AI-hub market.
+
+\q{Q2. Which finance concepts, formulas, data and assumptions are required?}
+Time value of money and discounting; DCF/NPV; IRR/MIRR; PI; payback and discounted payback; WACC;
+depreciation and the tax shield; relevant (incremental) cash flows; EAC and the annuity factor;
+break-even; and Monte-Carlo (all with formulas in Section~2). Data: capex build-up, revenue/opex,
+the six drivers, official CBUAE rates, and a historical price series --- classified H/C/F/U/AI in
+Section~3.
+
+\q{Q3. What do the calculations show across the three scenarios?}
+Optimistic +AED~10{,}216~m (accept), base +AED~1{,}854~m (accept, conditional), pessimistic
+$-$AED~4{,}138~m (reject). The decision genuinely flips with the assumptions, which is the whole point
+of the appraisal.
+
+\q{Q4. How can AI improve the analysis, dashboard, forecasting and decision-making?}
+Four ways, all present: a \emph{trained forecaster} turns the key volatile input into a validated,
+banded estimate; a \emph{trained risk classifier} gives an instant accept-probability and a
+data-driven driver ranking; \emph{Monte-Carlo} converts uncertainty into a probability of loss; and a
+\emph{grounded chatbot} explains everything in plain language --- while the deterministic engine keeps
+every number honest.
+
+\q{Q5. What final recommendation, and what risks?}
+Accept, conditionally and stage-gated (Section~11). The dominant \emph{financial} risk is a structural
+fall in the GPU rental price below break-even; the dominant \emph{AI-related} risk is over-trusting an
+optimistic forecast --- mitigated by ranges, held-out testing, grounding, and mandatory human review.
+
+% =====================================================================
+\section{Technology stack, and how we keep it correct}
+\textbf{Front-end:} React~19 + TypeScript, Vite, TailwindCSS~v4, Zustand (shared state), Framer
+Motion + GSAP (animation), Recharts (2D charts), Three.js + react-three-fiber (the 3D hall). \textbf{ML
+layer:} pure TypeScript (\texttt{web/src/lib/ml/}) --- logistic regression, AR(1), metrics --- so the
+maths is inspectable, seeded and testable, with no heavy black-box library. \textbf{Finance engine:}
+a TypeScript module mirrored exactly by a Python reference (\texttt{docs/finance-model-reference.py});
+the two must always agree. \textbf{Assistant back-end:} FastAPI + NVIDIA~NIM. \textbf{Quality:}
+\textbf{45 automatic tests} (Vitest), a \texttt{tsc} type-check and an \texttt{oxlint} pass, a live
+in-app self-test of financial identities, and grounding so the AI never invents numbers.
+\textbf{Live:} front-end on Vercel, AI back-end on Render.
 
 % =====================================================================
 \section{Mini-glossary}
 \begin{description}[leftmargin=0pt, style=nextline, itemsep=1pt]
-  \item[Data centre / hall] a building full of computers.
-  \item[GPU] a powerful chip used for AI; here rented out by the hour.
-  \item[PUE] ``Power Usage Effectiveness'' --- how much extra power cooling needs; 1.0 is perfect,
-  1.2 is good.
-  \item[Deterministic] same inputs always give the same output.
-  \item[Monte-Carlo] running thousands of random ``what-if'' worlds to see the range of outcomes.
-  \item[Seed] a fixed starting point for the randomness so results repeat exactly.
-  \item[Grounded AI] an AI that can only use the real numbers it is given.
-  \item[SSE / streaming] the chatbot's reply appears word-by-word as it is generated.
-  \item[Deploy] to put the app online so anyone can use it.
+  \item[Capital budgeting] deciding whether a big long-term investment is worth it.
+  \item[GPU / GPU-hour] an AI chip / renting one for an hour (our unit of revenue).
+  \item[PUE] Power Usage Effectiveness --- cooling overhead; 1.0 is perfect, 1.2 is good.
+  \item[WACC] the blended yearly return investors require; our discount rate (9\%).
+  \item[NPV / IRR / MIRR / PI] the core value and return scores (see Section~2).
+  \item[EAC / annuity factor] tools to fairly compare options of different lengths.
+  \item[Deterministic] same inputs always give the same output (our engine).
+  \item[Monte-Carlo / seed] thousands of random what-if runs / a fixed start so they repeat.
+  \item[Machine learning] a model that \emph{learns} a pattern from example data.
+  \item[Train/test split] learn on part of the data, score on unseen part (honesty check).
+  \item[Logistic regression] a model that predicts a probability of a yes/no outcome.
+  \item[AR(1)] a time-series model where each step depends on the previous one.
+  \item[Accuracy / ROC-AUC / RMSE / MAPE] how right a model is (classification / forecast error).
+  \item[Feature importance] how much each input matters to a trained model.
+  \item[Surrogate model] a fast learned stand-in for a slower exact model.
+  \item[Grounded AI] an AI that may only use the real numbers it is handed.
 \end{description}
 
 \vspace{1em}
 \begin{center}\small\textcolor{tvgrey}{%
-Teraval $\cdot$ Barq AI capital-budgeting appraisal $\cdot$ all figures verified against the
-deterministic reference model.}\end{center}
+Teraval $\cdot$ Barq AI capital-budgeting appraisal $\cdot$ every figure verified against the
+deterministic reference model; the two ML models are reported on held-out test data.}\end{center}
 
 \end{document}
