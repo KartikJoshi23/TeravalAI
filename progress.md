@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 — COLLABORATOR (Prem): built **P1 Board Review** + **P2 Download-summary** + **P3 stage-gate recommendation nuance**; **35/35 tests**. Only **P4 (optional Custom Case)** remains. Prior: MASTER (Kartik) live deploy verified (Vercel + Render + NIM), report (8 pages, in band), and spec'd the 4 Project Atlas features. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 (later) — MASTER (Kartik, Opus 4.8): began the **genuine AI/ML layer** (brief §2/§3 gap: the old "AI features" were rule-based). **Stage A DONE** — real trained models grounded in the engine: ML-2 surrogate risk classifier (logistic regression, **96.7% held-out test acc, AUC 0.998**, learned importance reproduces the tornado: Price×Util>Price>Util) + ML-1 GPU-price AR(1) forecaster (**test RMSE $0.063, MAPE 1.7%**; forecasts ~$2.73 vs $3.34 breakeven — a real risk signal). **45/45 tests · tsc clean · build OK.** NEXT: Stage B (Predictive AI tab) + Stage C (report §5/§6). Prior: COLLABORATOR (Prem) built P1 Board + P2 Download + P3 stage-gate. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -427,6 +427,40 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 - **Report note added:** `report/main.tex` Dashboard-Explanation section now has a "Live
   deployment" paragraph linking the Vercel + Render + GitHub URLs (hyperref). Recompiled with
   MiKTeX: **latexmk exit 0, 8 pages, 0 overfull, prose 1,544 words (band 1,300–1,650).**
+
+## 🤖 Genuine AI/ML layer — Stage A DONE (2026-08-04, MASTER Kartik + Opus 4.8)
+
+**Why:** the brief is titled "AI-Enabled" and §2/§3 want AI *forecasting* + real *AI-generated
+estimates*, but our "AI features" (F1–F6) were rule-based math + an LLM chatbot. So we're adding a
+real ML layer **where finance genuinely uses data** — never on the arithmetic. **Iron rule: the
+deterministic engine stays the valuation ground truth; ML augments, never replaces, the NPV.**
+User approved the **full ML layer**; building it in stages, stop after each for review.
+
+**Stage A — ML core (pure-TS classical ML, seeded/reproducible, unit-tested). `web/src/lib/ml/`:**
+- `rng.ts` (seeded mulberry32 + helpers), `metrics.ts` (train/test split, accuracy, precision/recall/
+  F1, **ROC-AUC via Mann–Whitney**, RMSE/MAPE, z-score standardiser), `logreg.ts` (from-scratch
+  **logistic regression**, batch GD + L2, real loss curve, **permutation importance**).
+- **ML-2 surrogate risk classifier** (`surrogate.ts`): samples 4,000 driver combos → labels each via
+  our **own `evaluate()`** (NPV>0?) → trains logreg on [price, util, tariff, pue, wacc, price×util].
+  **Held-out: 96.7% test acc · AUC 0.998 · F1 0.968** (3000/1000 split). Learned importance
+  **Price×Util > GPU price > Utilization** independently reproduces the analytic tornado (signs
+  correct). Exposes live accept-probability + a price×util decision surface. Honest AI: ground truth
+  IS the engine.
+- **ML-1 GPU-price forecaster** (`forecaster.ts`): **AR(1) via OLS** on a documented, clearly-labelled
+  *representative* monthly series (blended H100/A100 rental, 2023→2026 public trend). **Held-out
+  one-step test RMSE $0.063 · MAPE 1.7%** (29/10 split), φ=0.955, long-run $2.63. 8-yr horizon mean
+  **$2.73 (P10–P90 $2.27–3.19)** — *below* the $3.34 breakeven ⇒ a real AI risk signal reinforcing
+  "secure contracted offtake". This is the authentic §3 "forecast/AI-generated" data.
+- `ml.test.ts`: **+10 tests** (test-acc≥0.9, AUC≥0.95, not-overfit, importance economics, determinism,
+  forecaster stability/held-out error/band widening). **Total 45/45 · tsc clean · build OK.**
+- Engine + `docs/finance-model-reference.py` UNTOUCHED; no new deps.
+
+**NEXT — AI/ML Stage B:** a **"Predictive AI" tab** (new component) visualising both models: forecaster
+(history + fit + forecast bands + held-out error), surrogate (metric cards, confusion matrix, decision
+surface, feature-importance bars, live accept-probability), wired to the store + assistant tab-context.
+**Stage C:** report §5 (reframe AI features around the trained models + metrics) + §3 data table
+(authentic historical/forecast/AI-generated rows); refresh `internal-team-report.tex`'s "no ML split"
+note. *Stopped here for Kartik's review of Stage A.*
 
 ## 🔧 In progress
 
