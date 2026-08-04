@@ -1,0 +1,373 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---- packages (all standard; compiles on Overleaf as-is) ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{tvblue}{HTML}{2563EB}
+\definecolor{tvgrey}{HTML}{444444}
+\newcommand{\term}[1]{\textcolor{tvblue}{\textbf{#1}}}
+\setlist{itemsep=2pt, topsep=3pt}
+
+\title{\textbf{Teraval --- Internal Team Report}\\[4pt]
+\large A plain-English guide to everything in the project}
+\author{Team: Kartik Joshi, Prem Kukreja, Gagandeep Singh, Samuel Alex, Aditya Chitale\\
+Module: Corporate Finance \quad$\cdot$\quad Instructor: Dr.\ Nathaniel Christopher}
+\date{Repository: \texttt{github.com/KartikJoshi23/TeravalAI}}
+
+\begin{document}
+\maketitle
+
+\begin{quote}
+\small \textbf{How to read this document.} This is our own team notebook. It explains
+\emph{everything} we built, in the simplest words we could find --- if a sentence needs a
+big word, we define it right there. If you are new to the project, read it top to bottom
+and you will understand the whole thing. Nothing is left out.
+\end{quote}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{The one-paragraph summary}
+\term{Teraval} is a website (a ``dashboard'') that helps a company decide whether a very
+expensive project is worth building. Our example company is \term{Barq AI}, and the project
+is a big \term{data centre} --- a warehouse full of powerful computers (GPUs) --- in Abu
+Dhabi that would rent out computing power for artificial intelligence. Building it would cost
+about \textbf{AED 5.8 billion}. Teraval does all the money maths, shows it as easy charts,
+lets you play with the numbers using sliders, adds some AI helpers, and finally says: ``Yes,
+build it --- but carefully.''
+
+% =====================================================================
+\section{The real-world question we are answering}
+A company called Barq AI has to decide: \emph{should we spend about AED 5.8 billion to build a
+40~MW AI/GPU data-centre hall in Abu Dhabi and rent out its computing power for 8 years?}
+
+Why this is a hard and important decision:
+\begin{itemize}
+  \item \textbf{Huge amount of money.} AED 5.8 billion is a ``bet the company'' decision.
+  \item \textbf{Prices keep changing.} The price to rent a GPU for one hour crashed from about
+  \$8 to about \$2.85--3.50 recently. If the price stays low, the project can lose money.
+  \item \textbf{Timing.} The UAE is trying to become a world hub for AI computing, and Abu
+  Dhabi's electricity is cheap, which helps.
+\end{itemize}
+
+Everything in Teraval exists to answer this one question with numbers instead of gut feeling.
+
+% =====================================================================
+\section{The money words, explained like you are 15}
+These are the finance ideas the dashboard uses. Each is one simple sentence.
+
+\begin{itemize}
+  \item \term{Cash flow} --- the money coming in or going out each year.
+  \item \term{Discounting / Time value of money} --- money later is worth less than money now
+  (AED 100 next year is worth less than AED 100 today), so future money is shrunk down to
+  ``today's value.''
+  \item \term{WACC (discount rate)} --- the yearly ``cost of money'' for the company; how much
+  return investors expect. We use \textbf{9\%}. It is the bar the project must beat.
+  \item \term{NPV (Net Present Value)} --- add up all future cash, shrunk to today's value,
+  minus what you spend. \textbf{Positive NPV = the project makes you richer.} This is the main
+  score.
+  \item \term{IRR (Internal Rate of Return)} --- the yearly \% return the project earns. If it
+  is higher than the 9\% WACC, that is good.
+  \item \term{MIRR} --- a more careful version of IRR that fixes a known flaw in it.
+  \item \term{PI (Profitability Index)} --- value created per AED spent. Above 1 is good.
+  \item \term{Payback} --- how many years until you get your money back.
+  \item \term{Break-even} --- the price (or usage level) at which the project exactly breaks
+  even (NPV~=~0). Below it you lose money.
+  \item \term{EAC (Equivalent Annual Cost)} --- turns a project's whole-life cost into one
+  fair ``rent-like'' yearly number, so we can compare options that last different numbers of
+  years.
+\end{itemize}
+
+% =====================================================================
+\section{The headline answer (the verified numbers)}
+Using realistic assumptions, the base case looks like this:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Measure} & \textbf{Value} & \textbf{Meaning} \\
+\midrule
+NPV & \textbf{+AED 1,854M} & positive $\rightarrow$ creates value \\
+IRR & 16.5\% & beats the 9\% WACC \\
+MIRR & 12.6\% & also beats 9\% \\
+Profitability Index & 1.31 & above 1 $\rightarrow$ good \\
+Payback & 5.0 years & within the 8-year life \\
+Discounted payback & 6.3 years & within life, but late \\
+Break-even GPU price & \textbf{\$3.34/GPU-hr} & scary: the market is \$2.85--3.50 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Plain meaning:} the project makes money (about AED 1.85 billion of value), but the
+safety margin is thin --- the break-even price sits right inside today's market range. That
+single fact is the heart of the whole project.
+
+% =====================================================================
+\section{The technology we used, and why}
+Think of the app as three layers.
+
+\subsection*{Layer 1 --- the website you see (front-end)}
+\begin{itemize}
+  \item \term{React 19 + TypeScript} --- the language/framework for building the interface.
+  TypeScript catches mistakes before they happen.
+  \item \term{Vite} --- the tool that builds and runs the site very fast.
+  \item \term{TailwindCSS v4} --- how we style everything (the dark theme, glass cards).
+  \item \term{Zustand} --- a small ``memory box'' that holds the current slider values so every
+  chart updates together.
+  \item \term{Framer Motion + GSAP} --- animations (the sliding tabs, the counting numbers).
+  \item \term{Recharts} --- the 2D charts (bars, lines, the tornado).
+  \item \term{Three.js + react-three-fiber + drei + postprocessing} --- the 3D data-centre hall
+  with the glowing server racks.
+\end{itemize}
+
+\subsection*{Layer 2 --- the money brain (finance engine)}
+\begin{itemize}
+  \item A pure \term{TypeScript} module (\texttt{web/src/finance/}) that does all the maths:
+  NPV, IRR, MIRR, PI, payback, break-even, build-vs-rent, and a Monte-Carlo simulator.
+  \item It is copied exactly into a \term{Python} file (\texttt{docs/finance-model-reference.py})
+  that uses \texttt{numpy}. The two must always give the same numbers. This is our ``source of
+  truth.''
+\end{itemize}
+
+\subsection*{Layer 3 --- the AI chat helper (assistant back-end)}
+\begin{itemize}
+  \item \term{FastAPI} (Python) --- a tiny web service.
+  \item \term{NVIDIA NIM} --- the actual AI language model (it is ``OpenAI-compatible,'' so the
+  same code style works). It only \emph{explains} the numbers; it never makes numbers up.
+\end{itemize}
+
+\subsection*{Tools that keep it correct, and where it lives online}
+\begin{itemize}
+  \item \term{Vitest} --- our automatic test suite (35 tests). \term{oxlint} --- a code-quality
+  checker. \term{tsc} --- the TypeScript checker.
+  \item \term{Playwright} --- headless browser we used to take screenshots and prove things work.
+  \item \term{Vercel} hosts the website; \term{Render} hosts the AI back-end. The app is live.
+  \item \term{LaTeX} (this document) for reports; \term{NotebookLM} to turn the report into slides.
+\end{itemize}
+
+% =====================================================================
+\section{The dashboard, tab by tab}
+The app has a top navigation bar with \textbf{8 tabs}, a floating \textbf{AI assistant} button
+(bottom-right, on every tab), and a header (logo, a live ``model self-test'' badge, a
+``Download summary'' button, and the current Accept/Reject verdict).
+
+\begin{enumerate}
+  \item \term{Overview.} The landing page. Shows a live \textbf{3D data-centre hall} (racks glow
+  brighter when usage is higher; a heat plume changes colour with cooling efficiency; click a
+  rack to inspect it), the six headline \textbf{KPI cards} (NPV, IRR, MIRR, PI, Payback,
+  Break-even), and the \textbf{AI recommendation}.
+
+  \item \term{Cash Flow.} A chart of money in/out for each of the 8 years. Year~0 is the big
+  spend; Year~4 dips because we replace ageing GPUs (a ``refresh''); the line shows the running
+  total that crosses zero at the discounted payback point ($\approx$6.3 years).
+
+  \item \term{Build vs Rent.} Should Barq \emph{build and own} the hall, or \emph{rent} computing
+  from a cloud giant? Because the two last different numbers of years, we compare them with
+  \term{EAC}. Building is a fixed cost; renting grows with usage --- so \textbf{building only wins
+  above about 77\% usage}. At the base case, building is slightly better (extra value of roughly
+  +AED 320M).
+
+  \item \term{Scenarios.} Three futures side by side:
+  \emph{Optimistic} (+AED 10,216M, accept), \emph{Base} (+AED 1,854M, accept), and
+  \emph{Pessimistic} ($-$AED 4,138M, reject). This shows the decision can flip.
+
+  \item \term{Sensitivity \& Risk.} Six \textbf{sliders} (GPU price, usage, WACC, tariff, cooling,
+  rack cost). Drag one and \emph{every} number in the app updates instantly. A \term{tornado chart}
+  ranks which input matters most (answer: GPU price \#1, usage \#2). A \textbf{risk panel} lights
+  up warnings (e.g.\ ``price below break-even''). It also shows \textbf{decision thresholds} ---
+  the exact point at which the verdict flips.
+
+  \item \term{AI Analysis.} The AI features: a \textbf{Monte-Carlo} simulator (see
+  Section~\ref{sec:data}), an AI \textbf{rate forecast} with a range band, and an AI
+  \textbf{scenario generator}.
+
+  \item \term{Board Review.} Our newest feature. Five ``departments'' (Finance, Operations,
+  Commercial, Sustainability, Technology) each score the project out of 100 using a fixed rule,
+  take a stance (support / support-with-conditions / oppose), and a \textbf{weighted board verdict}
+  combines them. At the base case: \textbf{APPROVE WITH CONDITIONS, 65/100.} Every score comes from
+  the engine, so it all changes live with the sliders.
+
+  \item \term{Ethics \& Audit.} The ethics of using AI (with our real safeguards), a
+  \textbf{Data Provenance} panel (which numbers are official and where they came from), and an
+  \textbf{Assumptions Audit} table that tags every input and runs a live ``model self-test.''
+\end{enumerate}
+
+\textbf{The floating AI Assistant} (on all tabs) answers questions in plain English. It is
+\emph{grounded}: it is handed the live numbers and told to only explain them, never invent them.
+If the AI server is off, it falls back to a built-in answer-er so it still works.
+
+\textbf{Download summary} (header button) prints a clean one-page PDF of whatever is currently
+on screen --- a live snapshot to share.
+
+% =====================================================================
+\section{The six AI features (Brief requires five; we have six)}
+\begin{enumerate}
+  \item \textbf{F1 --- Rate forecaster.} Draws a likely future path for the GPU rental price with
+  a ``P10--P90'' range (a low-to-high band), so we never pretend to know the exact future.
+  \item \textbf{F2 --- Scenario generator.} Auto-builds an up/base/down set of assumptions from
+  wherever the sliders are right now.
+  \item \textbf{F3 --- Monte-Carlo risk simulator.} Runs 5,000 ``what-if'' worlds and reports the
+  chance of losing money.
+  \item \textbf{F4 --- AI Finance Assistant.} The chat helper (NVIDIA NIM), grounded in the engine.
+  \item \textbf{F5 --- Anomaly / unrealistic-input detector.} Flags inputs outside believable
+  ranges (e.g.\ cooling better than physically possible).
+  \item \textbf{F6 --- Recommendation engine.} Writes the final accept/reject paragraph, including
+  a ``stage-gate'' plan when the accept is thin.
+\end{enumerate}
+
+% =====================================================================
+\section{Data, ``spread,'' and the train/test-split question}
+\label{sec:data}
+
+\subsection*{Is there a machine-learning train/test split? Short answer: no --- and here is why}
+People often ask for a \term{train/test split} (splitting data to \emph{train} a model on some
+and \emph{test} it on the rest). That belongs to \emph{machine-learning} projects that
+\emph{learn} a model from examples.
+
+\textbf{Teraval does not learn a model from data.} Its brain is a \emph{deterministic financial
+calculator} --- given the same inputs, it always returns the same answer, using textbook formulas
+(NPV, IRR, etc.). There is nothing to ``train,'' so there is \textbf{no train/test split}. Instead
+of learning from a dataset, we \emph{feed in assumptions} and \emph{compute} the result. The
+``AI'' parts are simulations and an explaining chatbot, not a trained predictor. Being honest
+about this is important --- inventing a fake train/test split would be misleading.
+
+\subsection*{So what plays the role of ``data''? Three things}
+\begin{enumerate}
+  \item \textbf{Real official data} (in the \texttt{datasets/} folder). We downloaded official
+  figures to back our assumptions:
+  \begin{center}
+  \begin{tabular}{llll}
+  \toprule
+  \textbf{Figure} & \textbf{Value} & \textbf{Source} & \textbf{Status} \\
+  \midrule
+  CBUAE Base Rate & 3.65\% & Central Bank of the UAE, 29 Jul 2026 & official \\
+  3-month EIBOR & 3.94\% & CBUAE EIBOR table, 31 Jul 2026 & official \\
+  Abu Dhabi industrial tariff & AED 0.15/kWh & Abu Dhabi Open Data (ADWEA) & pending* \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+  \footnotesize *The tariff download was blocked by a portal outage (\texttt{data.bayanat.ae} was
+  down); we kept the AED 0.15 benchmark and documented it. The two interest rates feed the WACC.
+  \normalsize
+
+  \item \textbf{The assumption set} --- the model's inputs (the six sliders plus structural
+  numbers like 300 racks, 21,600 GPUs, 40~MW, 8-year life, 9\% tax). Each is tagged as Historical,
+  Current, Forecast, User-entered, or AI-generated in the Assumptions Audit tab.
+
+  \item \textbf{The Monte-Carlo distributions} --- this is what people usually mean by
+  ``spread.'' Instead of one guess per input, we give each key input a \emph{range} shaped like a
+  triangle (lowest, most-likely, highest), then draw 5,000 random combinations and compute NPV for
+  each. See below.
+\end{enumerate}
+
+\subsection*{The ``spread'' of outcomes (two ways we show it)}
+\textbf{(a) Monte-Carlo spread} --- from 5,000 simulated worlds at the base case:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Chance of losing money, P(NPV $<$ 0) & $\approx$ 21\% \\
+Average NPV & +AED 1,456M \\
+Low end (P10) & $-$AED 767M \\
+High end (P90) & +AED 3,757M \\
+\bottomrule
+\end{tabular}
+\end{center}
+The distribution is drawn as a histogram (a hill shape); the left, red part is the ``loss'' zone.
+
+\textbf{(b) Scenario spread} --- three deliberate futures:
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Scenario & NPV & IRR & Decision \\
+\midrule
+Optimistic & +AED 10,216M & 44.5\% & Accept \\
+Base & +AED 1,854M & 16.5\% & Accept (conditional) \\
+Pessimistic & $-$AED 4,138M & $-$9.5\% & Reject \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The Monte-Carlo is repeatable.} We use a fixed random ``seed,'' so the 21\% figure is the
+same everywhere in the app and every time --- important for a report you can trust.
+
+% =====================================================================
+\section{How we keep the numbers trustworthy}
+\begin{itemize}
+  \item \textbf{35 automatic tests} (Vitest) check the maths against the verified figures. If a
+  number ever drifts, a test fails.
+  \item \textbf{Live self-test} in the app checks financial identities (e.g.\ discounting at the
+  IRR must give NPV~=~0; PI~$>$~1 exactly when NPV~$>$~0). A badge in the header turns red if the
+  model's logic ever breaks.
+  \item \textbf{Two copies in sync} --- the TypeScript engine and the Python reference must match.
+  \item \textbf{Grounding} --- the AI never invents numbers; it is handed the computed values and
+  told to only explain them.
+  \item \textbf{Type-checked and linted} --- \texttt{tsc} and \texttt{oxlint} both pass clean.
+\end{itemize}
+
+% =====================================================================
+\section{Ethics (short version)}
+The AI \emph{advises}; the human \emph{decides}. We show forecasts as ranges (never as certainty),
+ground the chatbot so it cannot hallucinate figures, tag every assumption with its source, stress
+the downside with the pessimistic case and Monte-Carlo, and state on every recommendation that the
+final invest/reject call rests with the CFO --- not the AI.
+
+% =====================================================================
+\section{The final recommendation}
+\textbf{Accept --- but as a ``stage-gated'' accept.} The base case creates about AED 1.85 billion
+of value with a 16.5\% return, but the margin is thin (break-even \$3.34 is close to the \$4.00
+price, and there is a $\approx$21\% chance of a loss). So the advice is: \emph{proceed, but release
+the money in stages tied to real, measured usage staying above roughly 67--77\%, lock in multi-year
+rental customers first, and keep a ``rent instead'' fallback.} The internal Board Review reaches the
+same conclusion: \textbf{Approve With Conditions (65/100).}
+
+% =====================================================================
+\section{Probable questions (and short answers)}
+\begin{description}[leftmargin=0pt, style=nextline]
+  \item[``Is this machine learning? Where is the train/test split?''] No. It is a deterministic
+  finance calculator plus simulations, so there is no training and no split (see Section~\ref{sec:data}).
+  \item[``Why 9\% WACC when the official rates suggest about 8.6\%?''] We kept 9\% on purpose --- a
+  tougher bar --- so the ``accept'' verdict is conservative, not exaggerated.
+  \item[``Which single number decides everything?''] The GPU rental price. A $-$20\% move flips NPV
+  negative. Usage is the second-most important.
+  \item[``What if electricity gets more expensive?''] Barely matters --- Abu Dhabi's cheap power is
+  a real advantage; even a big tariff rise moves NPV far less than the GPU price does.
+  \item[``How does the chatbot avoid making up numbers?''] It is ``grounded'': it receives the live
+  computed figures and is instructed to explain only, never to generate numbers.
+  \item[``What happens if the AI server is down?''] The assistant falls back to a built-in,
+  engine-grounded answer-er, so the app still answers correctly.
+  \item[``Is it actually live?''] Yes --- front-end on Vercel, AI back-end on Render.
+  \item[``What is still pending / future work?''] (1) the official tariff file (portal was down);
+  (2) an optional ``Custom Case'' feature (upload your own numbers) --- deferred as future work.
+\end{description}
+
+% =====================================================================
+\section{Mini-glossary}
+\begin{description}[leftmargin=0pt, style=nextline, itemsep=1pt]
+  \item[Data centre / hall] a building full of computers.
+  \item[GPU] a powerful chip used for AI; here rented out by the hour.
+  \item[PUE] ``Power Usage Effectiveness'' --- how much extra power cooling needs; 1.0 is perfect,
+  1.2 is good.
+  \item[Deterministic] same inputs always give the same output.
+  \item[Monte-Carlo] running thousands of random ``what-if'' worlds to see the range of outcomes.
+  \item[Seed] a fixed starting point for the randomness so results repeat exactly.
+  \item[Grounded AI] an AI that can only use the real numbers it is given.
+  \item[SSE / streaming] the chatbot's reply appears word-by-word as it is generated.
+  \item[Deploy] to put the app online so anyone can use it.
+\end{description}
+
+\vspace{1em}
+\begin{center}\small\textcolor{tvgrey}{%
+Teraval $\cdot$ Barq AI capital-budgeting appraisal $\cdot$ all figures verified against the
+deterministic reference model.}\end{center}
+
+\end{document}

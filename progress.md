@@ -436,8 +436,11 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
   read the whole solution (engine, libs, all components, assistant, 3D); tsc/lint/tests/build all
   clean. Fixed 4 real items — `selfTest.ts` redundant `evaluate()`; `board.ts` null break-even-util
   text; `HallCanvas.tsx` GPU texture+geometry not disposed on tab-unmount (leak); `Header.tsx`
-  "Base-case verdict" mislabelled a live badge → "Current verdict". Now writing an **internal team
-  report** (`report/internal-team-report.tex`, plain-language, covers everything). Engine FROZEN.
+  "Base-case verdict" mislabelled a live badge → "Current verdict". Then wrote an **internal team
+  report DONE** — `report/internal-team-report.tex`: plain-English (high-school level), 13 sections,
+  covers tech stack, all 8 tabs, the 6 AI features, datasets + the "spread"/train-test-split question
+  (honest: deterministic engine, no ML split), probable Q&A, glossary. Compiles with pdflatex
+  (8 pages, exit 0). Separate from the academic `report/main.tex`. Engine FROZEN.
 
 ## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
 
