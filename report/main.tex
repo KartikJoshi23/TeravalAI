@@ -161,10 +161,13 @@ PUE (cooling) & 1.20 & C --- liquid-cooled GB200\\
 WACC & 9\% & F --- anchored to CBUAE base 3.65\% / 3-mo EIBOR 3.94\% + risk premia\\
 UAE corporate tax & 9\% & C --- introduced 2023\\
 Project life & 8 years & U --- appraisal horizon\\
+GPU-price history & 40-month series, \$5.6$\to$\$3.1 & H --- representative market trend, 2023--26\\
+Forecast spot rate & $\approx$\$2.73 / GPU-hr & AI --- trained AR(1) forecaster (§6)\\
 \bottomrule
 \end{tabularx}
-\caption{Key assumptions and their data type. Interest-rate anchors are official Central Bank of
-the UAE figures (July 2026); the industrial tariff awaits the Abu Dhabi Open Data portal.}
+\caption{Key assumptions by data type: historical (H), current (C), forecast (F), user (U) and
+AI-generated (AI). Interest-rate anchors are official Central Bank of the UAE figures (July 2026);
+the industrial tariff awaits the Abu Dhabi Open Data portal.}
 \end{table}
 
 % ============================ 5 ============================
@@ -175,10 +178,9 @@ against operating costs of AED 600\,m, giving EBITDA of AED 1{,}624\,m; a mid-li
 Year 4 and terminal salvage complete the stream. Discounting at 9\% yields the results in
 Table~\ref{tab:metrics}. A minimum of three major calculations is comfortably exceeded --- NPV,
 IRR, MIRR, PI, payback and break-even are all computed and cross-checked by a live model
-self-test (e.g.\ NPV discounted at the IRR equals zero). The 9\% discount rate is built up from
-the official Central Bank rates as a risk-free anchor, a levered equity risk premium and an
-after-tax cost of debt, while straight-line depreciation supplies a tax shield inside the
-operating cash flows.
+self-test (e.g.\ NPV discounted at the IRR equals zero). The 9\% rate is built up from the official
+CBUAE rates, a levered equity risk premium and an after-tax cost of debt; straight-line
+depreciation supplies a tax shield inside the operating cash flows.
 
 \begin{table}[h]
 \centering\small
@@ -203,8 +205,7 @@ compute either way, the build is appraised incrementally against renting hypersc
 compared on Equivalent Annual Cost. Building is a largely fixed cost while renting scales with
 utilization, so \textbf{building wins only above roughly 77\% sustained utilization}; at the base
 case it beats renting by a thin incremental NPV of about +AED 320\,m (Figure~\ref{fig:bvr}). As an
-internal check, the sign of that incremental NPV agrees with the difference in equivalent annual
-costs, so two independent routes to the answer are mutually consistent.
+internal check, that incremental NPV agrees in sign with the equivalent-annual-cost difference.
 
 \begin{figure}[h]
 \centering
@@ -224,36 +225,42 @@ only at high, sustained utilization; below the $\sim$77\% crossover, renting is 
 
 % ============================ 6 ============================
 \section{AI Features}
-Teraval proposes six AI features, each grounded in the deterministic engine so that figures are
-never invented:
+Teraval provides seven AI features, all grounded in the deterministic engine, which alone computes
+every valuation. Two are \emph{genuinely trained machine-learning models} --- learned on a
+train/test split and reported with held-out metrics --- not rule-based heuristics:
 \begin{enumerate}[leftmargin=1.4em,itemsep=1pt]
-\item \textbf{Rate \& utilization forecaster} --- projects a forward GPU-rental path with
-P10--P90 bands, replacing a flat guess with a defensible range (risk: market non-stationarity).
-\item \textbf{Scenario generator} --- auto-builds coherent optimistic/base/pessimistic driver sets.
-\item \textbf{Monte-Carlo risk simulator} --- 5{,}000 NPV draws yield a probability of loss
-($\approx$21\% at base) and a value-at-risk view.
-\item \textbf{AI Finance Assistant (NVIDIA NIM)} --- a natural-language, tab-aware chatbot that
-answers from the live model state and never free-generates numbers (risk: hallucination, mitigated
-by grounding).
-\item \textbf{Anomaly / unrealistic-assumption detector} --- flags inputs outside credible ranges.
+\item \textbf{Trained risk classifier (ML).} A logistic-regression surrogate trained on
+$\sim$4{,}000 engine-labelled scenarios learns the accept/reject boundary (\emph{held-out accuracy
+96.7\%, AUC 0.998}). It yields a live accept-probability, a price$\times$utilization decision surface
+and permutation feature-importance that reproduces the tornado. Limitation: it emulates the current
+model's assumptions.
+\item \textbf{Trained GPU-price forecaster (ML).} A first-order autoregression fitted by least
+squares to a historical monthly series, validated on a held-out window (\emph{test RMSE \$0.06}).
+It forecasts the spot rate to $\approx$\$2.73 --- below the \$3.34 break-even --- showing why
+contracted offtake is essential. Limitation: representative data and a non-stationary market.
+\item \textbf{Monte-Carlo risk simulator} --- 5{,}000 NPV draws give the probability of loss
+($\approx$21\%) and a value-at-risk view.
+\item \textbf{AI Finance Assistant (NVIDIA NIM)} --- a tab-aware natural-language chatbot answering
+from live model state, never free-generating numbers (risk: hallucination, mitigated by grounding).
+\item \textbf{Scenario generator} --- coherent optimistic/base/pessimistic driver sets.
+\item \textbf{Anomaly detector} --- flags inputs outside credible ranges.
 \item \textbf{Recommendation engine} --- synthesises metrics, break-even and the dominant driver
-into an accept/reject conclusion.
+into an accept/reject conclusion with a stage-gate plan.
 \end{enumerate}
-Together these automate the arithmetic, forecast the volatile revenue line, quantify risk, and
-explain results in plain language --- directly improving the analysis, dashboard and
-decision-making process.
+Each feature states what it does, its data, result, benefit and limitation --- two of them backed by
+genuine, held-out-tested models.
 
 % ============================ 7 ============================
 \section{Dashboard Explanation}
-The dashboard (Figure~\ref{fig:overview}) delivers the six required components across seven tabs:
-KPI cards (NPV, IRR, MIRR, PI, payback, break-even); a cash-flow trend chart; a scenario
-comparison; live sensitivity with a tornado chart; a risk-and-alert panel; and an AI
-recommendation panel. It is a dark, glassmorphism React application whose hero is a WebGL 3D
-data-centre hall that reacts to the live assumptions, with a floating, context-aware AI assistant
-available on every tab, a live model-integrity self-test, and a data-provenance panel citing the
-official Central Bank rates. Every component reads a single shared model state, so moving any
-assumption recomputes the KPI cards, charts, scenarios, risk alerts and the recommendation
-simultaneously --- letting a manager see the physical and financial story change together.
+The dashboard (Figure~\ref{fig:overview}) delivers the six required components across five grouped
+tabs: KPI cards (NPV, IRR, MIRR, PI, payback, break-even); a cash-flow trend chart; a scenario
+comparison; live sensitivity with a tornado chart; a risk-and-alert panel; and an AI recommendation
+panel. It is a dark, glassmorphism React application whose hero is a WebGL 3D data-centre hall that
+reacts to the live assumptions. The Overview opens with a \emph{decision brief} framing the question
+before the verdict; a dedicated \emph{Predictive-AI} section surfaces the two trained ML models; and
+a floating AI assistant, a live self-test and a data-provenance panel support every view. Every
+component reads a single shared model state, so moving any assumption recomputes the KPI cards,
+charts, scenarios, risk alerts and the recommendation simultaneously.
 
 \smallskip
 \noindent\textbf{Live deployment.} The dashboard is deployed publicly --- the React frontend on
@@ -317,9 +324,10 @@ not points. A language model can \emph{hallucinate} figures; the assistant is th
 in the deterministic engine and instructed to narrate only. Incorrect input data can silently flip
 the verdict, so assumptions are transparent, source-tagged and range-checked. A bull-market
 \emph{bias} could inflate revenue, which the pessimistic scenario and Monte-Carlo explicitly
-stress. Commercially sensitive assumptions stay client-side for \emph{confidentiality}. Above all,
-the tool requires \emph{human review}: it advises, but the responsibility for the final financial
-decision rests with the CFO and the investment committee, not with the AI.
+stress. Commercially sensitive assumptions stay client-side for \emph{confidentiality}. The trained
+ML models are validated on held-out data and only \emph{augment} the analysis; they never compute a
+valuation. Above all, the tool requires \emph{human review}: it advises, but responsibility for the
+final financial decision rests with the CFO and the investment committee, not with the AI.
 
 % ============================ 10 ============================
 \section{Final Recommendation}
