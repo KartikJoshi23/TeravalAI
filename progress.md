@@ -455,12 +455,19 @@ User approved the **full ML layer**; building it in stages, stop after each for 
   forecaster stability/held-out error/band widening). **Total 45/45 · tsc clean · build OK.**
 - Engine + `docs/finance-model-reference.py` UNTOUCHED; no new deps.
 
-**NEXT — AI/ML Stage B:** a **"Predictive AI" tab** (new component) visualising both models: forecaster
-(history + fit + forecast bands + held-out error), surrogate (metric cards, confusion matrix, decision
-surface, feature-importance bars, live accept-probability), wired to the store + assistant tab-context.
-**Stage C:** report §5 (reframe AI features around the trained models + metrics) + §3 data table
-(authentic historical/forecast/AI-generated rows); refresh `internal-team-report.tex`'s "no ML split"
-note. *Stopped here for Kartik's review of Stage A.*
+**Stage B — DONE (2026-08-04):** new **"Predictive AI" tab** (`components/ai/PredictiveAI.tsx`, 9th tab)
+visualising both models — surrogate (test-acc/AUC/F1 tiles, confusion matrix, permutation
+feature-importance bars, a price×util **decision-surface heatmap** with the live case marked, and a
+**live accept-probability** that re-reads the store) + forecaster (history+fit+forecast **band chart**
+with break-even $3.34 and contracted $4.00 reference lines, φ/long-run/RMSE tiles, spot-vs-contracted
+narrative). Models train once (module cache) on first open; only the accept-prob is store-reactive.
+Wired into `App.tsx` + `TabNav` + assistant `tabContext`. **Verified live:** tab renders all real
+metrics, **zero console errors**; `tsc` clean · `npm test` **45/45** · build OK.
+
+**NEXT — AI/ML Stage C:** report §5 (reframe AI features around the trained models + metrics) + §3 data
+table (authentic historical/forecast/AI-generated rows) + a line in §9 ethics on the representative
+forecaster data; refresh `internal-team-report.tex`'s "no ML split" note. *Stopping after Stage B for
+Kartik's review before touching the graded report.*
 
 ## 🔧 In progress
 

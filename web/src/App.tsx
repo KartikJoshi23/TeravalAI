@@ -20,6 +20,7 @@ import MonteCarloPanel from './components/ai/MonteCarloPanel';
 import RecommendationPanel from './components/ai/RecommendationPanel';
 import RateForecastPanel from './components/ai/RateForecastPanel';
 import ScenarioGenerator from './components/ai/ScenarioGenerator';
+import PredictiveAI from './components/ai/PredictiveAI';
 import AssistantWidget from './components/ai/AssistantWidget';
 import PrintSummary from './components/PrintSummary';
 
@@ -30,6 +31,7 @@ const TABS: TabDef[] = [
   { id: 'scenarios', label: 'Scenarios' },
   { id: 'sensitivity', label: 'Sensitivity & Risk' },
   { id: 'ai', label: 'AI Analysis' },
+  { id: 'predictive', label: 'Predictive AI' },
   { id: 'board', label: 'Board Review' },
   { id: 'ethics', label: 'Ethics & Audit' },
 ];
@@ -106,6 +108,8 @@ export default function App() {
                   <RateForecastPanel />
                 </>
               )}
+
+              {tab === 'predictive' && <PredictiveAI />}
 
               {tab === 'board' && <BoardReview />}
             </motion.div>

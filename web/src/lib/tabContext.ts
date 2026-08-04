@@ -46,6 +46,12 @@ export const TAB_INFO: Record<string, TabInfo> = {
       'The AI Analysis tab: a Monte-Carlo NPV distribution with the probability of a negative NPV, an AI GPU-rate forecast with P10–P90 bands, and an AI scenario generator. All figures are grounded in the deterministic engine.',
     samples: ['What is the probability of a loss?', 'What does the forecast band show?', 'Explain the Monte-Carlo result.'],
   },
+  predictive: {
+    label: 'Predictive AI',
+    description:
+      'The Predictive AI tab: two genuinely trained machine-learning models. (1) A surrogate risk classifier (logistic regression) trained on ~4,000 driver combinations each labelled accept/reject by the deterministic engine — held-out test accuracy ~96.7%, AUC ~0.998; it gives a live accept-probability, a learned price×utilization decision surface, and permutation feature-importance that independently reproduces the tornado (price and utilization dominate). (2) An AR(1) GPU-price forecaster fit by least squares to a representative monthly market series with a held-out test error (~$0.06 RMSE); it forecasts the spot rate to ~$2.73 — below the $3.34 break-even and $4.00 contracted rate, quantifying why the plan needs contracted offtake. The models augment the analysis; the deterministic engine still computes every valuation.',
+    samples: ['How accurate is the risk model?', 'What does the forecast imply for the decision?', 'Which features matter most to the model?'],
+  },
   board: {
     label: 'Board Review',
     description:
