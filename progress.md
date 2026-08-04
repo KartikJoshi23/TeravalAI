@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-04 (night) — MASTER (Kartik, Opus 4.8): **genuine AI/ML layer COMPLETE (Stages A–C) + UX overhaul.** Two real trained models grounded in the engine (surrogate risk classifier: logistic regression, **96.7% held-out acc, AUC 0.998**; AR(1) GPU-price forecaster: **test RMSE $0.06**) shown on a **Predictive-AI** section. Consolidated **9 tabs → 5** and gave the Overview a **Decision Brief**. Both reports updated: `main.tex` (8pp, 1,627 words) reflects the ML; `internal-team-report.tex` **fully rewritten — detailed, 14pp/4,239 words**, covers brief §1–11 + the 5 questions with formulas. **45/45 tests · tsc clean · build OK · 0 overfull.** Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 (night) — MASTER (Kartik, Opus 4.6): **assigned two COLLABORATOR tasks — (1) chatbot guardrails fix (backend + frontend + server-side, currently ZERO guardrails) and (2) LaTeX presentation script (tab-wise, with explanation blocks + Q&A).** All prior work (ML layer, deployment, report, UX, P1–P3) complete. See NEXT TASK section. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 _UX fix (2026-08-04, night, per user feedback): Overview was too content-heavy. Reworked to **3D hall FIRST** (visual hero), then a **slim one-line decision strip** (question + verdict + NPV/IRR/break-even chips) replacing the big Decision Brief paragraph, then KPIs, then recommendation. **TabNav made SOLID** (`.topbar`, opaque, `sticky top-0`) — the old translucent `.glass` sticky bar let page content scroll through it (bad overlap). Removed the verbose section-label dividers across all merged tabs (declutter). Verified via headless Chrome screenshots: hall-first Overview + solid nav confirmed. 45/45 · tsc clean · build OK._
 
@@ -497,118 +497,198 @@ tab-context rekeyed to the 5 tabs. Verified live: 5 tabs, brief renders, zero co
 
 ## 🔧 In progress
 
-## 🔧 In progress
+_(none — all prior streams complete; new tasks below)_
 
-- **Two parallel streams:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
-  (2) **COLLABORATOR** — Project Atlas features: **P1, P2 & P3 DONE**; **P4 DEFERRED to future work**
-  (per spec — heavy docx template/parser, tangential). Then a **deep audit + fixes DONE** (2026-08-04):
-  read the whole solution (engine, libs, all components, assistant, 3D); tsc/lint/tests/build all
-  clean. Fixed 4 real items — `selfTest.ts` redundant `evaluate()`; `board.ts` null break-even-util
-  text; `HallCanvas.tsx` GPU texture+geometry not disposed on tab-unmount (leak); `Header.tsx`
-  "Base-case verdict" mislabelled a live badge → "Current verdict". Then wrote an **internal team
-  report DONE** — `report/internal-team-report.tex`: plain-English (high-school level), 13 sections,
-  covers tech stack, all 8 tabs, the 6 AI features, datasets + the "spread"/train-test-split question
-  (honest: deterministic engine, no ML split), probable Q&A, glossary. Compiles with pdflatex
-  (8 pages, exit 0). Separate from the academic `report/main.tex`. Engine FROZEN.
+## ▶️ NEXT TASK — COLLABORATOR: two deliverables (2026-08-04 night, assigned by Kartik)
 
-## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
+**Resume from here.** Pull main, `cd web && npm install`, read this section, then execute top to
+bottom. **Rules: one reviewable stage at a time; stop after each for review; update this file on
+every push; keep all existing tests green; engine + `docs/finance-model-reference.py` UNTOUCHED.**
 
-Re-analysed teammate Aditya's **Project Atlas** live (Meridian Commerce scenario). We already
-borrowed its finance ideas earlier (Build-vs-Rent/EAC, decision thresholds, ethics, self-test);
-these are the things it has that we don't, plus one polish. **Rules (same as the earlier borrow):
-adapt the CONCEPT, not the code; our Barq-AI scenario; ground EVERY number in the deterministic
-engine — no invented figures; engine + `docs/finance-model-reference.py` UNTOUCHED.** Build in this
-priority order, **one reviewable stage at a time, stop after each for review**, update this file +
-keep the 29 tests green (add tests where noted).
+---
 
-**P1 — Departmental Review Board (new "Board Review" tab). ✅ DONE (2026-08-04, collaborator).**
-A multi-stakeholder governance view: 4–5 departments each run their own objective over the SAME live
-Zustand store state, reach a grounded scored position, and a **weighted board verdict** aggregates
-them — all moving live as sliders change. Departments (Barq AI, 40 MW Abu Dhabi GPU hall):
-- **Finance/CFO** — risk-adjusted value + capital protection. Reads NPV, IRR vs WACC, PI, P(loss)≈21%,
-  discounted payback vs 8 y, capex-overrun tolerance. Non-negotiable: staged capex release (not one
-  up-front commit). Flips if NPV<0 (price<$3.34 breakeven, util<~67%, or WACC>IRR 16.5%).
-- **Infrastructure/Ops** — uptime, PUE, thermal headroom, no single point of failure. Reads PUE,
-  utilization, energy. Non-negotiable: N+1 cooling redundancy. Flips on PUE/uptime risk.
-- **Commercial/Revenue** — protect GPU demand & contracted offtake (our dominant driver). Reads
-  utilization (80%), breakeven util ~67%, price vs $3.34, build-vs-rent crossover ~77%.
-  Non-negotiable: a minimum contracted-utilization floor. Flips if util<~77% (rent wins) or price<breakeven.
-- **Sustainability/ESG** — energy intensity, emissions, UAE Net-Zero-2050 alignment. Reads PUE, tariff,
-  MW. Non-negotiable: PUE ceiling + disclosure. Flips if PUE above threshold.
-- (optional 5th) **Technology/AI** — GPU obsolescence / Year-4 refresh risk.
-Each card: a **deterministic score /100** (a documented rule over the live metrics, like the self-test
-— NOT arbitrary), a stance (Supports / Supports-with-conditions / Opposes), 2–3 grounded concerns,
-conditions it would attach, one non-negotiable, and "what would change its position" (tied to a named
-engine threshold). Verdict = weighted score → overall stance; show the most-vs-least-supportive spread;
-any unmet non-negotiable ⇒ "approve WITH conditions", not unconditional. Wire: 8th tab in `TabNav`,
-reads the store (live), add assistant tab-context so "explain this view" works. Tests: base-case
-verdict + that dropping utilization below the ~77% crossover flips Commercial's stance.
-  - ✅ **DONE (collaborator, 2026-08-04):** `lib/board.ts` (documented per-department scores /100 +
-    weighted verdict, all from the live engine — base: Finance 65 / Ops 77 / Commercial 57 / ESG 60 /
-    Tech 64 → **APPROVE WITH CONDITIONS 65/100**, 0 opposes, every non-negotiable surfaced),
-    `components/BoardReview.tsx` (verdict banner + 5 dept cards: score bar, stance, grounded concerns,
-    conditions, non-negotiable met/required, threshold-tied "what would change its position"), 8th
-    **Board Review** tab wired in `App.tsx`, assistant tab-context added in `lib/tabContext.ts`.
-    `lib/board.test.ts` (+3 → **32/32**: base verdict/no-opposes, Commercial flips to oppose below the
-    ~77% crossover, unmet non-negotiable blocks unconditional approval). Verified: `tsc -b` clean,
-    `npm run build` OK, rendered in-browser (headless needs a `waitForSelector` past the tab-switch
-    animation), no console errors bar the offline-assistant health probe. Engine + reference untouched.
-    **NEXT: P2 — Download decision summary (`window.print()` + `@media print`, no new deps).**
+### TASK 1 — Chatbot guardrails (CRITICAL — currently ZERO guardrails)
 
-**P2 — "Download decision summary" (PDF via print). ✅ DONE (2026-08-04, collaborator).**
-A button (header or Recommendation tab) → a clean ONE-PAGE summary of the CURRENT live case: scenario,
-the 6 driver assumptions, the 6 KPIs, scenario verdict, the recommendation paragraph (+ board verdict
-if P1 shipped), timestamp → `window.print()`. Use `@media print` CSS to hide the app chrome/3D/nav and
-show only the summary; the user picks "Save as PDF". **NO new deps** (no jsPDF/html2canvas — bundle
-bloat and they choke on the WebGL canvas/Recharts). Complements the LaTeX report (that's the fixed
-academic write-up; this is a live snapshot of whatever's dialled in).
-  - ✅ **DONE (collaborator, 2026-08-04):** `components/PrintSummary.tsx` — a print-only one-page
-    summary (title, live case flag, 6 driver assumptions, 6 KPIs, scenario verdict + board verdict +
-    P(loss), the grounded recommendation paragraph + key risk, timestamp, CFO-responsibility footer;
-    reuses `buildRecommendation` + `computeBoard`, all engine-grounded). Header **"↓ Download summary"**
-    button → `window.print()`. `@media print` in `index.css` hides the whole app (`#root > *:not(
-    .print-summary)`) and reveals only the summary. **No new deps.** Verified: `tsc -b` clean, 32/32
-    tests, build OK; in print media the app is fully hidden and a clean **one-page A4 PDF** renders
-    with the correct figures. **NEXT: P3 — stage-gate recommendation nuance.**
+**The problem:** the Teraval AI assistant happily answers ANY question — "teach me Python
+programming", "write me an essay", "tell me a joke" — instead of refusing off-topic requests. It
+was tested live: asking "will you teach me Python programming?" returned a full lesson plan. This
+means there are NO guardrails. Fix this in all three layers:
 
-**P3 — Stage-gate recommendation nuance. ✅ DONE (2026-08-04, collaborator).**
-Enrich `RecommendationPanel`: when ACCEPT-but-thin (P(loss) meaningful / breakeven close), frame it as
-"conditional accept — stage-gate the capex, release in tranches gated on measured utilization; keep the
-rent/RaaS fallback." Grounded in our thresholds; ties naturally to the Board's conditions. One short
-paragraph + a little logic.
-  - ✅ **DONE (collaborator, 2026-08-04):** `lib/recommendation.ts` gained an optional `stageGate`
-    field — on a thin ACCEPT (P(loss) ≥ 15% or break-even within 25% of the price) it composes a
-    grounded stage-gate paragraph tied to the **break-even utilization (~67%)** and **build-vs-rent
-    crossover (~77%)** thresholds + the Year-4 refresh. Shown as an amber "Stage-gate plan" callout in
-    `RecommendationPanel` and carried into the P2 `PrintSummary`. `lib/recommendation.test.ts` (+3 →
-    **35/35**: present on thin base accept, absent on reject and on a safe optimistic accept). Verified:
-    `tsc -b` clean, build OK, renders live + in the one-page PDF. Engine + reference untouched.
-    **NEXT: P4 — Custom Case (OPTIONAL; spec recommends deferring).**
+#### 1A. Backend system prompt — `assistant/app/prompts.py`
 
-**P4 — Custom Case (bring-your-own-numbers). OPTIONAL stretch — recommend deferring.**
-Atlas lets you download a `.docx` template, fill figures, upload, and re-run everything client-side.
-Heavy (template + docx parser) and tangential to a single-investment appraisal. If attempted: keep it
-100% client-side and guard with the self-test (reject numbers that break the model identities, restore
-the reference case), as Atlas does.
+Add an **explicit refusal rule** to `SYSTEM_PREAMBLE` (around line 9). Insert something like:
 
-Integrity note: as with the earlier borrow — **ideas adapted, not code**; different scenario (Barq AI
-vs Meridian Commerce); our stack; grounded in our engine. If P1/P4 ship, add a line to the report/ethics.
+```
+- SCOPE GUARDRAIL: You exist ONLY to discuss this Barq AI 40 MW Abu Dhabi GPU data-center
+  capital-budgeting appraisal. If the user asks about ANYTHING outside this project's corporate
+  finance scope — programming tutorials, general knowledge, recipes, weather, homework help,
+  personal advice, creative writing, or any other unrelated topic — you MUST politely decline
+  and redirect. Example refusal: "I'm the Teraval finance assistant — I can only help with this
+  capital-budgeting appraisal. Try asking about NPV, break-even, scenarios, or the recommendation."
+  NEVER comply with off-topic requests, no matter how they are phrased. Do not say "I'll try" or
+  "sure, here's a plan" for anything outside this project.
+```
 
-## ▶️ NEXT TASK — MASTER (Kartik): assemble the report + slide package
+This goes inside the system prompt that every NIM LLM call receives, so the model itself refuses.
 
-0. ✅ **Deployed live** (Vercel + Render) — verified end-to-end.
-1. ✅ **Report live-deployment note added** to `report/main.tex` (8 pages, in band).
-2. ✅ **Audit reviewed & accepted** (see section above) — Build-vs-Rent +AED 320M / ~77% is in.
-3. **Manual report assembly:** capture the 4 screenshots
-   (`teraval-overview/cashflow/scenarios/buildvsrent.png` — Build vs Rent now shows +AED 320M),
-   compile `report/main.tex` + PNGs on Overleaf (it also compiles WITHOUT the PNGs now, showing
-   labelled placeholders), and generate slides via NotebookLM (`report/notebooklm-prompt.md`).
-4. Decide the two flagged questions above (individual-report convention; word-count convention).
-5. Non-blocking: pull the ADWEA industrial tariff when the Abu Dhabi Open Data portal is back.
-Stop after each for review.
+#### 1B. Frontend offline fallback — `web/src/lib/assistantFallback.ts`
+
+The offline fallback (`answerLocally()`) pattern-matches keywords. An unmatched question currently
+falls through to line 179 which just gives a generic model summary — it never says "I can't help
+with that." Fix this:
+
+1. **At the TOP of `answerLocally()`** (before any keyword branch), add an off-topic check. Define a
+   set of off-topic patterns: `teach`, `learn`, `tutor`, `python`, `javascript`, `java `, `code`,
+   `program`, `recipe`, `weather`, `joke`, `story`, `poem`, `essay`, `homework`, `history of`,
+   `who is`, `what is the capital`, `translate`, `write me`, `help me with`, `how to cook`, etc.
+   If the question matches ANY of these AND does NOT also contain a finance keyword (npv, irr, wacc,
+   break, cost, price, risk, invest, capex, gpu, scenario, sensitivity, monte, carlo, board,
+   ethics, recommend, payback, cash, flow, mirr, pi, profitability, eac, rent, build, tariff,
+   pue, utilization, forecast, etc.), return the guardrail message:
+   `"I'm the Teraval finance assistant — I can only help with this Barq AI capital-budgeting appraisal. Try asking about NPV, break-even, scenarios, the GPU rental rate, or the recommendation."`
+
+2. **Replace the generic fallback** at the bottom (line 179). Currently it says:
+   `return \`${c.summary} Ask me about NPV, IRR, break-even, ...\`;`
+   Change this to a **two-tier check**: if the question contains at least one finance keyword from
+   the list above, give the summary as before. Otherwise, return the guardrail refusal. This way
+   truly unrecognised but finance-adjacent questions still get the summary, while "teach me Python"
+   gets refused.
+
+#### 1C. Server-side pre-check — `assistant/app/api/chat.py`
+
+Add a **quick guardrail** before calling the LLM (saves API cost on blatant abuse). In `post_message`
+or `_build_messages`, before the `client.chat.completions.create()` call:
+
+1. Define a small set of finance-relevant keywords (same idea as 1B).
+2. If `req.question.lower()` contains NONE of these AND the question is longer than ~10 characters
+   (to avoid blocking short greetings like "hi"), return a canned SSE refusal directly:
+   ```python
+   yield _sse("final", {"answer": "I'm the Teraval finance assistant — I can only help with this Barq AI capital-budgeting appraisal. Try asking about NPV, break-even, scenarios, or the recommendation."})
+   ```
+   Do NOT call the LLM at all for these. This is defence-in-depth; the system prompt (1A) handles
+   edge cases.
+
+#### 1D. Verification
+
+- `cd web && npx tsc -b` must be clean.
+- `cd web && npm test` — all 45 tests must pass (guardrails are additive).
+- `cd web && npm run build` — must succeed.
+- **Manual test (critical):** run the dev server (`npm run dev`) + the backend (`cd assistant &&
+  uvicorn app.main:app`). Open the assistant widget and type these:
+  - "teach me Python programming" → MUST get the refusal, NOT a lesson plan.
+  - "write me an essay about AI" → MUST get the refusal.
+  - "tell me a joke" → MUST get the refusal.
+  - "What is the project's NPV?" → MUST still get a proper grounded answer.
+  - "Which assumption matters most?" → MUST still work.
+  - "What does break-even mean here?" → MUST still work.
+  - "Should we build or rent?" → MUST still work.
+  If any off-topic query gets a compliant answer, the guardrails are broken — fix before pushing.
+- Update this `progress.md` section to ✅ DONE with verification results.
+
+---
+
+### TASK 2 — LaTeX presentation script (`report/presentation-script.tex`)
+
+**Create a complete LaTeX document** that serves as the **speaker script** for the 7–10 minute
+project presentation (~8–15 slides). This is NOT the slides themselves — it's the words the
+speakers will READ (but it must sound so natural that no one can tell they're reading).
+
+#### Requirements:
+
+1. **Language:** extremely simple English — a high-school student should understand every sentence.
+   No jargon without immediate plain-English definition. Short sentences. Conversational tone.
+   Example: instead of "The project yields a positive NPV of AED 1,854 million, indicating value
+   creation above the cost of capital", say "The project adds about 1.8 billion dirhams of value
+   after accounting for the cost of borrowing — so it's worth doing."
+
+2. **Must sound natural:** if someone reads this aloud, the audience should feel it's spontaneous
+   speaking, not reading. Use natural transitions ("So here's the thing...", "Now, the big
+   question is...", "Let me walk you through..."). Avoid stiff academic phrasing.
+
+3. **Tab-wise structure** — one section per presentation topic, in this order:
+
+   **Section 1: Opening & Overview** (who we are, what Teraval is, the one-line problem)
+   **Section 2: The Financial Problem** (what decision, why it matters, the ~AED 5.8B at stake,
+     the GPU-price crash from $8→$2.85–3.50, why it's near-irreversible)
+   **Section 3: Finance Concepts** (NPV, IRR, MIRR, PI, payback, discounted payback, WACC, EAC —
+     each explained in one plain sentence)
+   **Section 4: Data & Assumptions** (the key inputs: GPU price $4/hr, utilization 80%, 40 MW,
+     capex AED 5,766m, tariff AED 0.15/kWh, PUE 1.20, WACC 9%, 8-year life; data types H/C/F/U/AI)
+   **Section 5: Financial Calculations & Results** (the base-case numbers: NPV +AED 1,854m,
+     IRR 16.5%, MIRR 12.6%, PI 1.31, payback 5.0/6.3 yrs, break-even $3.34; what they mean;
+     the self-test)
+   **Section 6: Cash Flow & Build-vs-Rent** (the 8-year FCF chart, Year-4 refresh dip, cumulative
+     discounted CF, build vs rent on EAC, building wins above ~77% utilization, thin +AED 320M)
+   **Section 7: Scenarios & Sensitivity** (optimistic +AED 10,216m / base +1,854m / pessimistic
+     −4,138m; the tornado — GPU price #1, utilization #2; thresholds; Monte-Carlo P(loss) ~21%)
+   **Section 8: AI & Forecasting** (the 7 AI features; the two trained ML models — surrogate risk
+     classifier 96.7% acc / AUC 0.998, AR(1) forecaster RMSE $0.06 → spot ~$2.73 below break-even;
+     Monte-Carlo; the assistant; why ML augments not replaces the engine)
+   **Section 9: Board & Ethics** (the 5-department board review, base "approve with conditions"
+     65/100; ethical AI — accuracy, hallucination, bias, confidentiality, human review,
+     responsibility; data provenance CBUAE rates)
+   **Section 10: Final Recommendation & Closing** (accept conditionally, the three conditions:
+     contracted offtake, staged capex, cloud-rental fallback; dominant risk = GPU price collapse;
+     closing)
+
+4. **Under each section, THREE blocks:**
+
+   **(a) SCRIPT** — the actual words to speak. 60–90 seconds per section (~150–220 words). Natural,
+   conversational. Use "we", "our", "you'll see". Mention which slide/tab the audience is looking at.
+
+   **(b) EXPLANATION BLOCK** — definitions of every technical term used in that section's script.
+   Format: `\textbf{Term}: plain-English definition.` For example:
+   - **NPV (Net Present Value):** the total value the project adds after subtracting what we spend
+     and adjusting for the fact that money today is worth more than money in the future.
+   - **IRR (Internal Rate of Return):** the annual percentage return the project earns on the
+     money invested in it.
+   - **WACC:** the blended cost of all the money used to fund the project (both debt and equity).
+   Cover ALL terms that a non-finance audience might not know.
+
+   **(c) PROBABLE QUESTIONS & ANSWERS** — 3–5 likely examiner/audience questions per section, with
+   prepared answers in the same simple language. Tag each Q with the section it relates to.
+   Examples:
+   - Q: "Why did you use 9% as the discount rate?"
+     A: "We built it up from the official UAE central bank rate (3.65%), added a risk premium for
+     the equity investors, and blended it with the cost of debt. 9% is actually conservative —
+     it's a tougher test than the raw calculation suggests."
+   - Q: "What if GPU prices keep falling?"
+     A: "That's exactly the risk. Our break-even is $3.34 per GPU-hour, and the market is already
+     at $2.85–3.50. If prices fall below break-even, NPV goes negative. That's why our #1
+     condition is: sign contracts that lock in a rate above $3.34 before committing the capital."
+
+5. **LaTeX formatting:** use `\documentclass[12pt,a4paper]{article}`, same border as `main.tex`,
+   clear section headers, a `\textbf{SCRIPT:}` / `\textbf{EXPLANATION:}` / `\textbf{PROBABLE
+   QUESTIONS:}` structure within each section. Title page: "Teraval — Presentation Script" with the
+   same team members as `main.tex`. Compile-ready with pdflatex.
+
+6. **Total length guidance:** ~2,500–3,500 words of script (for a ~8–10 minute presentation at
+   natural speaking pace), plus the explanation and Q&A blocks. The whole document will be longer
+   (maybe 15–25 pages) because of the explanation/Q&A material, but the spoken part alone is the
+   7–10 minutes.
+
+#### Verification:
+- Must compile with `pdflatex` (or `latexmk`) with 0 errors and 0 overfull.
+- Read the SCRIPT sections aloud — they must sound natural and fill 7–10 minutes.
+- Every technical term used in the script must appear in the explanation block.
+- Every number quoted must match the canonical figures (see the verified numbers throughout this file).
+- Update this `progress.md` section to ✅ DONE.
+
+---
+
+### Execution order:
+
+1. **TASK 1 first** (guardrails) — this is the critical fix.
+2. **TASK 2 second** (presentation script) — this is the deliverable.
+3. After both: push, update this file.
+
+---
 
 ## Notes / decisions
 
 - Repo root = this folder; GitHub repo is **`TeravalAI`** (https://github.com/KartikJoshi23/TeravalAI).
   NIM API key goes in `assistant/.env` (git-ignored); Kartik supplies it — never commit it.
 - Finance engine and Python reference must stay in sync; tests enforce the numbers.
+- **P1–P3 from the Project Atlas re-analysis: ALL DONE** (Board Review, Print Summary, Stage-gate).
+  P4 (Custom Case) deferred. See completed sections above.
+- **Previous MASTER tasks (report, deployment, ML, UX): ALL DONE.** See completed sections above.
