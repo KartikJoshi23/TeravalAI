@@ -4,7 +4,7 @@
 > (any laptop, any team member) reads this first, then continues from "NEXT TASK"
 > with zero ambiguity. Methodology: `Problem-Solving-Skill.md`. Plan: `implementation-plan.md`.
 
-_Last updated: 2026-08-03 (late night) — MASTER laptop (Kartik, Opus 4.8): **UI polish per user feedback** — fixed the transparent AI-assistant panel (now a solid surface), toned the living background down (~½ brightness), and de-blued the whole palette to a premium black + teal/violet/gold. 29/29 tests · tsc clean · build OK · zero console errors. Pushed to trigger the Vercel deploy. Repo: https://github.com/KartikJoshi23/TeravalAI_
+_Last updated: 2026-08-04 — MASTER laptop (Kartik, Opus 4.8): live deploy verified end-to-end (Vercel + Render + NIM); report live-deployment note added (8 pages, in band). Then re-analysed teammate Aditya's **Project Atlas** and **spec'd 4 new features** for the COLLABORATOR to build (see "NEXT BUILD" below) — top pick is a **Departmental Review Board**. This push is a PLAN update; no code changed. Repo: https://github.com/KartikJoshi23/TeravalAI_
 
 > Visual polish 2026-08-01: rack bodies sharper metallic (roughness 0.24, envMap 1.9) + a silver top-edge rim + brighter/sharper Environment light-formers → silver-shine edges from all sides. BackgroundFX now clearly live — drifting/breathing colour fields + 20 rising light motes (reduced-motion still disables).
 >
@@ -430,8 +430,66 @@ Three visual issues raised on the live dashboard, fixed in one pass (no engine/n
 
 ## 🔧 In progress
 
-- Deploy is live and verified. Remaining is the **manual report/slide assembly** (screenshots →
-  Overleaf → NotebookLM) + the two grading-convention questions.
+- **Two parallel streams now:** (1) **Kartik/MASTER** — manual report + slide assembly (below);
+  (2) **COLLABORATOR** — build the 4 features spec'd in "NEXT BUILD". The finance engine + every
+  canonical number stay FROZEN; these are presentation/aggregation layers over the existing
+  deterministic engine.
+
+## 🧩 NEXT BUILD — COLLABORATOR: 4 features from the Project Atlas re-analysis (2026-08-04)
+
+Re-analysed teammate Aditya's **Project Atlas** live (Meridian Commerce scenario). We already
+borrowed its finance ideas earlier (Build-vs-Rent/EAC, decision thresholds, ethics, self-test);
+these are the things it has that we don't, plus one polish. **Rules (same as the earlier borrow):
+adapt the CONCEPT, not the code; our Barq-AI scenario; ground EVERY number in the deterministic
+engine — no invented figures; engine + `docs/finance-model-reference.py` UNTOUCHED.** Build in this
+priority order, **one reviewable stage at a time, stop after each for review**, update this file +
+keep the 29 tests green (add tests where noted).
+
+**P1 — Departmental Review Board (new "Board Review" tab). ⭐ Flagship — biggest payoff.**
+A multi-stakeholder governance view: 4–5 departments each run their own objective over the SAME live
+Zustand store state, reach a grounded scored position, and a **weighted board verdict** aggregates
+them — all moving live as sliders change. Departments (Barq AI, 40 MW Abu Dhabi GPU hall):
+- **Finance/CFO** — risk-adjusted value + capital protection. Reads NPV, IRR vs WACC, PI, P(loss)≈21%,
+  discounted payback vs 8 y, capex-overrun tolerance. Non-negotiable: staged capex release (not one
+  up-front commit). Flips if NPV<0 (price<$3.34 breakeven, util<~67%, or WACC>IRR 16.5%).
+- **Infrastructure/Ops** — uptime, PUE, thermal headroom, no single point of failure. Reads PUE,
+  utilization, energy. Non-negotiable: N+1 cooling redundancy. Flips on PUE/uptime risk.
+- **Commercial/Revenue** — protect GPU demand & contracted offtake (our dominant driver). Reads
+  utilization (80%), breakeven util ~67%, price vs $3.34, build-vs-rent crossover ~77%.
+  Non-negotiable: a minimum contracted-utilization floor. Flips if util<~77% (rent wins) or price<breakeven.
+- **Sustainability/ESG** — energy intensity, emissions, UAE Net-Zero-2050 alignment. Reads PUE, tariff,
+  MW. Non-negotiable: PUE ceiling + disclosure. Flips if PUE above threshold.
+- (optional 5th) **Technology/AI** — GPU obsolescence / Year-4 refresh risk.
+Each card: a **deterministic score /100** (a documented rule over the live metrics, like the self-test
+— NOT arbitrary), a stance (Supports / Supports-with-conditions / Opposes), 2–3 grounded concerns,
+conditions it would attach, one non-negotiable, and "what would change its position" (tied to a named
+engine threshold). Verdict = weighted score → overall stance; show the most-vs-least-supportive spread;
+any unmet non-negotiable ⇒ "approve WITH conditions", not unconditional. Wire: 8th tab in `TabNav`,
+reads the store (live), add assistant tab-context so "explain this view" works. Tests: base-case
+verdict + that dropping utilization below the ~77% crossover flips Commercial's stance.
+
+**P2 — "Download decision summary" (PDF via print). Small, high-utility, independent.**
+A button (header or Recommendation tab) → a clean ONE-PAGE summary of the CURRENT live case: scenario,
+the 6 driver assumptions, the 6 KPIs, scenario verdict, the recommendation paragraph (+ board verdict
+if P1 shipped), timestamp → `window.print()`. Use `@media print` CSS to hide the app chrome/3D/nav and
+show only the summary; the user picks "Save as PDF". **NO new deps** (no jsPDF/html2canvas — bundle
+bloat and they choke on the WebGL canvas/Recharts). Complements the LaTeX report (that's the fixed
+academic write-up; this is a live snapshot of whatever's dialled in).
+
+**P3 — Stage-gate recommendation nuance. Quick polish (do alongside P1).**
+Enrich `RecommendationPanel`: when ACCEPT-but-thin (P(loss) meaningful / breakeven close), frame it as
+"conditional accept — stage-gate the capex, release in tranches gated on measured utilization; keep the
+rent/RaaS fallback." Grounded in our thresholds; ties naturally to the Board's conditions. One short
+paragraph + a little logic.
+
+**P4 — Custom Case (bring-your-own-numbers). OPTIONAL stretch — recommend deferring.**
+Atlas lets you download a `.docx` template, fill figures, upload, and re-run everything client-side.
+Heavy (template + docx parser) and tangential to a single-investment appraisal. If attempted: keep it
+100% client-side and guard with the self-test (reject numbers that break the model identities, restore
+the reference case), as Atlas does.
+
+Integrity note: as with the earlier borrow — **ideas adapted, not code**; different scenario (Barq AI
+vs Meridian Commerce); our stack; grounded in our engine. If P1/P4 ship, add a line to the report/ethics.
 
 ## ▶️ NEXT TASK — MASTER (Kartik): assemble the report + slide package
 
