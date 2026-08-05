@@ -57,7 +57,9 @@ export default function ScenarioGenerator() {
                 <span className={`h-2 w-2 shrink-0 rounded-full ${TONE_DOT[r.tone]}`} />
                 <span className="text-sm font-medium text-txt">{r.name}</span>
               </div>
-              <div className="mt-1 font-mono text-xs text-txt-dim">NPV {fmtAedM(r.npv)}</div>
+              <div className="mt-1 truncate font-mono text-xs tabular-nums text-txt-dim">
+                NPV {fmtAedM(r.npv)}
+              </div>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <DecisionPill decision={r.decision} />
@@ -66,7 +68,7 @@ export default function ScenarioGenerator() {
                 onClick={() => setAssumptions(r.patch)}
                 className="rounded-md border border-glass-border px-2 py-1 text-[11px] font-medium text-txt-dim transition-colors hover:border-violet/50 hover:text-txt"
               >
-                Apply
+                {r.tone === 'base' ? 'Reset' : 'Apply'}
               </button>
             </div>
           </div>
