@@ -26,9 +26,10 @@ const FINANCE_KW = [
 // Phrases that are never a legitimate finance question, even if a finance-ish
 // word appears (e.g. "capital of France" contains "capital").
 const STRONG_OFFTOPIC = [
-  'python', 'javascript', ' java ', 'c++', 'recipe', 'how to cook', 'capital of', 'capital city',
-  'tell me a joke', 'write me a poem', 'write me an essay', 'write a poem', 'write a song',
-  'meaning of life', 'weather in', 'who won', 'translate ',
+  'python', 'javascript', 'typescript', ' java ', 'c++', 'c#', 'sql', 'programming', 'write code',
+  'source code', 'write a program', 'leetcode', 'recipe', 'how to cook', 'capital of',
+  'capital city', 'tell me a joke', 'write me a poem', 'write me an essay', 'write a poem',
+  'write a song', 'meaning of life', 'weather in', 'who won', 'translate ',
 ];
 // Softer off-topic signals — refused only when NO finance keyword is present.
 const OFFTOPIC_KW = [

@@ -55,12 +55,29 @@ _FINANCE_KEYWORDS = {
     "profit", "loss", "revenue", "money", "worth", "spend", "summary", "kpi", "chart",
 }
 
+# Hard-block: phrases that are NEVER a legitimate appraisal question, even when a
+# finance word co-occurs — e.g. "write Python code to compute the NPV" (contains
+# "npv"), or "capital of France" (contains "capital"). Without this, such requests
+# slip past the finance-keyword allow-list and the model answers them. Mirrors the
+# frontend STRONG_OFFTOPIC list in web/src/lib/assistantFallback.ts.
+_STRONG_OFFTOPIC = {
+    "python", "javascript", "typescript", " java ", "c++", "c#", "sql", "programming",
+    "write code", "source code", "write a program", "leetcode", "recipe",
+    "how to cook", "capital of", "capital city", "tell me a joke", "write me a poem",
+    "write me an essay", "write a poem", "write a song", "meaning of life",
+    "weather in", "who won", "translate ",
+}
+
 
 def _off_topic(question: str) -> bool:
-    """True when a non-trivial question contains no finance-relevant keyword."""
+    """True when a question is out of scope for the appraisal assistant."""
     q = question.strip().lower()
+    # Hard block first: never-legitimate topics, even wrapped around a finance word.
+    if any(k in q for k in _STRONG_OFFTOPIC):
+        return True
     if len(q) <= 10:  # let short greetings ("hi", "thanks") reach the model
         return False
+    # Otherwise, in scope only if it mentions something finance/project-related.
     return not any(k in q for k in _FINANCE_KEYWORDS)
 
 

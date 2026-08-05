@@ -27,6 +27,17 @@ describe('assistant scope guardrail (offline fallback)', () => {
     }
   });
 
+  it('refuses off-topic requests even when wrapped around a finance term', () => {
+    const wrapped = [
+      'write Python code to calculate the NPV', // python + npv
+      'can you write a program that computes the IRR?', // write a program + irr
+      'write me a poem about our NPV', // write me a poem + npv
+    ];
+    for (const q of wrapped) {
+      expect(answerLocally(q, ctx), q).toMatch(REFUSAL);
+    }
+  });
+
   it('still answers legitimate finance questions', () => {
     expect(answerLocally('What is the project NPV and should we accept it?', ctx)).not.toMatch(REFUSAL);
     expect(answerLocally('What does break-even mean here?', ctx)).toMatch(/break-even/i);
